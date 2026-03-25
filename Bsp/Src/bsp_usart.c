@@ -794,7 +794,7 @@ void USART1_IRQHandler(void)
    if(LL_USART_IsActiveFlag_RXNE_RXFNE(USART1)){
    
      
-     // data = LL_USART_ReceiveData8(USART1);
+      rx1_data = LL_USART_ReceiveData8(USART1);
       ///usart1_isr_callback_handler(data);
         // 写入环形缓冲区
         uart1_rx_buf[uart1_rx_head] = rx1_data;

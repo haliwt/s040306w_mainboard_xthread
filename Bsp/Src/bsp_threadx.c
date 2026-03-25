@@ -88,7 +88,7 @@ static void vTaskMsgPro(ULONG thread_input)
 
    while(1){
 			
-	tx_semaphore_get(&decoder_semaphore, TX_NO_WAIT) ;
+	tx_semaphore_get(&decoder_semaphore, TX_NO_WAIT);//==SUCCESS){
 	 
 			
 	  // 从环形缓冲区取数据
@@ -103,8 +103,10 @@ static void vTaskMsgPro(ULONG thread_input)
        if(gpro_t.decoder_success_flag==1){
 	      decoder_handler();
        	}
+	    
 
-   
+		
+	   
    	} 
 
  }
