@@ -69,7 +69,7 @@ static void vTaskMsgPro(ULONG thread_input)
          wifi_run_handler();
 
         
-		 tx_thread_sleep(100);//100
+		 tx_thread_sleep(500);//100
 		
 	}
       
