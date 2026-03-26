@@ -32,7 +32,8 @@ static void parse_recieve_copy_data(uint8_t *pddata);
 
 
 uint8_t rx_inputBuf[12];
-uint8_t check_bcc_code,rx1_data;
+uint8_t check_bcc_code;
+uint8_t rx1_data;
 uint8_t counter_power_flag;
 uint8_t ptc_onoff_default ;
 
@@ -160,6 +161,7 @@ uint8_t parse_exit_flag,parse_decoder_flag;
 	*Return Ref:NO
 	*
 *******************************************************************************/
+#if 1
 void usart1_isr_callback_handler(uint8_t data)
 {
    
@@ -169,26 +171,51 @@ void usart1_isr_callback_handler(uint8_t data)
 		if(data == FRAME_HEADER){
 			rx_data_counter=0;
 			gl_tMsg.usData[rx_data_counter]=data;
+			
 			rx_state =1;
+
+		}
+		else{
+		   rx_state =0;
 
 		}
 	 break;
 
 	 case 1:
+			rx_data_counter++;
+			gl_tMsg.usData[rx_data_counter]=data;
+
+	        if(gl_tMsg.usData[rx_data_counter]==0x01 || gl_tMsg.usData[rx_data_counter]==0x02){
+			 
+				 rx_state = 2;
+			 }
+			 else{
+				rx_state = 0;
+				gl_tMsg.usData[rx_data_counter]=0;
+
+			    rx_data_counter=0;
+
+			 }
+
+	 break;
+
+	 case 2:
 	    // if(gpro_t.decoder_success_flag==0){
 		 	
 		   rx_data_counter++;
            gl_tMsg.usData[rx_data_counter]=data;
-		  if(gl_tMsg.usData[rx_data_counter]==0xFE){
-		      rx_state = 2;
+		   
+		  if(gl_tMsg.usData[rx_data_counter]==0xFE && rx_data_counter> 4){
+		      rx_state = 3;
 		  }
 	    /// }
 		 
      break;
 			 
-	 case 2:
+	 case 3:
 		       rx_data_counter++;
 	           gl_tMsg.usData[rx_data_counter]=data;
+			 
 	           rx_state = 0;
                gl_tMsg.rx_total_numbers = rx_data_counter;
 
@@ -198,16 +225,72 @@ void usart1_isr_callback_handler(uint8_t data)
 
 			   gl_tMsg.bcc_check_code = data;
 
-            //   display_board_xtask_notice();
+               display_board_xtask_notice();
+
+	 break;
+
+	 default:
+	   rx_state =0;
 
 	 break;
 
 	 }
 
-	
-
-
 }
+#else 
+void usart1_isr_callback_handler(uint8_t data)
+{
+    switch(rx_state) {
+        case 0: // 寻找帧头 0xA5
+            if(data == FRAME_HEADER) {
+                rx_data_counter = 0;
+                gl_tMsg.usData[rx_data_counter] = data;
+                rx_state = 1; 
+                gpro_t.decoder_success_flag = 0; // 开始新的一帧，清除成功标志
+            }
+            break;
+
+        case 1: // 接收数据体
+            rx_data_counter++;
+            if(rx_data_counter < 12) { // 防止数组越界
+                gl_tMsg.usData[rx_data_counter] = data;
+                
+                // 关键点：只有当收到 0xFE 时，才认为数据接收完毕，准备接收最后的校验位
+                if(data == FRAME_END_BYTE) {
+                    rx_state = 2;
+                }
+            } else {
+                // 超长错误，重置
+                rx_state = 0;
+            }
+            break;
+
+        case 2: // 接收最后的 BCC 校验位
+            rx_data_counter++;
+            if(rx_data_counter < 12) {
+                gl_tMsg.usData[rx_data_counter] = data;
+                gl_tMsg.bcc_check_code = data; // 存入校验码
+                gl_tMsg.rx_total_numbers = rx_data_counter + 1;
+                
+                // --- 校验逻辑 ---
+                // 这里可以写一个简单的循环计算 BCC，如果匹配再置标志位
+                gpro_t.decoder_success_flag = 1; 
+                
+                // 只有一整帧完全接收且校验过，才唤醒任务
+                //display_board_xtask_notice(); 
+            }
+            rx_state = 0; // 处理完无论成功失败，必须回到状态0等待新帧
+            break;
+
+        default:
+            rx_state = 0;
+            break;
+    }
+}
+
+
+
+#endif 
 /********************************************************************************
 	**
 	*Function Name:void usart1_protocol_state_machine(void)
@@ -791,19 +874,25 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 0 */
   volatile uint8_t data;
   // static uint8_t rx_flag;
+
    if(LL_USART_IsActiveFlag_RXNE_RXFNE(USART1)){
    
      
       rx1_data = LL_USART_ReceiveData8(USART1);
-      ///usart1_isr_callback_handler(data);
+       usart1_isr_callback_handler(rx1_data);
+	  // gl_tMsg.usData[rx_data_counter]=rx1_data;
+	  /// rx_data_counter++;
+	  /// if(rx_data_counter > 8){
+	   	 // rx_data_counter=0;
+	   //	}
         // 写入环形缓冲区
-        uart1_rx_buf[uart1_rx_head] = rx1_data;
-        uart1_rx_head = (uart1_rx_head + 1) % UART1_RX_BUF_SIZE;
+      // uart1_rx_buf[uart1_rx_head] = rx1_data;
+     //  uart1_rx_head = (uart1_rx_head + 1) % UART1_RX_BUF_SIZE;
 
         // 通知接收任务
         //tx_semaphore_put(&uart1_rx_semaphore);
-       display_board_xtask_notice();
-     
+      //display_board_xtask_notice(rx1_data);
+      
 
    }
   /* USER CODE END USART1_IRQn 0 */

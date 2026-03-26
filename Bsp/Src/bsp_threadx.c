@@ -1,26 +1,21 @@
 #include "bsp.h"
 
-#define DECODER_BIT_0        (1<< 0)
-
-#define BIT_1                (1<<1)
-
-#define BIT_2                (1<<2)
-
-#define LOWEST_PRIORITY   1  // ???????
-#define HIGHEST_PRIORITY  3
 
 
 /***********************************************************************************************************
 											函数声明
 ***********************************************************************************************************/
 #define STACK_SIZE_ONE  1024//3072//2048//1024//896//768
-#define STATC_SIZE_TWO  512//512//256
+#define STATC_SIZE_TWO  1024//512//256
 
 
 static TX_THREAD thread_msg;
 static TX_THREAD thread_start;
 /* 定义信号量 */
 TX_SEMAPHORE decoder_semaphore;
+/*队列*/
+//static TX_QUEUE uart1_rx_queue;
+//static uint8_t uart1_rx_queue_buffer[UART1_RX_BUF_SIZE * sizeof(uint8_t)];
 
 
 static UCHAR stack_msg_pro[STACK_SIZE_ONE];
@@ -37,6 +32,9 @@ static void wifi_run_handler(void);
 
 
 
+uint8_t data;
+   uint8_t frame_buf[12];
+   uint8_t frame_index = 0;
 
 
 
@@ -49,8 +47,7 @@ uint8_t power_on_sound_flag ;
  * @param   None
  * @retval  None
  */
-
-static void vTaskMsgPro(ULONG thread_input)
+ static void vTaskMsgPro(ULONG thread_input)
 {
    (void)thread_input;  /* 消除未使用的参数警告 */
 	while(1)
@@ -69,7 +66,7 @@ static void vTaskMsgPro(ULONG thread_input)
          wifi_run_handler();
 
         
-		 tx_thread_sleep(500);//100
+		 tx_thread_sleep(1000);//100
 		
 	}
       
@@ -81,33 +78,54 @@ static void vTaskMsgPro(ULONG thread_input)
   * @param	 None
   * @retval  None
   */
- 
  static void vTaskStart(ULONG thread_input)
  {
    (void)thread_input;  /* 消除未使用的参数警告 */
-
+  
+   #if 1
    while(1){
 			
-	tx_semaphore_get(&decoder_semaphore, TX_NO_WAIT);//==SUCCESS){
-	 
-			
-	  // 从环形缓冲区取数据
-        while(uart1_rx_tail != uart1_rx_head)
-        {
-            rx1_data = uart1_rx_buf[uart1_rx_tail];
-            uart1_rx_tail = (uart1_rx_tail + 1) % UART1_RX_BUF_SIZE;
+	// 阻塞等待 ISR 投递
+      if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
+      {
+            // 处理环形缓冲区数据
+           
 
-            // 调用协议解析函数
-            usart1_isr_callback_handler(rx1_data);
-        }
-       if(gpro_t.decoder_success_flag==1){
-	      decoder_handler();
-       	}
-	    
+            // 或者直接调用解码器
+          
+              decoder_handler();
+                
+       }
 
 		
 	   
    	} 
+   #else 
+   
+    while(1)
+    {
+        // 阻塞等待队列消息
+        if(tx_queue_receive(&uart1_rx_queue, &rx1_data, TX_WAIT_FOREVER) == TX_SUCCESS)
+        {
+            // 简单状态机：帧头 0xA5，帧尾 0xFE
+            rx_byte =(uint8_t)rx1_data;
+            if(rx_byte == 0xA5) {
+                frame_index = 0;
+                frame_buf[frame_index++] = rx_byte;
+            }
+            else if(frame_index > 0) {
+                frame_buf[frame_index++] = rx_byte;
+                if(rx1_data == 0xFE) {
+                    // 收到完整一帧
+                   // decoder_handler(frame_buf, frame_index);
+                    frame_index = 0;
+                }
+            }
+        }
+    }
+
+
+   #endif 
 
  }
  
@@ -147,6 +165,12 @@ void threadx_handler(void)
 
    /* 创建信号量 */
    tx_semaphore_create(&decoder_semaphore, "DecoderSemaphore", 0);
+   
+//	tx_queue_create(&uart1_rx_queue,
+//					"Uart1RxQueue",
+//					TX_1_ULONG,   // 每个消息大小，这里用 1 字节
+//					uart1_rx_queue_buffer,
+//					sizeof(uart1_rx_queue_buffer));
  
 }
 /*
@@ -229,6 +253,8 @@ void display_board_xtask_notice(void)
 {
 
   tx_semaphore_put(&decoder_semaphore);
+    // 投递到队列
+   // tx_queue_send(&uart1_rx_queue, &data, TX_NO_WAIT);
 
 }
 
