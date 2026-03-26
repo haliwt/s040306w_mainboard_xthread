@@ -57,7 +57,7 @@ void adc_detected_hundler(void)
 
 
 		  	gpro_t.fan_counter_error ++;
-			  if(gpro_t.fan_counter_error  > 9){
+			  if(gpro_t.fan_counter_error  > 5){
 			      gpro_t.fan_warning_flag=1;
 				  gctl_t.ptc_prohibit_on_flag = 1;
 				  gpro_t.rx_ptc_flag = 0;
@@ -198,14 +198,14 @@ void fan_warning_sound(void)
 		   tx_thread_sleep(100);//tx_thread_sleep(100);
           
            SendWifiData_To_Cmd(0x09, 0x01);
-           tx_thread_sleep(10);
+           tx_thread_sleep(100);
 	       if(wifi_link_net_state()==1){
 
-               MqttData_Publis_SetFan(0);
-	            // tx_thread_sleep(pdMS_TO_TICKS(200));//HAL_Delay(350);
+              // MqttData_Publis_SetFan(0);
+	           //tx_thread_sleep(pdMS_TO_TICKS(200));//HAL_Delay(350);
 
     		   Publish_Data_Warning(fan_warning,warning);
-    	       // tx_thread_sleep(pdMS_TO_TICKS(200));//HAL_Delay(200);
+    	        tx_thread_sleep(200);//HAL_Delay(200);
 
            }
 
