@@ -6,7 +6,7 @@
 											函数声明
 ***********************************************************************************************************/
 #define STACK_SIZE_ONE  1024//3072//2048//1024//896//768
-#define STATC_SIZE_TWO  1024//512//256
+#define STATC_SIZE_TWO  512//512//256
 
 
 static TX_THREAD thread_msg;
@@ -66,7 +66,7 @@ uint8_t power_on_sound_flag ;
          wifi_run_handler();
 
         
-		 tx_thread_sleep(1000);//100
+		 tx_thread_sleep(300);//100
 		
 	}
       
@@ -92,8 +92,11 @@ uint8_t power_on_sound_flag ;
            
 
             // 或者直接调用解码器
-          
-              decoder_handler();
+              if(gpro_t.decoder_success_flag==1){
+			  	  gpro_t.decoder_success_flag =0;
+                 decoder_handler();
+
+              }
                 
        }
 

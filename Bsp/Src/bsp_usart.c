@@ -191,11 +191,8 @@ void usart1_isr_callback_handler(uint8_t data)
 			 }
 			 else{
 				rx_state = 0;
-				gl_tMsg.usData[rx_data_counter]=0;
-
-			    rx_data_counter=0;
-
-			 }
+				
+             }
 
 	 break;
 
@@ -208,7 +205,6 @@ void usart1_isr_callback_handler(uint8_t data)
 		  if(gl_tMsg.usData[rx_data_counter]==0xFE && rx_data_counter> 4){
 		      rx_state = 3;
 		  }
-	    /// }
 		 
      break;
 			 
@@ -540,9 +536,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
         buzzer_sound();
         
-         SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.07.28
+         //SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.07.28
 
-		  tx_thread_sleep(100);
+		 /// tx_thread_sleep(100);
 		  
        break;
 	  
@@ -874,6 +870,7 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 0 */
   volatile uint8_t data;
   // static uint8_t rx_flag;
+   if (LL_USART_IsActiveFlag_ORE(USART1)) LL_USART_ClearFlag_ORE(USART1);
 
    if(LL_USART_IsActiveFlag_RXNE_RXFNE(USART1)){
    
@@ -900,7 +897,7 @@ void USART1_IRQHandler(void)
   
   /* USER CODE BEGIN USART1_IRQn 1 */
 	 // 清除错误标志
-    if (LL_USART_IsActiveFlag_ORE(USART1)) LL_USART_ClearFlag_ORE(USART1);
+  
     if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
     if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
   /* USER CODE END USART1_IRQn 1 */
@@ -913,7 +910,7 @@ void USART1_IRQHandler(void)
 **/
 void decoder_handler(void)
 {
-    gpro_t.decoder_success_flag=0;
+   // gpro_t.decoder_success_flag=0;
 	check_bcc_code = bcc_check(gl_tMsg.usData,gl_tMsg.rx_total_numbers);
 	if(check_bcc_code == gl_tMsg.bcc_check_code){
 		usart1_protocol_state_machine(gl_tMsg.usData);
