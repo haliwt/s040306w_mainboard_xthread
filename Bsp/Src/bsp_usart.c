@@ -311,6 +311,10 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
         if(pdata[3] == 0x01){ //open
                 
 		        gpro_t.process_run_step=0;
+				
+		        buzzer_sound();//buzzer_sound_fun();
+	            SendWifiData_Answer_Cmd(0x01,0x01);
+	            tx_thread_sleep(100);
 				if(gpro_t.soft_version > 2)gpro_t.soft_version =0;
 				if(gpro_t.soft_version ==0){
 				   gpro_t.gpower_on = power_on;
@@ -320,9 +324,6 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
                    PTC_SetHigh();
 
 				}
-		        buzzer_sound();//buzzer_sound_fun();
-	            SendWifiData_Answer_Cmd(0x01,0x01);
-	            tx_thread_sleep(50);
 	         
 	           
 
@@ -330,7 +331,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
         else if(pdata[3] == 0x0){ //close 
 
 		      counter_power_flag ++;
-			  buzzer_sound();
+			 buzzer_sound();
 		     gpro_t.power_off_run_step=1;
              gpro_t.gpower_on = power_off;
               if(gpro_t.soft_version ==2){
@@ -481,12 +482,13 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 		   gpro_t.process_run_step=0;
 	       gpro_t.gpower_on = power_on;
+		   SendWifiData_Answer_Cmd(0x10,0x01);
+	       tx_thread_sleep(100);
 		    fan_full_run();//WT.EDIT 2026.01.26
 		    PLASMA_SetHigh();
              ultrasonic_open();   //ultrasnoic ON 
              PTC_SetHigh();
-	       SendWifiData_Answer_Cmd(0x10,0x01);
-	       tx_thread_sleep(100);
+	     
 	         
 	    }
         else if(pdata[3] == 0x0){ //close 
@@ -496,7 +498,6 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	            ultrasonic_close();
 			
               SendWifiData_Answer_Cmd(0x10,0x0); //power off .
-
               tx_thread_sleep(100); 
       
              gpro_t.power_off_run_step=1;

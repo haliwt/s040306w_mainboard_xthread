@@ -30,14 +30,6 @@ static void vTaskStart(ULONG thread_input);
 static void power_run_handler(void);
 static void wifi_run_handler(void);
 
-
-
-uint8_t data;
-   uint8_t frame_buf[12];
-   uint8_t frame_index = 0;
-
-
-
 uint8_t power_on_sound_flag ;
 
 
@@ -66,7 +58,7 @@ uint8_t power_on_sound_flag ;
          wifi_run_handler();
 
         
-		 tx_thread_sleep(300);//100
+		 tx_thread_sleep(200);//100
 		
 	}
       
@@ -88,10 +80,7 @@ uint8_t power_on_sound_flag ;
 	// 阻塞等待 ISR 投递
       if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
-            // 处理环形缓冲区数据
-           
-
-            // 或者直接调用解码器
+              // 或者直接调用解码器
               if(gpro_t.decoder_success_flag==1){
 			  	  gpro_t.decoder_success_flag =0;
                  decoder_handler();
