@@ -52,16 +52,16 @@ void USART2_DMA_Send(uint8_t *txBuf,uint16_t txlen)
 {
     if(txBuf ==NULL || txlen ==0) return ;
 	
-	LL_DMA_DisableChannel(DMA1,LL_DMA_CHANNEL_5);
+	LL_DMA_DisableChannel(DMA1,LL_DMA_CHANNEL_4);
 
-    LL_DMA_ConfigAddresses(DMA1,LL_DMA_CHANNEL_5,
+    LL_DMA_ConfigAddresses(DMA1,LL_DMA_CHANNEL_4,
                             (uint32_t)txBuf,
                             (uint32_t)&USART2->TDR,
                             LL_DMA_DIRECTION_MEMORY_TO_PERIPH);
-    LL_DMA_SetDataLength(DMA1,LL_DMA_CHANNEL_5,txlen);
+    LL_DMA_SetDataLength(DMA1,LL_DMA_CHANNEL_4,txlen);
 
    
-    LL_DMA_EnableChannel(DMA1,LL_DMA_CHANNEL_5);
+    LL_DMA_EnableChannel(DMA1,LL_DMA_CHANNEL_4);
 
 	 LL_DMA_ClearFlag_TC5(DMA1);//TC5 -> clear transfer complete flag
 
