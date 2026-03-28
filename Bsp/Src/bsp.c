@@ -88,7 +88,7 @@ void wifi_communication_tnecent_handler(void)
 void link_wifi_to_tencent_handler(void)
 {
     if(gpro_t.wifi_led_fast_blink_flag == 1){//if(gpro_t.wifi_led_fast_blink_flag==1){
-        if(gctl_t.gTimer_linkTencentCounter  > 119){
+        if(gctl_t.gTimer_linkTencentCounter  > 170){//119
 
            gpro_t.wifi_led_fast_blink_flag =0;//gpro_t.wifi_led_fast_blink_flag =0;
            if(wifi_link_net_state()==0){

@@ -351,7 +351,7 @@ void Get_Beijing_Time(void)
 
 
 }
-
+#if 0
 void PowerOn_Self_Auto_Link_Tencent_Cloud(void)
 {
 
@@ -392,7 +392,7 @@ void PowerOn_Self_Auto_Link_Tencent_Cloud(void)
   free(device_massage);
 
 }
-
+#endif 
 void SmartPhone_TryToLink_TencentCloud(void)
 {
     net_t.linking_tencent_cloud_doing =1; //enable usart2 receive wifi  data

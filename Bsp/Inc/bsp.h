@@ -124,7 +124,7 @@ typedef struct PROCESS_T{
   
    uint8_t copy_cmd_notice_buff[10];
    //copy command 
-
+   uint8_t set_temp_value_success;
  
  
 
@@ -176,6 +176,7 @@ typedef struct PROCESS_T{
    uint8_t gTimer_read_dht11_to_disp;
    uint8_t gTimer_twohours_seconds_counter;	
    uint8_t gTimer_conter_twohours_minutes;
+
   
 
    

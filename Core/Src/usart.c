@@ -30,7 +30,7 @@ void MX_USART1_UART_Init(void)
 {
 
   /* USER CODE BEGIN USART1_Init 0 */
-
+ //display board 
   /* USER CODE END USART1_Init 0 */
 
   LL_USART_InitTypeDef USART_InitStruct = {0};
@@ -100,7 +100,7 @@ void MX_USART1_UART_Init(void)
   LL_DMA_SetMemorySize(DMA1, LL_DMA_CHANNEL_2, LL_DMA_MDATAALIGN_BYTE);
 
   /* USART1 interrupt Init */
-  NVIC_SetPriority(USART1_IRQn, 0);
+  NVIC_SetPriority(USART1_IRQn, 2);
   NVIC_EnableIRQ(USART1_IRQn);
 
   /* USER CODE BEGIN USART1_Init 1 */
@@ -211,7 +211,7 @@ void MX_USART2_UART_Init(void)
   LL_DMA_SetMemorySize(DMA1, LL_DMA_CHANNEL_4, LL_DMA_MDATAALIGN_BYTE);
 
   /* USART2 interrupt Init */
-  NVIC_SetPriority(USART2_IRQn, 3);
+  NVIC_SetPriority(USART2_IRQn, 0);
   NVIC_EnableIRQ(USART2_IRQn);
 
   /* USER CODE BEGIN USART2_Init 1 */

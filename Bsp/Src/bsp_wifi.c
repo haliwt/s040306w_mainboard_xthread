@@ -65,7 +65,7 @@ void link_wifi_net_handler(void)
           
         		at_send_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
         
-        		tx_thread_sleep(3000);//tx_thread_sleep(1000);
+        		tx_thread_sleep(2000);//tx_thread_sleep(1000);
         		
               gpro_t.link_net_step = 1;
 
@@ -73,7 +73,7 @@ void link_wifi_net_handler(void)
 
             case 1:
                // WIFI_IC_ENABLE();
-             
+                tx_thread_sleep(1000);
                at_send_data((const uint8_t *)"AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
                 tx_thread_sleep(1000);
                 gctl_t.randomName[0]=HAL_GetUIDw0();
@@ -86,7 +86,8 @@ void link_wifi_net_handler(void)
             break;
 
             case 2:
-                 if(gpro_t.gTimer_link_net_timer_time  > 5){
+				  tx_thread_sleep(1000);
+                 //if(gpro_t.gTimer_link_net_timer_time  > 5){
                      gpro_t.gTimer_link_net_timer_time = 0;
 
                         // WIFI_IC_ENABLE();
@@ -94,18 +95,18 @@ void link_wifi_net_handler(void)
                         sprintf((char *)device_massage, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,gctl_t.randomName[0]);
             			at_send_data(device_massage, strlen((const char *)device_massage));
             	  		tx_thread_sleep(1000);
-                 
+                          tx_thread_sleep(1000);
                        gpro_t.link_net_step = 3;
 
-                 }
+                 //}
 		
 
             break;
 
 
             case 3:
-                
-            if(gpro_t.gTimer_link_net_timer_time  > 4){
+                 tx_thread_sleep(1000); 
+            //if(gpro_t.gTimer_link_net_timer_time  > 4){
                       gpro_t.gTimer_link_net_timer_time = 0;
                   
            // WIFI_IC_ENABLE();
@@ -115,22 +116,26 @@ void link_wifi_net_handler(void)
 				at_send_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
 
 			    tx_thread_sleep(1000);
+				  tx_thread_sleep(1000);
                
                   gpro_t.link_net_step = 4;
-            }
+            //}
 	
 
             break;
 
 
             case 4:
-                 if(gpro_t.gTimer_link_net_timer_time  > 7){
+				  tx_thread_sleep(1000);
+				    tx_thread_sleep(1000);
+			  tx_thread_sleep(1000);
+                 //if(gpro_t.gTimer_link_net_timer_time  > 7){
                   gpro_t.gTimer_link_net_timer_time = 0;
 
                    net_t.linking_tencent_cloud_doing =1;
                   wifi_t.soft_ap_config_flag =1; //WE.EIDT 
                   gpro_t.link_net_step = 5;
-                 }
+                 //}
             
             break;
 
@@ -138,7 +143,7 @@ void link_wifi_net_handler(void)
 
 	            sprintf((char *)device_massage, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",gctl_t.randomName[0]);
                 at_send_data(device_massage, strlen((const char *)device_massage));
-	            tx_thread_sleep(1000);
+	           tx_thread_sleep(1000);
 			
                tx_thread_sleep(1000);
        
@@ -168,13 +173,13 @@ void link_wifi_net_handler(void)
             break;
 
             case 7:
+				  tx_thread_sleep(1000);
+				    tx_thread_sleep(1000);
 
-            if( gpro_t.gTimer_link_net_timer_time  > 7){
+            //if( gpro_t.gTimer_link_net_timer_time  > 7){
 
              if(net_t.wifi_link_net_success==1){
 			
-			    EEPROM_Write(0x0001,1);//
-			    tx_thread_sleep(1000);
 				gctl_t.first_link_tencent_cloud_flag =1;
 				wifi_t.get_rx_beijing_time_enable=0;
 			 
@@ -195,7 +200,7 @@ void link_wifi_net_handler(void)
                   
                 }
                 
-               }
+              // }
 
             break;
 

@@ -89,6 +89,7 @@ static void tim17_isr_callback_handler(void)
         gpro_t.gTimer_poweroff_fan++;
 		gpro_t.gTimer_read_dth11_sensor ++;
 		gpro_t.gTimer_read_dht11_to_disp++;
+
         if(gpro_t.gTimer_twohours_seconds_counter > 59){
 			gpro_t.gTimer_twohours_seconds_counter=0;	
 			gpro_t.gTimer_conter_twohours_minutes++;

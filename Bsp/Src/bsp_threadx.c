@@ -5,8 +5,8 @@
 /***********************************************************************************************************
 											函数声明
 ***********************************************************************************************************/
-#define STACK_SIZE_ONE  1024//3072//2048//1024//896//768
-#define STATC_SIZE_TWO  512//512//256
+#define STACK_SIZE_ONE  1280//3072//2048//1024//896//768
+#define STATC_SIZE_TWO  1024//512//256
 
 
 static TX_THREAD thread_msg;
@@ -58,7 +58,7 @@ uint8_t power_on_sound_flag ;
          wifi_run_handler();
 
         
-		 tx_thread_sleep(200);//100
+		 tx_thread_sleep(100);//100
 		
 	}
       
@@ -76,7 +76,7 @@ uint8_t power_on_sound_flag ;
   
    #if 1
    while(1){
-			
+	#if 1		
 	// 阻塞等待 ISR 投递
       if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
@@ -88,8 +88,14 @@ uint8_t power_on_sound_flag ;
               }
                 
        }
+	  #endif 
 
-		
+//	   if(gpro_t.decoder_success_flag==1){
+//			  	  gpro_t.decoder_success_flag =0;
+//                 decoder_handler();
+//	   	}
+
+//		tx_thread_sleep(10);//100
 	   
    	} 
    #else 
@@ -137,8 +143,8 @@ void threadx_handler(void)
                      0,                           /* 传递给任务的参数 */
                      stack_msg_pro,                /* 堆栈基地址 */
                      STACK_SIZE_ONE,               /* 堆栈空间大小 */ 
-                     2,								/* 任务优先级*/
-                     2,								/* 任务抢占阀值 */
+                     1,								/* 任务优先级*/
+                     1,								/* 任务抢占阀值 */
                      TX_NO_TIME_SLICE,               /* 不开启时间片 */
                      TX_AUTO_START);                /* 创建后立即启动 */
  #if 1
@@ -149,8 +155,8 @@ void threadx_handler(void)
                      0,                       /* 传递给任务的参数 */
                      stack_start_pro,         /* 堆栈基地址 */
                      STATC_SIZE_TWO,			/* 堆栈空间大小 */  
-                     1, 						/* 任务优先级*/
-                     1, 						/* 任务抢占阀值 */
+                     2, 						/* 任务优先级*/
+                     2, 						/* 任务抢占阀值 */
                      TX_NO_TIME_SLICE, 			/* 不开启时间片 */
                      TX_AUTO_START);             /* 创建后立即启动 */
   #endif 
@@ -183,9 +189,7 @@ static void power_run_handler(void)
             power_on_handler();
             link_wifi_to_tencent_handler(); //detected ADC of value 
             ai_mode_display_fun();
-			if(gpro_t.stopTwoHours_flag ==0){
-			   Fan_RunSpeed_Fun();
-		    }
+		
 
 			//ack_handler();
             if(gpro_t.process_run_step > 10 || gpro_t.stopTwoHours_flag > 1){

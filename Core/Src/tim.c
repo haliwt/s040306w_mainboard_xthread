@@ -220,7 +220,7 @@ void MX_TIM17_Init(void)
   LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM17);
 
   /* TIM17 interrupt Init */
-  NVIC_SetPriority(TIM17_IRQn, 0);
+  NVIC_SetPriority(TIM17_IRQn, 3);
   NVIC_EnableIRQ(TIM17_IRQn);
 
   /* USER CODE BEGIN TIM17_Init 1 */

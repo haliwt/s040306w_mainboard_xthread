@@ -15,7 +15,7 @@ uint8_t fan_run_one_minute_flag;
 **********************************************************************/
 void power_on_handler(void)
 {
-    static uint8_t counter;
+    static uint8_t counter,sw_flag,counter_flag;
     switch(gpro_t.process_run_step){
 
 	case 0: //1
@@ -59,6 +59,7 @@ void power_on_handler(void)
 		
        
         gpro_t.stopTwoHours_flag =0;
+		gpro_t.set_temp_value_success=0;
 	
          Fan_Full_Speed();//Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
      
@@ -125,24 +126,40 @@ void power_on_handler(void)
 	     
 		
     case 6: //repeat process 
-		if(gpro_t.gTimer_update_todisplay > 4){
-			gpro_t.gTimer_update_todisplay=0;
-            counter++;
-			updateDht11_sensorData_toDisp();
-	        tx_thread_sleep(100);
-			
-		    if(net_t.wifi_link_net_success ==1 && counter > 1 && gpro_t.soft_version == 0){ //WT.EDIT 2026.02.27
-		       counter =0;
-			   SendWifiData_olderCmd(0x1F,0x01);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-			   tx_thread_sleep(100);
-			}
-			else if(net_t.wifi_link_net_success ==0 && counter > 1 && gpro_t.soft_version ==0){ //WT.EDIT 2026.02.27
-		       counter =0;
-			   SendWifiData_olderCmd(0x1F,0x0);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-			   tx_thread_sleep(100);
-			}
-			
-       }
+		
+	   if(gpro_t.gTimer_update_todisplay > 4){
+				   gpro_t.gTimer_update_todisplay=0;
+				   counter++;
+				   updateDht11_sensorData_toDisp();
+				  tx_thread_sleep(100);
+				   
+				   if(net_t.wifi_link_net_success ==1 && counter > 1 && gpro_t.soft_version == 0){ //WT.EDIT 2026.02.27
+					  counter =0;
+					  sw_flag = sw_flag ^ 0x01;
+					  if(sw_flag == 1){
+						  SendWifiData_olderCmd(0x1F,0x01);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
+						  tx_thread_sleep(100);
+					  }
+					  else{
+					   SendWifiData_To_Data(0x1F,0x01);
+					   tx_thread_sleep(100);
+					  }
+					  
+				   }
+				   else if(net_t.wifi_link_net_success ==0 && counter > 1 && gpro_t.soft_version ==0){ //WT.EDIT 2026.02.27
+					  counter =0;
+					   sw_flag = sw_flag ^ 0x01;
+					  if(sw_flag == 1){
+						  SendWifiData_olderCmd(0x1F,0x0);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
+						  tx_thread_sleep(100);
+					  }
+					  else{
+						SendWifiData_To_Data(0x1F,0x0);
+					   tx_thread_sleep(100);
+					  }
+				   }
+				   
+			  }
 
        gpro_t.process_run_step=7 ;
 
@@ -228,9 +245,22 @@ void power_on_handler(void)
 	if(gctl_t.gUlransonic > 1) gctl_t.gUlransonic =1;
 	if(gpro_t.stopTwoHours_flag==0)gpro_t.fan_rx_stop_flag =0;
 
-	gpro_t.process_run_step= 6;	
+	gpro_t.process_run_step= 11;	
 
    break;
+
+   case 11:
+   	    counter ++ ;
+   		if(gpro_t.stopTwoHours_flag ==0 && counter > 50){
+			   counter =0;
+			   Fan_RunSpeed_Fun();
+		 }
+
+		gpro_t.process_run_step= 6;
+
+   break;
+
+   
 
      default:
 	

@@ -634,7 +634,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	  break;
 
-
+  
 	  case 0x1B: //write set temperature value .data.2026.01.06
 	  
         if(pdata[3]== 0x01){
@@ -673,7 +673,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 
       break;
      
-
+ 
 	  
     case 0x1C: // is time data: hours,minutes,sencodes.
 		   
@@ -739,6 +739,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			  
 			   if(pdata[5] >19 && pdata[5] < 41){
 			   	gctl_t.ptc_prohibit_on_flag = 0;
+				gpro_t.set_temp_value_success=1;
 			   	if(gpro_t.stopTwoHours_flag >1 )gpro_t.stopTwoHours_flag=0; //This is be solved bug.
 			   gctl_t.set_temperature_value = pdata[5] ;
 			   gctl_t.ptc_prohibit_on_flag =0;

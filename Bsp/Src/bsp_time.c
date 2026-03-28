@@ -6,7 +6,22 @@
 #define TWOH_FAN_DURATION_SEC   (60U)             // fan run 1 minute
 #define TWOH_PAUSE_DURATION_SEC 10       // rest 10 minutes
 
+#define TEMP_ON_THRESHOLD   38   // 温度低于 38℃ 打开 PTC
+#define TEMP_OFF_THRESHOLD  40   // 温度高于等于 40℃ 关闭 PTC
+//#define TEMP_SAFE_LIMIT     60   // 安全保护温度
+#define DEFAULT_TEMP        40   // 默认温度（未设置时）
+
+typedef enum {
+    PTC_STATE_OFF = 0,
+    PTC_STATE_ON  = 1
+} PTC_State;
+
+static PTC_State ptc_state = PTC_STATE_OFF;
+
+static void CompareSetAndActualTemperature(void);
+
 uint8_t counter_two_hours;
+uint8_t define_twohours_flag ;
 
 
 
@@ -35,8 +50,6 @@ uint8_t twoHours_stop_flag;
 ************************************************************************/
 void works_run_two_hours_state(void)
 {
-
-  static uint8_t define_twohours_flag ;
 
   switch(gpro_t.soft_version ){
 
@@ -79,6 +92,18 @@ void works_run_two_hours_state(void)
             PTC_SetLow();
             ultrasonic_close();
 	  }
+	  else if(gpro_t.stopTwoHours_flag ==1 &&  define_twohours_flag ==0){
+	  
+	  	    gpro_t.gTimer_conter_twohours_minutes=0;
+	        gpro_t.gTimer_twohours_seconds_counter=0;
+			define_twohours_flag =1;
+			PLASMA_SetLow(); //
+            PTC_SetLow();
+            ultrasonic_close();
+	  
+	  }
+	  
+	  
 
 	  if(define_twohours_flag==1)gpro_t.stopTwoHours_flag=1;
 	  else if(define_twohours_flag==2)gpro_t.stopTwoHours_flag=1;
@@ -89,12 +114,13 @@ void works_run_two_hours_state(void)
 			  define_twohours_flag++;
 			   gpro_t.gTimer_conter_twohours_minutes=0;
 			   gpro_t.gTimer_twohours_seconds_counter=0;
-
-	          FAN_Stop();
+               gpro_t.fan_rx_stop_flag =1;
+	           FAN_Stop();
       }
       else if(gpro_t.stopTwoHours_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 10 && define_twohours_flag ==2){
 			  define_twohours_flag=0;
 			  gpro_t.stopTwoHours_flag =0;
+	          gpro_t.fan_rx_stop_flag =0;
 	          gpro_t.gTimer_conter_twohours_minutes=0;
 			  gpro_t.gTimer_twohours_seconds_counter=0;
 
@@ -105,11 +131,88 @@ void works_run_two_hours_state(void)
           
             ActionEvent_Handler();
       }
-	  
 
+     if(gpro_t.gTimer_poweroff_fan > 5){
+	 	gpro_t.gTimer_poweroff_fan=0;
+	    CompareSetAndActualTemperature();
+	  
+     	}
 	break;
 
   	}
+
+}
+/**
+*@brief:
+*@notice
+*@param
+*
+*
+**/
+static void CompareSetAndActualTemperature(void)
+{
+    if(gpro_t.stopTwoHours_flag ==1 || gctl_t.ptc_prohibit_on_flag ==1)return ;
+	// 控制 PTC 加热器开关（带滞后控制）
+	uint8_t real_temp = gctl_t.gDht11_temperature;
+	int8_t target_temp;
+	
+		// 确定目标温度：有设置用设置值，否则默认 40℃
+		if (gpro_t.set_temp_value_success == 1) {
+			target_temp = gctl_t.set_temperature_value;
+		} else {
+			target_temp = DEFAULT_TEMP;
+		}
+	
+		// 安全保护：超过 60℃ 强制关闭
+		if (real_temp >= DEFAULT_TEMP) {
+			   gpro_t.rx_ptc_flag = 0;
+				
+			    PTC_SetLow();
+		        ptc_state = PTC_STATE_OFF;
+				SendData_Set_Command(0x22, 0x00); // close PTC
+				tx_thread_sleep(50);
+			    
+			return;
+		}
+	
+
+        if(real_temp < target_temp && gctl_t.ptc_prohibit_on_flag ==0){
+
+           gpro_t.rx_ptc_flag= 1;
+		   PTC_SetHigh();
+		   ptc_state = PTC_STATE_ON;
+		   SendData_Set_Command(0x22, 0x01); // open PTC
+
+		   tx_thread_sleep(50);
+
+
+		}
+        else if (ptc_state == PTC_STATE_OFF) {// 滞后控制逻辑
+			// 当前关闭状态 → 低于 (目标温度 - 2℃) 才打开
+			if (real_temp <= (target_temp - 2)) {
+				
+				gpro_t.rx_ptc_flag  = 1;
+			     PTC_SetHigh();
+				ptc_state = PTC_STATE_ON;
+				SendData_Set_Command(0x22, 0x01); // open PTC
+
+				tx_thread_sleep(50);
+			}
+		} 
+		else {
+			// 当前开启状态 → 高于等于目标温度才关闭
+			if (real_temp >= target_temp) {
+				
+				 gpro_t.rx_ptc_flag = 0;
+				
+			    PTC_SetLow();
+				ptc_state = PTC_STATE_OFF;
+				SendData_Set_Command(0x22, 0x00); // close PTC
+				tx_thread_sleep(50);
+			}
+		}
+	
+
 
 }
 
