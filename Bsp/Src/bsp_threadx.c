@@ -143,8 +143,8 @@ void threadx_handler(void)
                      0,                           /* 传递给任务的参数 */
                      stack_msg_pro,                /* 堆栈基地址 */
                      STACK_SIZE_ONE,               /* 堆栈空间大小 */ 
-                     1,								/* 任务优先级*/
-                     1,								/* 任务抢占阀值 */
+                     0,								/* 任务优先级*/
+                     0,								/* 任务抢占阀值 */
                      TX_NO_TIME_SLICE,               /* 不开启时间片 */
                      TX_AUTO_START);                /* 创建后立即启动 */
  #if 1
