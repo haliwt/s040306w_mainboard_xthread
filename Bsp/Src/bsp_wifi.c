@@ -127,8 +127,8 @@ void link_wifi_net_handler(void)
 
             case 4:
 				  tx_thread_sleep(1000);
-				    tx_thread_sleep(1000);
-			  tx_thread_sleep(1000);
+				 //   tx_thread_sleep(1000);
+			  //tx_thread_sleep(1000);
                  //if(gpro_t.gTimer_link_net_timer_time  > 7){
                   gpro_t.gTimer_link_net_timer_time = 0;
 
