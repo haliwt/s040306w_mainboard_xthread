@@ -114,7 +114,7 @@ static void Mqtt_power_off_Value(void)
 ********************************************************************************/
 void property_topic_publish(void)
 {
-    char topic[128] = {0};
+    char topic[180] = {0};
     int  size;
 
     gctl_t.randomName[0]=HAL_GetUIDw0();
@@ -122,7 +122,7 @@ void property_topic_publish(void)
     //at_send_data((uint8_t *)topic, size);
     //tx_thread_sleep(300);
     USART2_DMA_Send((uint8_t *)topic, size);
-    tx_thread_sleep(200);
+    tx_thread_sleep(50);
 }
 /********************************************************************************
 	*
@@ -135,7 +135,7 @@ void property_topic_publish(void)
 ********************************************************************************/
 static void property_report_state(void)
 {
-    char       message[256]    = {0};
+    char       message[180]    = {0};
     int        message_len     = 0;
 
     Mqtt_Value_Init();
@@ -146,14 +146,14 @@ static void property_report_state(void)
 	//at_send_data((uint8_t *)message, message_len);
 	//tx_thread_sleep(200);
 	USART2_DMA_Send((uint8_t *)message, message_len);
-	tx_thread_sleep(200);
+	tx_thread_sleep(50);
    
 }
 
 
 void property_report_update_data(void)
 {
-	char  message[256]    = {0};
+	char  message[180]    = {0};
 	int   message_len	   = 0;
 	
 	 Mqtt_Value_update_data();
@@ -163,7 +163,7 @@ void property_report_update_data(void)
 	 
 	//at_send_data((uint8_t *)message, message_len);
 	USART2_DMA_Send((uint8_t *)message, message_len);
-	tx_thread_sleep(200);
+	tx_thread_sleep(50);
 
 
 }
@@ -171,7 +171,7 @@ void property_report_update_data(void)
 static void property_report_power_off_state(void)
 {
 
-	char       message[256]    = {0};
+	char       message[180]    = {0};// message[256]
     int        message_len     = 0;
 
    Mqtt_power_off_Value();
@@ -182,7 +182,7 @@ static void property_report_power_off_state(void)
   //at_send_data((uint8_t *)message, message_len);
   
 	USART2_DMA_Send((uint8_t *)message, message_len);
-	tx_thread_sleep(200);
+	tx_thread_sleep(50);
 
 
 }
@@ -207,7 +207,7 @@ static void property_report_ReadTempHum(uint8_t tempvalue,uint8_t humvalue)
 								  
 		//at_send_data((uint8_t *)message, message_len);
 		USART2_DMA_Send((uint8_t *)message, message_len);
-		tx_thread_sleep(200);
+		tx_thread_sleep(50);
 }
 
 static void property_report_SetState(uint8_t dat)
@@ -221,7 +221,7 @@ static void property_report_SetState(uint8_t dat)
 	//at_send_data((uint8_t *)message, message_len);
 
 	USART2_DMA_Send((uint8_t *)message, message_len);
-	tx_thread_sleep(200);
+	tx_thread_sleep(50);
 
 }
 /********************************************************************************
@@ -242,7 +242,7 @@ static void property_report_SetTemp(uint8_t temp)
 								  
 	//at_send_data((uint8_t *)message, message_len);
 	USART2_DMA_Send((uint8_t *)message, message_len);
-	tx_thread_sleep(300);
+	tx_thread_sleep(50);
 
 }
 static void property_report_SetOpen(uint8_t open)
@@ -256,7 +256,7 @@ static void property_report_SetOpen(uint8_t open)
 	//at_send_data((uint8_t *)message, message_len);
 	//tx_thread_sleep(200);
 	USART2_DMA_Send((uint8_t *)message, message_len);
-	tx_thread_sleep(200);
+	tx_thread_sleep(50);
 
 }
 /********************************************************************************
@@ -278,7 +278,7 @@ static void property_report_SetSonic(uint8_t datsonic)
 								  
 	//at_send_data((uint8_t *)message, message_len);
 	USART2_DMA_Send((uint8_t *)message, message_len);
-	tx_thread_sleep(200);
+	tx_thread_sleep(50);
 
 }
 /********************************************************************************
@@ -300,7 +300,7 @@ static void property_report_SetAnion(uint8_t datanion)
 								  
 	//at_send_data((uint8_t *)message, message_len);
 	USART2_DMA_Send((uint8_t *)message, message_len);
-	tx_thread_sleep(200);
+	tx_thread_sleep(50);
 
 }
 /********************************************************************************
@@ -322,7 +322,7 @@ static void property_report_SetPtc(uint8_t datptc)
 								  
 	//at_send_data((uint8_t *)message, message_len);
 	USART2_DMA_Send((uint8_t *)message, message_len);
-	tx_thread_sleep(200);
+	tx_thread_sleep(50);
 
 }
 
@@ -345,7 +345,7 @@ static void property_report_SetFan(uint8_t fan)
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up05\\\"\\,\\\"params\\\":{\\\"find\\\":%d}}\"\r\n",fan);
 	//at_send_data((uint8_t *)message, message_len);
 	USART2_DMA_Send((uint8_t *)message, message_len);
-	tx_thread_sleep(200);
+	tx_thread_sleep(50);
 
 }
 /********************************************************************************
@@ -368,7 +368,7 @@ static void property_report_SetTime(uint8_t time)
 								   time);
 	 // at_send_data((uint8_t *)message, message_len);
 	 USART2_DMA_Send((uint8_t *)message, message_len);
-	 tx_thread_sleep(200);
+	 tx_thread_sleep(50);
 }
 
 /********************************************************************************
