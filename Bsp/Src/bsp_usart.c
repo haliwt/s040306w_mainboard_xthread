@@ -316,7 +316,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	            SendWifiData_Answer_Cmd(0x01,0x01);
 	            tx_thread_sleep(10);
 				if(gpro_t.soft_version > 2)gpro_t.soft_version =0;
-				if(gpro_t.soft_version ==0){
+				if(gpro_t.soft_version ==0 && gctl_t.app_timer_power_on_flag==0){
 				   gpro_t.gpower_on = power_on;
 				   fan_full_run();//WT.EDIT 2026.01.26
 				   PLASMA_SetHigh();
@@ -488,10 +488,12 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		   SendWifiData_Answer_Cmd(0x10,0x01);
 	       tx_thread_sleep(10);
 		    fan_full_run();//WT.EDIT 2026.01.26
-		    PLASMA_SetHigh();
-             ultrasonic_open();   //ultrasnoic ON 
-             PTC_SetHigh();
-	     
+		    if(gctl_t.app_timer_power_on_flag ==0){
+			    PLASMA_SetHigh();
+	             ultrasonic_open();   //ultrasnoic ON 
+	             PTC_SetHigh();
+
+		    }
 	         
 	    }
         else if(pdata[3] == 0x0){ //close 

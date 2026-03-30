@@ -717,6 +717,12 @@ void every_power_on_run(void)
 	  
 
     }
+    else{
+      gpro_t.rx_ptc_flag = 0;//gctl_t.gDry = 1;
+      gctl_t.gPlasma =0;       //"é„1¤7?é‘„1¤7?"
+      gctl_t.gUlransonic = 0; // "æ¤¹è¾«æ«„1¤7"
+
+	}
     gctl_t.gModel=1;
 }
 

@@ -441,7 +441,7 @@ void Tencent_Cloud_Rx_Handler(void)
 	if(strstr((char *)gpro_t.wifi_rx_data_array,"ptc\":0")){
             if(gpro_t.gpower_on ==power_on){
 				  gpro_t.rx_ptc_flag = 0;//gctl_t.gDry=0;
-                
+                  gctl_t.ptc_prohibit_on_flag = 1;//WT.EDIT 2026.03.30
 	           gctl_t.response_wifi_signal_label = PTC_OFF_ITEM;
 	         
              }
