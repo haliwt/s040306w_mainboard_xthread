@@ -691,6 +691,7 @@ void Json_Parse_Command_Fun(void)
 
 	  case SONIC_OFF_ITEM://ultransonic off
         if(gpro_t.gpower_on ==power_on){
+			  buzzer_sound();
 
           
               gctl_t.gUlransonic=0;
@@ -776,7 +777,7 @@ void Json_Parse_Command_Fun(void)
 		    gpro_t.set_temp_value_success = 1;//WT.EDIT 2026-03-30
 			gctl_t.ptc_prohibit_on_flag =0;
 		
-			SendWifiData_To_Data(0x3A, gctl_t.set_temperature_value); //smart phone set temperature value .
+			SendWifiData_To_Data(0x2A, gctl_t.set_temperature_value); //smart phone set temperature value .
 			tx_thread_sleep(10);//tx_thread_sleep(10);//HAL_Delay(10);
 			
 			gctl_t.set_temp_first_closeptc = 0;
