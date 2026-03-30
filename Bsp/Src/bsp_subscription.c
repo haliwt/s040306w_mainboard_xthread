@@ -558,13 +558,13 @@ void Json_Parse_Command_Fun(void)
 			#endif 
 			gpro_t.phone_power_on_flag = 1; //ack_app_power_on;
 	       
-		    SendWifiData_To_Cmd(0x31,0x01); //smart phone is power on
+		    SendWifiData_To_Cmd(0x20,0x01); //smart phone is power on
 			tx_thread_sleep(10);//tx_thread_sleep(5);//HAL_Delay(5);
 			MqttData_Publish_SetOpen(1);  
-			//tx_thread_sleep(200);//HAL_Delay(100);//tx_thread_sleep(100);//HAL_Delay(100);
+			tx_thread_sleep(30);//HAL_Delay(100);//tx_thread_sleep(100);//HAL_Delay(100);
 
 	        Publish_Data_ToTencent_Initial_Data();
-		    //tx_thread_sleep(200);//HAL_Delay(200);
+		    tx_thread_sleep(30);//HAL_Delay(200);
 
 	       
 			buzzer_temp_on=0;
@@ -590,10 +590,10 @@ void Json_Parse_Command_Fun(void)
 			
 			gpro_t.phone_power_on_flag = 2; //ack_app_power_on;
 	
-             SendWifiData_To_Cmd(0x31,0x0); //smart phone is power off
+             SendWifiData_To_Cmd(0x20,0x0); //smart phone is power off
              tx_thread_sleep(10);
 			 MqttData_Publish_SetOpen(0); 
-		
+		     tx_thread_sleep(10);
 			buzzer_temp_on=0;
 	
          
@@ -841,13 +841,15 @@ void Json_Parse_Command_Fun(void)
 		   
 			  gctl_t.app_timer_power_on_flag = 1;
               gpro_t.power_off_run_step=1; // app power on 
-               buzzer_sound();
+              
 		 
 			   gpro_t.gpower_on = power_on;
+			   gpro_t.process_run_step=0;
 			   SendWifiData_To_Cmd(0x21,0x01); //smart phone is open that App timer 
 			   tx_thread_sleep(10);//HAL_Delay(10);
-                MqttData_Publish_SetOpen(1);  
-			  // tx_thread_sleep(200);//tx_thread_sleep(100);//HAL_Delay(350);
+			   buzzer_sound();
+               MqttData_Publish_SetOpen(1);  
+			   tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
             
 			   buzzer_temp_on=0;
    
@@ -860,20 +862,19 @@ void Json_Parse_Command_Fun(void)
 			}
 		    else if(strstr((char *)TCMQTTRCVPUB,"open\":0")){
 		   
-		     buzzer_sound();
-			  
-		
-
+		    gctl_t.app_timer_power_on_flag = 0;
             gpro_t.gpower_on = power_off;
             gpro_t.power_off_run_step=1; //WT.EDIT 2025.01.04
            
             gpro_t.send_ack_cmd = 1; //ack_app_power_off;
 
 	
-            SendWifiData_To_Cmd(0x21,0x0); //smart phone is power off
+            SendWifiData_To_Cmd(0x20,0x0); //smart phone is power off
 			tx_thread_sleep(10);//HAL_Delay(5);
+			 buzzer_sound();
+			  
             MqttData_Publish_SetOpen(0);  
-			//tx_thread_sleep(200);//tx_thread_sleep(100);
+			tx_thread_sleep(20);//tx_thread_sleep(100);
 			
 	        phone_power_flag=2;
          

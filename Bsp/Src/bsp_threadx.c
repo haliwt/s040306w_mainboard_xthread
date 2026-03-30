@@ -74,9 +74,9 @@ uint8_t power_on_sound_flag ;
  {
    (void)thread_input;  /* 消除未使用的参数警告 */
   
-   #if 1
+  
    while(1){
-	#if 1		
+		
 	// 阻塞等待 ISR 投递
       if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
@@ -88,44 +88,8 @@ uint8_t power_on_sound_flag ;
               }
                 
        }
-	  #endif 
-
-//	   if(gpro_t.decoder_success_flag==1){
-//			  	  gpro_t.decoder_success_flag =0;
-//                 decoder_handler();
-//	   	}
-
-//		tx_thread_sleep(10);//100
-	   
-   	} 
-   #else 
-   
-    while(1)
-    {
-        // 阻塞等待队列消息
-        if(tx_queue_receive(&uart1_rx_queue, &rx1_data, TX_WAIT_FOREVER) == TX_SUCCESS)
-        {
-            // 简单状态机：帧头 0xA5，帧尾 0xFE
-            rx_byte =(uint8_t)rx1_data;
-            if(rx_byte == 0xA5) {
-                frame_index = 0;
-                frame_buf[frame_index++] = rx_byte;
-            }
-            else if(frame_index > 0) {
-                frame_buf[frame_index++] = rx_byte;
-                if(rx1_data == 0xFE) {
-                    // 收到完整一帧
-                   // decoder_handler(frame_buf, frame_index);
-                    frame_index = 0;
-                }
-            }
-        }
-    }
-
-
-   #endif 
-
- }
+    } 
+}
  
 
  /**

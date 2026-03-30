@@ -517,8 +517,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  case 0x12: //powe off fan run one minute stop .
 	  	 if(pdata[3]==1){ // recach 2 hours fan stop
 
-             gpro_t.power_off_run_step=1;
-             gpro_t.gpower_on = power_off;
+            // gpro_t.power_off_run_step=1;
+               gpro_t.gpower_on = power_off;
 			 
                FAN_Stop();
 			   PTC_SetLow(); //ptc off;
