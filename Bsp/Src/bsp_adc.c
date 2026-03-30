@@ -47,7 +47,7 @@ void adc_detected_hundler(void)
         Fan_Full_Speed();
 
        fan_detect_voltage=(adc_buffer[0] * 3300 )/4095;
-       tx_thread_sleep(100);
+       tx_thread_sleep(5);
 
 	   if(gpro_t.fan_counter_error > 10)gpro_t.fan_counter_error =0;
 

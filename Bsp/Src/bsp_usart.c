@@ -334,6 +334,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 buzzer_sound();
 		     gpro_t.power_off_run_step=1;
              gpro_t.gpower_on = power_off;
+			 PTC_SetLow();
               if(gpro_t.soft_version ==2){
                 SendWifiData_Answer_Cmd(0x01,0x0); //power off .
                 tx_thread_sleep(10); 
@@ -750,17 +751,13 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
                       gpro_t.rx_ptc_flag=1;
 				      PTC_SetHigh();
 					  
-						   
-				        
 			   }
 			   else{
 			   	   ptc_onoff_default++;
 				   gpro_t.rx_ptc_flag =0 ;//gctl_t.gDry =0;
 
 			       PTC_SetLow();
-		
-
-			   }
+		       }
 
 			   if(ptc_set_wifi !=gpro_t.rx_ptc_flag){
 				 	ptc_set_wifi =gpro_t.rx_ptc_flag;

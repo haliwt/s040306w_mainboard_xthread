@@ -210,6 +210,12 @@ void power_on_handler(void)
   case 9:
   	 
        adc_detected_hundler();
+	   
+        gpro_t.process_run_step= 10; 
+
+  break;
+
+  case 10:
     
 
 	   if(wifi_link_net_state() ==1 && gpro_t.gTimer_update_tencet_dht11 >5){
@@ -217,12 +223,12 @@ void power_on_handler(void)
 				Update_Dht11_Totencent_Value();
         }
 	 
-       gpro_t.process_run_step= 10; 
+       gpro_t.process_run_step= 11; 
 
 
   break;
 
-  case 10:
+  case 11:
 
      if(gctl_t.set_temperature_flag > 1 || gctl_t.set_temperature_value > 40 || gctl_t.ptc_prohibit_on_flag > 1
 	 	  ||gctl_t.app_timer_power_on_flag > 2 || gctl_t.set_temp_first_closeptc > 1 || gpro_t.soft_version > 2){
@@ -245,11 +251,11 @@ void power_on_handler(void)
 	if(gctl_t.gUlransonic > 1) gctl_t.gUlransonic =1;
 	if(gpro_t.stopTwoHours_flag==0)gpro_t.fan_rx_stop_flag =0;
 
-	gpro_t.process_run_step= 11;	
+	gpro_t.process_run_step= 12;	
 
    break;
 
-   case 11:
+   case 12:
    	    counter ++ ;
    		if(gpro_t.stopTwoHours_flag ==0 && counter > 50){
 			   counter =0;
@@ -295,7 +301,7 @@ void ActionEvent_Handler(void)
 		
 			 ptc_default=  get_ptc_value();
 			MqttData_Publish_SetPtc(0x01);
-			tx_thread_sleep(100);//tx_thread_sleep(100);//HAL_Delay(350);
+			//tx_thread_sleep(100);//tx_thread_sleep(100);//HAL_Delay(350);
 			
 		}
    	  }
@@ -311,7 +317,7 @@ void ActionEvent_Handler(void)
 			
 		
 			MqttData_Publish_SetPtc(0x0);
-			tx_thread_sleep(100);//tx_thread_sleep(100);//HAL_Delay(350);
+			//tx_thread_sleep(100);//tx_thread_sleep(100);//HAL_Delay(350);
 			
 		}
    }
@@ -326,7 +332,7 @@ void ActionEvent_Handler(void)
 			plasma_default = gpro_t.plasma_switch_flag;	
 		
 		   MqttData_Publish_SetPlasma(0x01);
-		   tx_thread_sleep(100);
+		   //tx_thread_sleep(100);
 		 
 		}
 	}
@@ -338,7 +344,7 @@ void ActionEvent_Handler(void)
 			plasma_default = gpro_t.plasma_switch_flag;
 		
 		   MqttData_Publish_SetPlasma(0);
-		  tx_thread_sleep(50);
+		  //tx_thread_sleep(50);
 		 
 		}
 	}
@@ -352,7 +358,7 @@ void ActionEvent_Handler(void)
 	    ultrasonic_default = gpro_t.ultrasonic_switch_flag;
 		 
 		 MqttData_Publish_SetUltrasonic(0x01);
-		tx_thread_sleep(200);
+		//tx_thread_sleep(200);
 	 } 
 		
 	}
@@ -365,7 +371,7 @@ void ActionEvent_Handler(void)
 			ultrasonic_default = gpro_t.ultrasonic_switch_flag;	
 			 
 			MqttData_Publish_SetUltrasonic(0);
-		   tx_thread_sleep(200);
+		  // tx_thread_sleep(200);
 			
 		}
 
@@ -396,25 +402,25 @@ void smartphone_timer_power_on_and_normal_handler(void)
 			
 
 				SendWifiData_To_Cmd(0x03,0x01);
-                tx_thread_sleep(50);
+                tx_thread_sleep(10);
 			
 			}
 			else{
 				gctl_t.gPlasma =0;
 				SendWifiData_To_Cmd(0x03,0x0);
-				tx_thread_sleep(50);
+				tx_thread_sleep(10);
 			}
 
 
 			if(gctl_t.gUlransonic==1){
 
 					SendWifiData_To_Cmd(0x04,0x01);
-					tx_thread_sleep(100);
+					tx_thread_sleep(10);
 			}
 			else {
 					gctl_t.gUlransonic=0;
 					SendWifiData_To_Cmd(0x04,0x0);
-					tx_thread_sleep(100);
+					tx_thread_sleep(10);
 			}
 
 
@@ -422,20 +428,20 @@ void smartphone_timer_power_on_and_normal_handler(void)
 		   if(get_ptc_value()==1){
               
 				SendWifiData_To_Cmd(0x02,0x01);
-				tx_thread_sleep(50);
+				tx_thread_sleep(10);
 			}
 			else if(get_ptc_value() ==0){
 					
                     
 					SendWifiData_To_Cmd(0x02,0x0);
-					tx_thread_sleep(50);
+					tx_thread_sleep(10);
 
 			}
 
 		     gctl_t.set_wind_speed_value =100;
 	      
 		     MqttData_Publish_Update_Data();
-		     tx_thread_sleep(200);
+		    // tx_thread_sleep(200);
 
 			
 	 
@@ -485,7 +491,7 @@ void power_off_handler(void)
 
     case 1:
 		  SendWifiData_Answer_Cmd(0x01,0x0); //power off .
-          tx_thread_sleep(30); 
+          tx_thread_sleep(10); 
           gpro_t.gTimer_poweroff_fan=0;
          
 	
@@ -526,7 +532,7 @@ void power_off_handler(void)
        if(wifi_link_net_state() == 1){
 
           MqttData_Publish_PowerOff_Ref(); 
-          tx_thread_sleep(200); //WT.EDTI 2024.11.19 
+          //tx_thread_sleep(200); //WT.EDTI 2024.11.19 
        }
          gpro_t.power_off_run_step = 4;
        break;
@@ -536,7 +542,7 @@ void power_off_handler(void)
           if(gctl_t.ptc_warning == 1){
 		 	
 		  	Publish_Data_Warning(ptc_temp_warning,0);
-		  	tx_thread_sleep(100);
+		  	//tx_thread_sleep(100);
             
           }
            gpro_t.power_off_run_step = 5;
@@ -545,7 +551,7 @@ void power_off_handler(void)
         case 5:
             if(gctl_t.ptc_warning == 1){
 			Publish_Data_Warning(fan_warning,0);
-			tx_thread_sleep(200);
+			//tx_thread_sleep(200);
 			
           }
         gpro_t.power_off_run_step = 6;
