@@ -297,9 +297,9 @@ void ActionEvent_Handler(void)
       PTC_SetHigh();
         
       
-	   if(ptc_default!=  get_ptc_value() && wifi_link_net_state()==1){
+	   if(wifi_link_net_state()==1){//if(ptc_default!=  get_ptc_value() && wifi_link_net_state()==1){
 		
-			 ptc_default=  get_ptc_value();
+			// ptc_default=  get_ptc_value();
 			MqttData_Publish_SetPtc(0x01);
 			//tx_thread_sleep(100);//tx_thread_sleep(100);//HAL_Delay(350);
 			
@@ -311,9 +311,9 @@ void ActionEvent_Handler(void)
 	  
 		PTC_SetLow();
 		
-		if(ptc_default!= get_ptc_value() && wifi_link_net_state()==1){
+		if(wifi_link_net_state()==1){//if(ptc_default!= get_ptc_value() && wifi_link_net_state()==1){
 			
-			ptc_default = get_ptc_value();
+			//ptc_default = get_ptc_value();
 			
 		
 			MqttData_Publish_SetPtc(0x0);

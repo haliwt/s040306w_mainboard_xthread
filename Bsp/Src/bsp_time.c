@@ -170,7 +170,7 @@ static void CompareSetAndActualTemperature(void)
 			    PTC_SetLow();
 		        ptc_state = PTC_STATE_OFF;
 				SendData_Set_Command(0x22, 0x00); // close PTC
-				tx_thread_sleep(50);
+				tx_thread_sleep(10);
 			    
 			return;
 		}
@@ -183,7 +183,7 @@ static void CompareSetAndActualTemperature(void)
 		   ptc_state = PTC_STATE_ON;
 		   SendData_Set_Command(0x22, 0x01); // open PTC
 
-		   tx_thread_sleep(50);
+		   tx_thread_sleep(10);
 
 
 		}
@@ -196,7 +196,7 @@ static void CompareSetAndActualTemperature(void)
 				ptc_state = PTC_STATE_ON;
 				SendData_Set_Command(0x22, 0x01); // open PTC
 
-				tx_thread_sleep(50);
+				tx_thread_sleep(10);
 			}
 		} 
 		else {
@@ -208,7 +208,7 @@ static void CompareSetAndActualTemperature(void)
 			    PTC_SetLow();
 				ptc_state = PTC_STATE_OFF;
 				SendData_Set_Command(0x22, 0x00); // close PTC
-				tx_thread_sleep(50);
+				tx_thread_sleep(10);
 			}
 		}
 	
