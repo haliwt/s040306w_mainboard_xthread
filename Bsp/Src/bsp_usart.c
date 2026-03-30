@@ -330,7 +330,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		 }
         else if(pdata[3] == 0x0){ //close 
 
-		      counter_power_flag ++;
+		     counter_power_flag ++;
 			 buzzer_sound();
 		     gpro_t.power_off_run_step=1;
              gpro_t.gpower_on = power_off;
@@ -354,31 +354,33 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
        if(pdata[3] == 0x01 ){//phone_cmd_power
 
-	      buzzer_sound();
-		 gpro_t.rx_ptc_flag = 1;
-		 gctl_t.ptc_prohibit_on_flag=0;
-		 if(gpro_t.stopTwoHours_flag==0){//two hours have a rest ten minutes .
-         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
-             
-              PTC_SetHigh();
+	     buzzer_sound();
+	
+			 gpro_t.rx_ptc_flag = 1;
+			 gctl_t.ptc_prohibit_on_flag=0;
+			 
+			 if(gpro_t.stopTwoHours_flag==0){//two hours have a rest ten minutes .
+	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
+	             
+	              PTC_SetHigh();
+         }
              
            SendWifiData_Answer_Cmd(0x02,0x01); //
            tx_thread_sleep(10); 
 		
            }
 
-		 }
+		 
 	   }
        else if(pdata[3]== 0x0 ){
 	   
 		 
           buzzer_sound();
-          gpro_t.rx_ptc_flag = 0;
-	   
-      
-	      PTC_SetLow();
 		
-		  gctl_t.ptc_prohibit_on_flag =1;
+	          gpro_t.rx_ptc_flag = 0;
+		      PTC_SetLow();
+			  gctl_t.ptc_prohibit_on_flag =1;
+		  
           SendWifiData_Answer_Cmd(0x02,0x0); //
           tx_thread_sleep(10); 
      
@@ -682,8 +684,11 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 
 	case 0x22: //PTC ON OR OFF by compare temperature value .
+
+	    if(gctl_t.ptc_prohibit_on_flag == 1)return ;
+		
         if(pdata[3]== 0x01){
-		   
+		  
 		   if(gpro_t.stopTwoHours_flag >1 )gpro_t.stopTwoHours_flag=0; //This is be solved bug.
 		   if(gctl_t.ptc_prohibit_on_flag >1) gctl_t.ptc_prohibit_on_flag=0;
 		   

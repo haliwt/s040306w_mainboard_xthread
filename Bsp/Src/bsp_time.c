@@ -64,7 +64,8 @@ void works_run_two_hours_state(void)
          ultrasonic_close();
 
   }
-  else if(gctl_t.gTimer_senddata_panel >6  && gpro_t.fan_rx_stop_flag ==0 && gpro_t.stopTwoHours_flag ==0){ //300ms
+  else if((gctl_t.gTimer_senddata_panel >6  && gpro_t.fan_rx_stop_flag ==0 && gpro_t.stopTwoHours_flag ==0)\
+  	     ||(gctl_t.app_timer_power_on_flag == 1)){ //300ms
             gctl_t.gTimer_senddata_panel=0;
           
             ActionEvent_Handler();
