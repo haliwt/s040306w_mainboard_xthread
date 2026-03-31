@@ -156,8 +156,8 @@ static void power_run_handler(void)
 		
 
 			//ack_handler();
-            if(gpro_t.process_run_step > 10 || gpro_t.stopTwoHours_flag > 1){
-				 if(gpro_t.process_run_step > 10 )gpro_t.process_run_step=6; //WT.EDIT 2025.10.07
+            if(gpro_t.process_run_step > 15 || gpro_t.stopTwoHours_flag > 1){
+				 if(gpro_t.process_run_step > 15 )gpro_t.process_run_step=6; //WT.EDIT 2025.10.07
 				 if(gpro_t.stopTwoHours_flag > 1 )gpro_t.stopTwoHours_flag =0;
             }
 		   

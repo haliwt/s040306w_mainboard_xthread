@@ -481,8 +481,10 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
      break;
 
 	 case 0x10: //power on or off don't sound .
-	     if(pdata[3] == 0x01){ //open
 
+	     if(gctl_t.app_timer_power_on_flag ==1) return ;
+	     if(pdata[3] == 0x01){ //open
+           
 		   gpro_t.process_run_step=0;
 	       gpro_t.gpower_on = power_on;
 		   SendWifiData_Answer_Cmd(0x10,0x01);

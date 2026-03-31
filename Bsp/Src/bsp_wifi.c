@@ -112,7 +112,7 @@ void link_wifi_net_handler(void)
                 at_send_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
 
 			    tx_thread_sleep(1000);
-				  tx_thread_sleep(1000);
+				//  tx_thread_sleep(1000);
                
                   gpro_t.link_net_step = 4;
             }
