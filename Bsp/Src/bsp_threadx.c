@@ -58,7 +58,7 @@ uint8_t power_on_sound_flag ;
          wifi_run_handler();
 
         
-		 tx_thread_sleep(200);//100
+		 tx_thread_sleep(20);//100
 		
 	}
       
@@ -81,11 +81,11 @@ uint8_t power_on_sound_flag ;
       if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
               // 或者直接调用解码器
-              if(gpro_t.decoder_success_flag==1){
-			  	  gpro_t.decoder_success_flag =0;
+             // if(gpro_t.decoder_success_flag==1){
+			  	 /// gpro_t.decoder_success_flag =0;
                  decoder_handler();
 
-              }
+              //}
                 
        }
     } 
