@@ -31,7 +31,7 @@ void buzzer_sound(void)
 {
    
    tim3_buzzer_sound_config();
-   tx_thread_sleep(5);
+   tx_thread_sleep(10);
    tim3_stop_buzzer_sound_config();
 
 
