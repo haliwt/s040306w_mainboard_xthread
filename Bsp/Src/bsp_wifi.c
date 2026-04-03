@@ -86,7 +86,7 @@ void link_wifi_net_handler(void)
             break;
 
             case 2:
-				 // tx_thread_sleep(1000);
+				 tx_thread_sleep(1000);
                  if(gpro_t.gTimer_link_net_timer_time  > 2){
                      gpro_t.gTimer_link_net_timer_time = 0;
 
@@ -95,7 +95,7 @@ void link_wifi_net_handler(void)
                         sprintf((char *)device_massage, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,gctl_t.randomName[0]);
             			at_send_data(device_massage, strlen((const char *)device_massage));
             	  		tx_thread_sleep(1000);
-                         // tx_thread_sleep(1000);
+                         tx_thread_sleep(1000);
                        gpro_t.link_net_step = 3;
 
                  }
@@ -105,14 +105,14 @@ void link_wifi_net_handler(void)
 
 
             case 3:
-                 //tx_thread_sleep(1000); 
+                 tx_thread_sleep(1000); 
             if(gpro_t.gTimer_link_net_timer_time  > 4){
                       gpro_t.gTimer_link_net_timer_time = 0;
                   
                 at_send_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
 
 			    tx_thread_sleep(1000);
-				//  tx_thread_sleep(1000);
+				  tx_thread_sleep(1000);
                
                   gpro_t.link_net_step = 4;
             }
@@ -141,7 +141,7 @@ void link_wifi_net_handler(void)
                 at_send_data(device_massage, strlen((const char *)device_massage));
 	           tx_thread_sleep(1000);
 			
-             //  tx_thread_sleep(1000);
+             // tx_thread_sleep(1000);
        
               gpro_t.link_net_step = 6;
 

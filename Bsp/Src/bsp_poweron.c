@@ -120,7 +120,7 @@ void power_on_handler(void)
      if(wifi_link_net_state() ==1 &&  gctl_t.app_timer_power_on_flag==0){
     
 		  MqttData_Publish_Init();
-		// tx_thread_sleep(100);
+		  tx_thread_sleep(200);
      }
 	 else if(gctl_t.app_timer_power_on_flag == 1){
 
@@ -150,7 +150,7 @@ void power_on_handler(void)
 				   gpro_t.gTimer_update_todisplay=0;
 				   counter++;
 				   updateDht11_sensorData_toDisp();
-				  	//tx_thread_sleep(100);
+				  	tx_thread_sleep(100);
 				   
 				   if(net_t.wifi_link_net_success ==1 && counter > 1 && gpro_t.soft_version == 0){ //WT.EDIT 2026.02.27
 					  counter =0;
@@ -193,7 +193,7 @@ void power_on_handler(void)
 		  gctl_t.first_link_tencent_cloud_flag++;
 
                MqttData_Publish_Update_Data();
-			  //tx_thread_sleep(100);//HAL_Delay(200);
+			  tx_thread_sleep(200);//HAL_Delay(200);
              SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
              tx_thread_sleep(100);
           
@@ -202,7 +202,7 @@ void power_on_handler(void)
 			 gctl_t.first_link_tencent_cloud_flag++;
 
             Subscriber_Data_FromCloud_Handler();
-    	   // tx_thread_sleep(100);
+    	    tx_thread_sleep(100);
 	    }
 		
 		   SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01);
@@ -337,7 +337,7 @@ void ActionEvent_Handler(void)
 		if(gctl_t.app_timer_power_on_flag == 1){
 			    gctl_t.ptc_prohibit_on_flag =1;
                 SendWifiData_To_Cmd(0x02,0);
-				tx_thread_sleep(10);
+				tx_thread_sleep(100);
 
 		}
 		else if(wifi_link_net_state()==1){//if(ptc_default!= get_ptc_value() && wifi_link_net_state()==1){
@@ -600,7 +600,7 @@ void power_off_handler(void)
           if(gctl_t.ptc_warning == 1){
 		 	
 		  	Publish_Data_Warning(ptc_temp_warning,0);
-		  	//tx_thread_sleep(100);
+		  	tx_thread_sleep(200);
             
           }
            gpro_t.power_off_run_step = 5;

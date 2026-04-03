@@ -246,7 +246,7 @@ void read_sensorData(void)
 	
 	    Dht11_Read_TempHumidity_Handler(&DHT11);
 	    sendData_Real_TimeHum(gctl_t.gDht11_humidity ,gctl_t.gDht11_temperature);
-		tx_thread_sleep(10);
+		tx_thread_sleep(100);
 	
 }
 
@@ -267,7 +267,7 @@ void Update_Dht11_Totencent_Value(void)
 
 
 	MqttData_Publis_ReadTempHum(gctl_t.gDht11_temperature, gctl_t.gDht11_humidity);
-    //tx_thread_sleep(200);//HAL_Delay(100);
+    tx_thread_sleep(200);//HAL_Delay(100);
 
 }
 
