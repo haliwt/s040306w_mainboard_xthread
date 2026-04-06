@@ -140,6 +140,7 @@ typedef struct PROCESS_T{
  
    uint8_t rx_ptc_flag;
    uint8_t second_disp_flag;
+   uint8_t first_ptc_on;
 	
     
 	 uint8_t ultrasonic_switch_flag;

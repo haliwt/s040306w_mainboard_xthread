@@ -65,7 +65,7 @@ void link_wifi_net_handler(void)
           
         		at_send_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
         
-        		tx_thread_sleep(1000);//tx_thread_sleep(1000);
+        		tx_thread_sleep(2000);//tx_thread_sleep(1000);
         		
               gpro_t.link_net_step = 1;
 
@@ -86,8 +86,8 @@ void link_wifi_net_handler(void)
             break;
 
             case 2:
-				 tx_thread_sleep(1000);
-                 if(gpro_t.gTimer_link_net_timer_time  > 2){
+		
+                 if(gpro_t.gTimer_link_net_timer_time  > 5){
                      gpro_t.gTimer_link_net_timer_time = 0;
 
                         // WIFI_IC_ENABLE();
@@ -95,7 +95,7 @@ void link_wifi_net_handler(void)
                         sprintf((char *)device_massage, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,gctl_t.randomName[0]);
             			at_send_data(device_massage, strlen((const char *)device_massage));
             	  		tx_thread_sleep(1000);
-                         tx_thread_sleep(1000);
+                      
                        gpro_t.link_net_step = 3;
 
                  }
@@ -105,14 +105,13 @@ void link_wifi_net_handler(void)
 
 
             case 3:
-                 tx_thread_sleep(1000); 
             if(gpro_t.gTimer_link_net_timer_time  > 4){
                       gpro_t.gTimer_link_net_timer_time = 0;
                   
                 at_send_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
 
 			    tx_thread_sleep(1000);
-				  tx_thread_sleep(1000);
+			
                
                   gpro_t.link_net_step = 4;
             }
@@ -122,10 +121,8 @@ void link_wifi_net_handler(void)
 
 
             case 4:
-				 // tx_thread_sleep(1000);
-				 //   tx_thread_sleep(1000);
-			  //tx_thread_sleep(1000);
-                 if(gpro_t.gTimer_link_net_timer_time  > 4){
+		
+                 if(gpro_t.gTimer_link_net_timer_time  > 7){
                   gpro_t.gTimer_link_net_timer_time = 0;
 
                    net_t.linking_tencent_cloud_doing =1;
@@ -141,7 +138,7 @@ void link_wifi_net_handler(void)
                 at_send_data(device_massage, strlen((const char *)device_massage));
 	           tx_thread_sleep(1000);
 			
-             // tx_thread_sleep(1000);
+              tx_thread_sleep(1000);
        
               gpro_t.link_net_step = 6;
 
@@ -169,10 +166,9 @@ void link_wifi_net_handler(void)
             break;
 
             case 7:
-				//  tx_thread_sleep(1000);
-				//    tx_thread_sleep(1000);
+	
 
-            if( gpro_t.gTimer_link_net_timer_time  > 3){
+            if( gpro_t.gTimer_link_net_timer_time  > 7){
 
              if(net_t.wifi_link_net_success==1){
 			
@@ -225,7 +221,7 @@ void link_wifi_net_handler(void)
 
 				Subscriber_Data_FromCloud_Handler();
 		
-	             tx_thread_sleep(100);
+	             tx_thread_sleep(200);
         
 			 gpro_t.link_net_step = 0xfe;
 

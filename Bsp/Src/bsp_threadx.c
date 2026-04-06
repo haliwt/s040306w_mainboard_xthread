@@ -27,9 +27,9 @@ static void vTaskStart(ULONG thread_input);
 
 /* 创建任务通信机制 */
 //static void AppObjCreate(void);
-static void power_run_handler(void);
-static void wifi_run_handler(void);
 
+static void wifi_run_handler(void);
+static void power_run_handler(void);
 uint8_t power_on_sound_flag ;
 
 
@@ -42,6 +42,7 @@ uint8_t power_on_sound_flag ;
  static void vTaskMsgPro(ULONG thread_input)
 {
    (void)thread_input;  /* 消除未使用的参数警告 */
+ 
 	while(1)
     {
 
@@ -100,6 +101,15 @@ uint8_t power_on_sound_flag ;
  */
 void threadx_handler(void)
 {
+
+      /* 创建信号量 */
+   tx_semaphore_create(&decoder_semaphore, "DecoderSemaphore", 0);
+   
+//	tx_queue_create(&uart1_rx_queue,
+//					"Uart1RxQueue",
+//					TX_1_ULONG,   // 每个消息大小，这里用 1 字节
+//					uart1_rx_queue_buffer,
+//					sizeof(uart1_rx_queue_buffer));
   
 	tx_thread_create(&thread_msg,                    /* 任务控制块地址 */ 
  	                 "MsgPro",                    /* 任务名 */
@@ -125,14 +135,7 @@ void threadx_handler(void)
                      TX_AUTO_START);             /* 创建后立即启动 */
   #endif 
 
-   /* 创建信号量 */
-   tx_semaphore_create(&decoder_semaphore, "DecoderSemaphore", 0);
-   
-//	tx_queue_create(&uart1_rx_queue,
-//					"Uart1RxQueue",
-//					TX_1_ULONG,   // 每个消息大小，这里用 1 字节
-//					uart1_rx_queue_buffer,
-//					sizeof(uart1_rx_queue_buffer));
+
  
 }
 /*

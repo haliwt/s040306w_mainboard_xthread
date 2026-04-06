@@ -576,6 +576,7 @@ void power_off_handler(void)
          gpro_t.process_run_step=0;//gpro_t.process_run_step
           gctl_t.rx_set_temp_flag=0; 
          gctl_t.set_temperature_flag = 0; 
+		 gpro_t.first_ptc_on=0;
 		 fan_detect_voltage=100;
          fan_run_one_minute_flag=1;
 		 gpro_t.gTimer_poweroff_fan =0;
