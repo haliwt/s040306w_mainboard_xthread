@@ -188,10 +188,11 @@ static void CompareSetAndActualTemperature(void)
 		           gpro_t.rx_ptc_flag= 1;
 				   PTC_SetHigh();
 				   ptc_state = PTC_STATE_ON;
+				   if(gpro_t.first_ptc_on ==1) gpro_t.first_ptc_on =2;
 				   SendData_Set_Command(0x22, 0x01); // open PTC
 
 				   tx_thread_sleep(100);
-				   if(gpro_t.first_ptc_on ==1)gpro_t.first_ptc_on = 2;   // 之后进入滞后模式
+				  
 
 
 				}
