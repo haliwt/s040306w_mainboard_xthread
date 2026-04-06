@@ -182,7 +182,7 @@ static void CompareSetAndActualTemperature(void)
         if(ptc_state == PTC_STATE_OFF){
 
 			 // 第一次打开：不需要滞后
-			if(gpro_t.first_ptc_on){
+			if(gpro_t.first_ptc_on ==0 || gpro_t.first_ptc_on ==1){
 		        if(real_temp < target_temp && gctl_t.ptc_prohibit_on_flag ==0){
 
 		           gpro_t.rx_ptc_flag= 1;
@@ -191,7 +191,7 @@ static void CompareSetAndActualTemperature(void)
 				   SendData_Set_Command(0x22, 0x01); // open PTC
 
 				   tx_thread_sleep(100);
-				   gpro_t.first_ptc_on = 0;   // 之后进入滞后模式
+				   if(gpro_t.first_ptc_on ==1)gpro_t.first_ptc_on = 2;   // 之后进入滞后模式
 
 
 				}

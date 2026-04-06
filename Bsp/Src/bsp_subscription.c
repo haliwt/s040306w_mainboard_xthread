@@ -591,7 +591,7 @@ void Json_Parse_Command_Fun(void)
 			gpro_t.phone_power_on_flag = 2; //ack_app_power_on;
 	
              SendWifiData_To_Cmd(0x20,0x0); //smart phone is power off
-             tx_thread_sleep(10);
+             tx_thread_sleep(100);
 			 MqttData_Publish_SetOpen(0); 
 		     tx_thread_sleep(50);
 			buzzer_temp_on=0;
@@ -617,9 +617,9 @@ void Json_Parse_Command_Fun(void)
 
 
            SendWifiData_To_Cmd(0x02,0x01);
-		   tx_thread_sleep(10);//HAL_Delay(5);
+		   tx_thread_sleep(100);//HAL_Delay(5);
 		   MqttData_Publish_SetPtc(0x01);
-		   tx_thread_sleep(50);
+		   tx_thread_sleep(200);
          
 		
          }
@@ -646,11 +646,11 @@ void Json_Parse_Command_Fun(void)
 		 gctl_t.rx_set_temp_flag =0;
 		 
 	     SendWifiData_To_Cmd(0x02,0x0);
-         tx_thread_sleep(10);//HAL_Delay(5);
+         tx_thread_sleep(100);//HAL_Delay(5);
 
 		 MqttData_Publish_SetPtc(0);
 
-		 tx_thread_sleep(50);
+		 tx_thread_sleep(200);
          }
 		buzzer_temp_on=0;
 	     gctl_t.response_wifi_signal_label = 0xfe;
@@ -665,7 +665,7 @@ void Json_Parse_Command_Fun(void)
             gctl_t.gPlasma=0;
 			gctl_t.gTimer_senddata_panel=8;
 			SendWifiData_To_Cmd(0x03,0x0);
-	  	   tx_thread_sleep(10);//HAL_Delay(5);
+	  	   tx_thread_sleep(100);//HAL_Delay(5);
 	  	    MqttData_Publish_SetPlasma(0);
 			 tx_thread_sleep(50);
 	  	}
