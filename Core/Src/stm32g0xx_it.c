@@ -130,6 +130,7 @@ void DMA1_Channel2_3_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
   if(LL_DMA_IsActiveFlag_TC2(DMA1) != RESET) {
 		  LL_DMA_ClearFlag_TC2(DMA1);
+		  tx_disp_flag_put_hander();
 		  
   	}
    else if(LL_DMA_IsActiveFlag_TC3(DMA1) != RESET) {
@@ -160,7 +161,8 @@ void DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Ch4_5_DMAMUX1_OVR_IRQn 0 */
   if(LL_DMA_IsActiveFlag_TC4(DMA1)){
 	 LL_DMA_ClearFlag_TC4(DMA1);
-	 }
+	  tx_wifi_flag_put_hander();
+	}
     else if(LL_DMA_IsActiveFlag_TC5(DMA1)){
 	LL_DMA_ClearFlag_TC5(DMA1);
   	}

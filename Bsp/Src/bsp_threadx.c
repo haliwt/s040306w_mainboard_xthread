@@ -8,15 +8,20 @@
 #define STACK_SIZE_ONE  1792//3072//2048//1024//896//768
 #define STATC_SIZE_TWO  512//256
 
+#define EVT_UART_TX_DONE   (1u << 0)
+
+
 
 static TX_THREAD thread_msg;
 static TX_THREAD thread_start;
 /* 定义信号量 */
 TX_SEMAPHORE decoder_semaphore;
+TX_SEMAPHORE wifi_tx_semaphore;
+TX_SEMAPHORE disp_tx_semaphore;
 /*队列*/
 //static TX_QUEUE uart1_rx_queue;
 //static uint8_t uart1_rx_queue_buffer[UART1_RX_BUF_SIZE * sizeof(uint8_t)];
-
+//TX_EVENT_FLAGS_GROUP      evt_flags;
 
 static UCHAR stack_msg_pro[STACK_SIZE_ONE];
 static UCHAR stack_start_pro[STATC_SIZE_TWO];
@@ -31,6 +36,8 @@ static void vTaskStart(ULONG thread_input);
 static void wifi_run_handler(void);
 static void power_run_handler(void);
 uint8_t power_on_sound_flag ;
+uint8_t counter, success_flag ;
+
 
 
 /**
@@ -53,7 +60,7 @@ uint8_t power_on_sound_flag ;
 		
 
         }
-      
+         counter++;
 	     power_run_handler();
        
          wifi_run_handler();
@@ -102,8 +109,19 @@ uint8_t power_on_sound_flag ;
 void threadx_handler(void)
 {
 
-      /* 创建信号量 */
+  UINT status ;
+  /* 创建信号量 */
    tx_semaphore_create(&decoder_semaphore, "DecoderSemaphore", 0);
+   tx_semaphore_create(&wifi_tx_semaphore, "wifi_tx_semaphore",0);
+   status = tx_semaphore_create(&disp_tx_semaphore,"disp_tx_semaphore",0);
+   if(status ==TX_SUCCESS){
+        success_flag =1;
+   }
+   else{
+        success_flag =2;
+
+   }
+  // status  = tx_event_flags_create(&evt_flags,"evt_flags");
    
 //	tx_queue_create(&uart1_rx_queue,
 //					"Uart1RxQueue",
@@ -179,7 +197,7 @@ static void power_run_handler(void)
 
 }
 
-/********************************************************************************
+/******************************************************************************
 	**
 	*Function Name:static void wifi_run_handler(void)
 	*Function :
@@ -210,14 +228,56 @@ static void wifi_run_handler(void)
            }
 
 }
-
-
+/******************************************************************************
+	**
+	*Function Name:
+	*Function :
+	*Input Ref: 
+	*Return Ref:NO
+	*
+*******************************************************************************/
 void display_board_xtask_notice(void)
 {
 
   tx_semaphore_put(&decoder_semaphore);
     // 投递到队列
    // tx_queue_send(&uart1_rx_queue, &data, TX_NO_WAIT);
+
+}
+
+void tx_wifi_flag_put_hander(void)
+{
+
+  //tx_event_flags_set(&evt_flags, EVT_UART_TX_DONE, TX_OR);
+  tx_semaphore_put(&wifi_tx_semaphore);  // 通知发送完成
+
+}
+
+void tx_wifi_flag_get_hander(void)
+{
+  tx_semaphore_get(&wifi_tx_semaphore, TX_WAIT_FOREVER);
+}
+
+void tx_disp_flag_put_hander(void)
+{
+
+  //tx_event_flags_set(&evt_flags, EVT_UART_TX_DONE, TX_OR);
+  tx_semaphore_put(&disp_tx_semaphore);  // 通知发送完成
+
+}
+
+void tx_disp_flag_get_hander(void)
+{
+//   ULONG actual;
+//	tx_event_flags_get(&evt_flags,
+//	                   EVT_UART_TX_DONE,
+//	                   TX_OR_CLEAR,
+//	                   &actual,
+//	                   TX_WAIT_FOREVER);
+
+  
+   tx_semaphore_get(&disp_tx_semaphore, TX_WAIT_FOREVER);
+
 
 }
 
