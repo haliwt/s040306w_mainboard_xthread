@@ -713,6 +713,54 @@ void every_power_on_run(void)
 	  
 
     }
+    else{
+
+
+	  if(gpro_t.rx_ptc_flag==1){
+              
+				SendWifiData_To_Cmd(0x02,0x01);
+				tx_thread_sleep(100);
+			}
+			else if(gpro_t.rx_ptc_flag  ==0){
+					gctl_t.ptc_prohibit_on_flag =1;
+                    PTC_SetLow();
+					SendWifiData_To_Cmd(0x02,0x0);
+					tx_thread_sleep(100);
+
+			}
+
+			if(gctl_t.gUlransonic==1){
+
+					SendWifiData_To_Cmd(0x04,0x01);
+					tx_thread_sleep(100);
+			}
+			else {
+					gctl_t.gUlransonic=0;
+					SendWifiData_To_Cmd(0x04,0x0);
+					tx_thread_sleep(100);
+			}
+
+	      if( gctl_t.gPlasma==1){ //Anion
+			
+                
+				SendWifiData_To_Cmd(0x03,0x01);
+                tx_thread_sleep(100);
+			
+			}
+			else{
+				gctl_t.gPlasma =0;
+				SendWifiData_To_Cmd(0x03,0x0);
+				tx_thread_sleep(100);
+			}
+
+
+		
+
+
+
+		 
+
+	}
   
     gctl_t.gModel=1;
 }
