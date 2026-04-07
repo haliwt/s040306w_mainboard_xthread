@@ -33,7 +33,7 @@ static void wifi_run_handler(void);
 static void power_run_handler(void);
 uint8_t power_on_sound_flag ;
 
-volatile uint8_t tx_error_flag;
+volatile uint8_t tx_error_flag,counter_flag;
 
 
 static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr);
@@ -76,7 +76,7 @@ void tx_application_define(void *first_unused_memory)
 		
 
         }
-      
+         counter_flag ++;
 	     power_run_handler();
        
          wifi_run_handler();

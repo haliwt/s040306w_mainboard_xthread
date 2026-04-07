@@ -6,12 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
+  * version: 1.0  compatible older and new PCB .in "main.h"
+  *    #define NEW_PCB  ON/OFF.DATA.2026-04-07
   *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  * 
+  *
   *
   ******************************************************************************
   */

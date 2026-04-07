@@ -77,7 +77,7 @@ void link_wifi_net_handler(void)
                at_send_data((const uint8_t *)"AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
                 tx_thread_sleep(1000);
                 gctl_t.randomName[0]=HAL_GetUIDw0();
-			          tx_thread_sleep(1000);
+			    tx_thread_sleep(1000);
                 gpro_t.gTimer_link_net_timer_time = 0;
 		
                 
