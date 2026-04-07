@@ -33,6 +33,22 @@ static void power_run_handler(void);
 uint8_t power_on_sound_flag ;
 
 
+
+/**
+ * @brief  :  static void vTaskStart(void *pvParameters
+ * @note    
+ * @param   None
+ * @retval  None
+ */
+
+void tx_application_define(void *first_unused_memory)
+{
+    // 创建线程、信号量、事件组、队列
+     threadx_handler();
+}
+
+
+
 /**
  * @brief  :  static void vTaskStart(void *pvParameters
  * @note    

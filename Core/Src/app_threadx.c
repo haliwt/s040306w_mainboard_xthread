@@ -56,22 +56,22 @@
   * @param memory_ptr: memory pointer
   * @retval int
   */
-UINT App_ThreadX_Init(VOID *memory_ptr)
-{
-  UINT ret = TX_SUCCESS;
-  //TX_BYTE_POOL *byte_pool = (TX_BYTE_POOL*)memory_ptr;
+//UINT App_ThreadX_Init(VOID *memory_ptr)
+//{
+//  UINT ret = TX_SUCCESS;
+//  //TX_BYTE_POOL *byte_pool = (TX_BYTE_POOL*)memory_ptr;
 
-  /* USER CODE BEGIN App_ThreadX_MEM_POOL */
-  //(void)byte_pool;
-	(void)memory_ptr;
-  /* USER CODE END App_ThreadX_MEM_POOL */
+//  /* USER CODE BEGIN App_ThreadX_MEM_POOL */
+//  //(void)byte_pool;
+//	(void)memory_ptr;
+//  /* USER CODE END App_ThreadX_MEM_POOL */
 
-  /* USER CODE BEGIN App_ThreadX_Init */
-   threadx_handler();
-  /* USER CODE END App_ThreadX_Init */
+//  /* USER CODE BEGIN App_ThreadX_Init */
+//   threadx_handler();
+//  /* USER CODE END App_ThreadX_Init */
 
-  return ret;
-}
+//  return ret;
+//}
 
 /**
   * @brief  MX_ThreadX_Init
