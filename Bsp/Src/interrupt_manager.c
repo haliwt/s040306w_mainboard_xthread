@@ -36,21 +36,21 @@ void callback_register_fun(void)
 /********************************************************************************
 	**
 	*Function Name:void tim17_isr_callback_handler(void)
-	*Function : // 业务逻辑函数（回调实现）
+	*Function : // 业务逻辑函数（回调实现） T =10ms
 	*Input Ref: 
 	*Return Ref:NO
 	*
 *******************************************************************************/
 void tim17_isr_callback_handler(void)
 {
-   static  uint16_t tm0;
+   static  uint8_t tm0;
 
  
 
     tm0 ++ ;
       
      
-	 if(tm0 > 999){//10ms *100 = 1000ms =1s
+	 if(tm0 > 99){//10ms *100 = 1000ms =1s
         tm0 =0;
      
 	   gpro_t.gTimer_twohours_seconds_counter++;

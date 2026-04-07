@@ -237,7 +237,7 @@ void MX_TIM17_Init(void)
   /* USER CODE END TIM17_Init 1 */
   TIM_InitStruct.Prescaler = 63;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 999;//1ms
+  TIM_InitStruct.Autoreload = 9999;//1ms //f = 1/(9999+1)=0.0001MHz=0.1KHz,T = 1/0.1KHz = 10ms.
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
   TIM_InitStruct.RepetitionCounter = 0;
   LL_TIM_Init(TIM17, &TIM_InitStruct);
@@ -461,7 +461,7 @@ void MX_TIM17_Init(void)
   /* USER CODE END TIM17_Init 1 */
   TIM_InitStruct.Prescaler = 63; //F =64/(1+63)=1MHZ
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 999;//T = (1+999)*1/F =1000us = 1ms
+  TIM_InitStruct.Autoreload = 9999;//10ms//T = (1+999)*1/F =1000us = 1ms
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
   TIM_InitStruct.RepetitionCounter = 0;
   LL_TIM_Init(TIM17, &TIM_InitStruct);
