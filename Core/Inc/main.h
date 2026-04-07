@@ -72,15 +72,61 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 
 /* USER CODE BEGIN Private defines */
+
+#define OLDER_PCB   0
+
+#define NEW_PCB     1 
+
+#if NEW_PCB
+
 #define WIFI_TX_Pin           LL_GPIO_PIN_2
 #define WIFI_TX_GPIO_Port      GPIOA
 
 #define WIFI_RX_Pin           LL_GPIO_PIN_3
 #define WIFI_RX_GPIO_Port     GPIOA
 
-#define OLDER_PCB 1
 
-#if OLDER_PCB
+
+#define FAN_CW_Pin            LL_GPIO_PIN_5 //COM 
+#define FAN_CW_GPIO_Port        GPIOA
+
+#define PLASMA_Pin              LL_GPIO_PIN_4
+#define PLASMA_GPIO_Port         GPIOA
+
+
+#define FAN_COM_Pin                 LL_GPIO_PIN_7
+#define FAN_COM_GPIO_Port           GPIOA
+
+#define RELAY_Pin           			LL_GPIO_PIN_0
+#define RELAY_GPIO_Port 				GPIOB
+
+
+
+#define TEMP_SENSOR_Pin         LL_GPIO_PIN_13
+#define TEMP_SENSOR_GPIO_Port GPIOB
+
+
+//USART2 
+#define DISP_TX_Pin         LL_GPIO_PIN_9
+#define DISP_TX_GPIO_Port GPIOA
+
+#define DISP_RX_Pin     LL_GPIO_PIN_10
+#define DISP_RX_GPIO_Port GPIOA
+
+#define WIFI_EN_Pin        LL_GPIO_PIN_12
+#define WIFI_EN_GPIO_Port GPIOA
+//TIM
+#define BEEP_Pin              LL_GPIO_PIN_1
+#define BEEP_GPIO_Port        GPIOB
+
+#else  //older PCB
+
+#define WIFI_TX_Pin           LL_GPIO_PIN_2
+#define WIFI_TX_GPIO_Port      GPIOA
+
+#define WIFI_RX_Pin           LL_GPIO_PIN_3
+#define WIFI_RX_GPIO_Port     GPIOA
+
 
 
 #define PLASMA_Pin            LL_GPIO_PIN_5
@@ -91,16 +137,6 @@ void Error_Handler(void);
 
 #define FAN_CCW_Pin               LL_GPIO_PIN_6 //RUN
 #define FAN_CCW_GPIO_Port         GPIOA
-
-#endif 
-
-
-//GPIO 
-//#define PLASMA_Pin            LL_GPIO_PIN_4
-//#define PLASMA_GPIO_Port        GPIOA
-
-//#define FAN_CW_Pin            LL_GPIO_PIN_5
-//#define FAN_CW_GPIO_Port        GPIOA
 
 
 /*older version be used to IC */
@@ -130,6 +166,9 @@ void Error_Handler(void);
 //TIM
 #define BEEP_Pin              LL_GPIO_PIN_1
 #define BEEP_GPIO_Port        GPIOB
+
+#endif 
+
 
 /* USER CODE END Private defines */
 
