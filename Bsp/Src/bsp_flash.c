@@ -185,7 +185,7 @@ void EEPROM_Write(uint16_t virtAddr, uint32_t data)
 }
 
 #endif 
-#if 1
+#if 0
 
 	uint32_t addr = EEPROM_PAGE_ADDR;
 	

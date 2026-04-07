@@ -11,7 +11,7 @@ void threadx_handler(void);
 void display_board_xtask_notice(void);
 
 
-
+extern volatile uint8_t tx_error_flag;
 
 
 

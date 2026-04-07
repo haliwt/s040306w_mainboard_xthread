@@ -1,4 +1,5 @@
 #include "bsp.h"
+#include "tx_api.h"
 
 
 
@@ -32,6 +33,10 @@ static void wifi_run_handler(void);
 static void power_run_handler(void);
 uint8_t power_on_sound_flag ;
 
+volatile uint8_t tx_error_flag;
+
+
+static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr);
 
 
 /**
@@ -43,6 +48,8 @@ uint8_t power_on_sound_flag ;
 
 void tx_application_define(void *first_unused_memory)
 {
+   tx_thread_stack_error_notify(tx_thread_stack_error_handler);
+
     // 创建线程、信号量、事件组、队列
      threadx_handler();
 }
@@ -236,5 +243,14 @@ void display_board_xtask_notice(void)
    // tx_queue_send(&uart1_rx_queue, &data, TX_NO_WAIT);
 
 }
+
+static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr)
+{
+    // 这里可以打印日志、点灯、复位等
+    //printf("Stack overflow detected in thread: %s\n", thread_ptr->tx_thread_name);
+     tx_error_flag ++;
+    // 或者进入安全模式
+}
+
 
 

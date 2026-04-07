@@ -593,7 +593,7 @@ void Json_Parse_Command_Fun(void)
              SendWifiData_To_Cmd(0x20,0x0); //smart phone is power off
              tx_thread_sleep(100);
 			 MqttData_Publish_SetOpen(0); 
-		     tx_thread_sleep(50);
+		     tx_thread_sleep(200);
 			buzzer_temp_on=0;
 	
          
@@ -667,7 +667,7 @@ void Json_Parse_Command_Fun(void)
 			SendWifiData_To_Cmd(0x03,0x0);
 	  	   tx_thread_sleep(100);//HAL_Delay(5);
 	  	    MqttData_Publish_SetPlasma(0);
-			 tx_thread_sleep(50);
+			 tx_thread_sleep(200);
 	  	}
       
 		buzzer_temp_on=0;

@@ -499,7 +499,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
 
           //  WIFI_IC_ENABLE();
        
-    		at_send_data("AT+RST\r\n", strlen("AT+RST\r\n"));
+    		at_send_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
             tx_thread_sleep(1000);//HAL_Delay(1000);
             wifi_t.gTimer_auto_link_net_time =0;
             auto_link_net_flag=1;
@@ -530,7 +530,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
              auto_link_net_flag =2;
    
 //	        HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 0xffff);//瀵�1�?7?婵绻涢幒?
-            at_send_data("AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
+            at_send_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
             tx_thread_sleep(1000);//HAL_Delay(1000);
          
            

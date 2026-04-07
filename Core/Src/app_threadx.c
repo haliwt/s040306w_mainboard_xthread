@@ -83,6 +83,7 @@ void MX_ThreadX_Init(void)
   /* USER CODE BEGIN  Before_Kernel_Start */
 
   /* USER CODE END  Before_Kernel_Start */
+  
 
   tx_kernel_enter();
 

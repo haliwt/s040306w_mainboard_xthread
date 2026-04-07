@@ -102,6 +102,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
     bsp_init();
   /* USER CODE END 2 */
+	
 
   MX_ThreadX_Init();
 
