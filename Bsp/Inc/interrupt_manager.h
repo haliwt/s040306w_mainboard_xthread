@@ -17,7 +17,7 @@ void callback_register_fun(void);
 
 // ISR 调用的触发函数
 void tim17_invoke_callback(void);
-
+void tim17_isr_callback_handler(void);
 
 
 #endif 

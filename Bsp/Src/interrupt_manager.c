@@ -3,7 +3,7 @@
 
 
 
-static void tim17_isr_callback_handler(void);
+
 
 
 // 定义 TIM17 回调函数类型
@@ -41,7 +41,7 @@ void callback_register_fun(void)
 	*Return Ref:NO
 	*
 *******************************************************************************/
-static void tim17_isr_callback_handler(void)
+void tim17_isr_callback_handler(void)
 {
    static  uint16_t tm0;
 

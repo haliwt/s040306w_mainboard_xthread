@@ -203,8 +203,8 @@ void TIM17_IRQHandler(void)
   	
       LL_TIM_ClearFlag_UPDATE(TIM17); // ✅ 清除更新中断标志
       //tim17_isr_callback_handler();
-       tim17_invoke_callback();   // 调用回调函数
-
+       //tim17_invoke_callback();   // 调用回调函数
+       tim17_isr_callback_handler();
 
   }
   /* USER CODE END TIM17_IRQn 0 */

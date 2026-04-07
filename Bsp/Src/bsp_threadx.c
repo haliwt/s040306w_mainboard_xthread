@@ -48,7 +48,7 @@ static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr);
 
 void tx_application_define(void *first_unused_memory)
 {
-   tx_thread_stack_error_notify(tx_thread_stack_error_handler);
+   //tx_thread_stack_error_notify(tx_thread_stack_error_handler);
 
     // 创建线程、信号量、事件组、队列
      threadx_handler();
