@@ -314,7 +314,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				
 		        buzzer_sound();//buzzer_sound_fun();
 	            SendWifiData_Answer_Cmd(0x01,0x01);
-	             tx_disp_flag_get_hander();//tx_thread_sleep(100);
+	            tx_thread_sleep(100);
 				if(gpro_t.soft_version > 2)gpro_t.soft_version =0;
 				if(gpro_t.soft_version ==0 && gctl_t.app_timer_power_on_flag==0){
 				   gpro_t.gpower_on = power_on;
@@ -337,12 +337,12 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 PTC_SetLow();
               if(gpro_t.soft_version ==2){
                 SendWifiData_Answer_Cmd(0x01,0x0); //power off .
-                tx_disp_flag_get_hander();//tx_thread_sleep(100); 
+                tx_thread_sleep(100); 
               }
               else{
 			  	
 			    SendWifiData_Answer_Cmd(0x01,0x02); //compatible older version 
-	             tx_disp_flag_get_hander();//tx_thread_sleep(100);
+	            tx_thread_sleep(100);
 			     
               }
       
@@ -366,7 +366,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
          }
              
            SendWifiData_Answer_Cmd(0x02,0x01); //
-           tx_disp_flag_get_hander();//tx_thread_sleep(100); 
+           tx_thread_sleep(100); 
 		
            }
 
@@ -382,7 +382,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			  gctl_t.ptc_prohibit_on_flag =1;
 		  
           SendWifiData_Answer_Cmd(0x02,0x0); //
-          tx_disp_flag_get_hander();//tx_thread_sleep(100); 
+          tx_thread_sleep(100); 
      
        }
       break;
@@ -402,7 +402,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 
 			SendWifiData_Answer_Cmd(0x03,0x01); //
-			tx_disp_flag_get_hander();//tx_thread_sleep(100); 
+			tx_thread_sleep(100); 
 			 
 		  }
 		  else if(pdata[3]  == 0x0){
@@ -413,7 +413,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 PLASMA_SetLow();
 
 			SendWifiData_Answer_Cmd(0x03,0x0); //
-			 tx_disp_flag_get_hander();//tx_thread_sleep(100); 
+			tx_thread_sleep(100); 
 			  
 		  
 		  }
@@ -434,7 +434,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			}
 			
 			SendWifiData_Answer_Cmd(0x04,0x01); //
-			tx_disp_flag_get_hander();//tx_thread_sleep(100); 
+			tx_thread_sleep(100); 
    
 		  }
 		  else if(pdata[3] == 0x0){ //close 
@@ -444,7 +444,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			ultrasonic_close();
 			
 			SendWifiData_Answer_Cmd(0x04,0x0); //
-			tx_disp_flag_get_hander();//tx_thread_sleep(100); 
+			tx_thread_sleep(100); 
    
 		  }
    
@@ -466,7 +466,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  
           gctl_t.gTimer_linkTencentCounter=0; //total times is 120s
           SendWifiData_Answer_Cmd(0x05,0x01); //WT.EDIT 2024.12.28
-          tx_disp_flag_get_hander();//tx_thread_sleep(100);
+          tx_thread_sleep(100);
          
       
         }
@@ -488,7 +488,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		   gpro_t.process_run_step=0;
 	       gpro_t.gpower_on = power_on;
 		   SendWifiData_Answer_Cmd(0x10,0x01);
-	       tx_disp_flag_get_hander();//tx_thread_sleep(100);
+	       tx_thread_sleep(100);
 		    fan_full_run();//WT.EDIT 2026.01.26
 		    if(gctl_t.app_timer_power_on_flag ==0){
 			    PLASMA_SetHigh();
@@ -505,7 +505,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	            ultrasonic_close();
 			
               SendWifiData_Answer_Cmd(0x10,0x0); //power off .
-              tx_disp_flag_get_hander();//tx_thread_sleep(100); 
+              tx_thread_sleep(100); 
       
              gpro_t.power_off_run_step=1;
              gpro_t.gpower_on = power_off;
@@ -562,7 +562,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  
 	      if(wifi_link_net_state()==1){
 	          MqttData_Publish_AitState(2);
-			  tx_wifi_flag_get_hander();//tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
+			   tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
 	       }
         
           
@@ -573,7 +573,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	     gctl_t.mode_ai_switch_flag =1;
          if(wifi_link_net_state()==1){
 	         MqttData_Publish_AitState(1);
-			  tx_wifi_flag_get_hander();//tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
+			 tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
 	      }
 		 
        }
@@ -655,7 +655,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		         tx_thread_sleep(10);
 				 if(wifi_link_net_state()==1){ 
 					  MqttData_Publish_SetPtc(0x01);
-					   tx_wifi_flag_get_hander();//tx_thread_sleep(200);
+					  tx_thread_sleep(200);
 					
 				  }
 			   	
@@ -668,12 +668,12 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	       PTC_SetLow();
         
 		   SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.07.28
-           tx_disp_flag_get_hander();//tx_thread_sleep(10);
+           tx_thread_sleep(10);
 
 		  
 		  if(wifi_link_net_state()==1){ 
 			MqttData_Publish_SetPtc(0x0);
-			 tx_wifi_flag_get_hander();//tx_thread_sleep(200);
+			tx_thread_sleep(200);
 		  }
          
 	   }
@@ -710,7 +710,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				 	ptc_set_wifi =gpro_t.rx_ptc_flag;
 					 if(wifi_link_net_state()==1){ 
 						  MqttData_Publish_SetPtc(0x01);
-						 tx_wifi_flag_get_hander();//tx_thread_sleep(200);
+						tx_thread_sleep(200);
 						
 					  }
 				 }
@@ -732,7 +732,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				 	ptc_set_wifi =gpro_t.rx_ptc_flag;
 		  if(wifi_link_net_state()==1){ 
 			MqttData_Publish_SetPtc(0x0);
-			 tx_wifi_flag_get_hander();//tx_thread_sleep(200);
+			tx_thread_sleep(200);
 		  }
 		  }
          
@@ -771,7 +771,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		
 				   if(wifi_link_net_state()==1){
 					   MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
-					   tx_wifi_flag_get_hander();//tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
+					   tx_thread_sleep(200);//tx_thread_sleep(200);//HAL_Delay(350);
 					}
 			   	
 			  }

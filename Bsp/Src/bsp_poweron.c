@@ -104,7 +104,7 @@ void power_on_handler(void)
 	         gctl_t.set_wind_speed_value =100;
 
 		     MqttData_Publish_SetOpen(1);  
-			  tx_wifi_flag_get_hander();//tx_thread_sleep(200);
+			 tx_thread_sleep(200);
 		
 		 }
 		 else if(gctl_t.app_timer_power_on_flag ==1){
@@ -120,16 +120,14 @@ void power_on_handler(void)
      if(wifi_link_net_state() ==1 &&  gctl_t.app_timer_power_on_flag==0){
     
 		  MqttData_Publish_Init();
-		 tx_wifi_flag_get_hander();//tx_thread_sleep(200);
+		  tx_thread_sleep(200);
      }
 	 else if(gctl_t.app_timer_power_on_flag == 1){
 
            	gctl_t.set_wind_speed_value=100;
             MqttData_Publis_SetFan(gctl_t.set_wind_speed_value);//WT.EDIT 2025.12.19
-            tx_wifi_flag_get_hander();
             gctl_t.set_temperature_value=40;
             MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
-			tx_wifi_flag_get_hander();
 
 	 }
      	
@@ -152,18 +150,18 @@ void power_on_handler(void)
 				   gpro_t.gTimer_update_todisplay=0;
 				   counter++;
 				   updateDht11_sensorData_toDisp();
-				   tx_disp_flag_get_hander();//tx_thread_sleep(100);
+				  	tx_thread_sleep(100);
 				   
 				   if(net_t.wifi_link_net_success ==1 && counter > 1 && gpro_t.soft_version == 0){ //WT.EDIT 2026.02.27
 					  counter =0;
 					  sw_flag = sw_flag ^ 0x01;
 					  if(sw_flag == 1){
 						  SendWifiData_olderCmd(0x1F,0x01);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-						  tx_disp_flag_get_hander();//tx_thread_sleep(100);
+						  tx_thread_sleep(100);
 					  }
 					  else{
 					   SendWifiData_To_Data(0x1F,0x01);
-					  tx_disp_flag_get_hander();//tx_thread_sleep(100);
+					   tx_thread_sleep(100);
 					  }
 					  
 				   }
@@ -172,11 +170,11 @@ void power_on_handler(void)
 					   sw_flag = sw_flag ^ 0x01;
 					  if(sw_flag == 1){
 						  SendWifiData_olderCmd(0x1F,0x0);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-						   tx_disp_flag_get_hander();//tx_thread_sleep(100);
+						  tx_thread_sleep(100);
 					  }
 					  else{
 						SendWifiData_To_Data(0x1F,0x0);
-					    tx_disp_flag_get_hander();//tx_thread_sleep(100);
+					   tx_thread_sleep(100);
 					  }
 				   }
 				   
@@ -195,20 +193,20 @@ void power_on_handler(void)
 		  gctl_t.first_link_tencent_cloud_flag++;
 
                MqttData_Publish_Update_Data();
-			   tx_wifi_flag_get_hander();//tx_thread_sleep(200);//HAL_Delay(200);
+			  tx_thread_sleep(200);//HAL_Delay(200);
              SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-              tx_disp_flag_get_hander();//tx_thread_sleep(100);
+             tx_thread_sleep(100);
           
     	}
 	    else if(gctl_t.first_link_tencent_cloud_flag < 4){
 			 gctl_t.first_link_tencent_cloud_flag++;
 
             Subscriber_Data_FromCloud_Handler();
-    	     tx_wifi_flag_get_hander();//tx_thread_sleep(100);
+    	    tx_thread_sleep(100);
 	    }
 		
 		   SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01);
-            tx_disp_flag_get_hander();//tx_thread_sleep(100);
+           tx_thread_sleep(100);
 	}
     
       gpro_t.process_run_step=8 ;

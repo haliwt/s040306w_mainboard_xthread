@@ -189,7 +189,7 @@ void updateDht11_sensorData_toDisp(void)
 	
 	    Dht22_Read_TempHumidity_Handler(&DHT22);
 	    sendData_Real_TimeHum(gctl_t.gDht11_humidity ,gctl_t.gDht11_temperature);
-		tx_disp_flag_get_hander();//tx_thread_sleep(100);//tx_thread_sleep(20);
+		tx_thread_sleep(100);//tx_thread_sleep(20);
 	
 
      //dht11_read_data(&gctl_t.gDht11_temperature, &gctl_t.gDht11_humidity);
@@ -210,7 +210,7 @@ void Update_Dht11_Totencent_Value(void)
 
 
 	MqttData_Publis_ReadTempHum(gctl_t.gDht11_temperature, gctl_t.gDht11_humidity);
-    tx_wifi_flag_get_hander();//tx_thread_sleep(200);//HAL_Delay(100);
+    tx_thread_sleep(200);//HAL_Delay(100);
 
 }
 
