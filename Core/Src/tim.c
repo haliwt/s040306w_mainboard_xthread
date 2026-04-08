@@ -255,7 +255,7 @@ void MX_TIM17_Init(void)
 
 
 
-#else 
+#else //older PCB
 
 
 void MX_TIM1_Init(void)
