@@ -131,14 +131,17 @@ void power_on_handler(void)
 
 	 }
      	
-  
+    read_sensorData();
     gctl_t.gTimer_senddata_panel = 8;
     gpro_t.process_run_step= 5;
 
 	 break;
 
 	case 5:
+		
         ActionEvent_Handler();
+		read_sensorData();
+        gpro_t.gTimer_read_dht11_to_disp = 10;
 	    gpro_t.process_run_step= 6;
 
 	break;
