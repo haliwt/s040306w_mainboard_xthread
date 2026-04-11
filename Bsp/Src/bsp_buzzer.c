@@ -13,8 +13,8 @@ void tim3_buzzer_sound_config(void)
 
 static void tim3_stop_buzzer_sound_config(void)
 {
-  //LL_TIM_DisableCounter(TIM3);
- // LL_TIM_CC_DisableChannel(TIM3,LL_TIM_CHANNEL_CH4);
+  LL_TIM_DisableCounter(TIM3);
+  LL_TIM_CC_DisableChannel(TIM3,LL_TIM_CHANNEL_CH4);
 	LL_TIM_OC_SetCompareCH4(TIM3,0);
 
 
@@ -22,6 +22,15 @@ static void tim3_stop_buzzer_sound_config(void)
 
 
 
+
+void buzzer_sound_once(void)
+{
+   
+   tim3_buzzer_sound_config();
+   LL_mDelay(1);//tx_thread_sleep(1);
+   tim3_stop_buzzer_sound_config();
+
+}
 
 
 
@@ -33,9 +42,6 @@ void buzzer_sound(void)
    tim3_buzzer_sound_config();
    tx_thread_sleep(20);
    tim3_stop_buzzer_sound_config();
-
-
-
 
 }
 

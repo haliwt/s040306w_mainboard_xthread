@@ -72,7 +72,7 @@ void tx_application_define(void *first_unused_memory)
 		if(power_on_sound_flag==0){
             power_on_sound_flag ++;
             FAN_Stop();  //WT.EDIT.2025.01.03
-            buzzer_sound();//buzzer_sound();
+            buzzer_sound_once();//buzzer_sound();//buzzer_sound();
 		
 
         }

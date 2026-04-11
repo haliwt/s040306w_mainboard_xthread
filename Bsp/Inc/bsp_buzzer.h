@@ -7,6 +7,8 @@
 
 
 void buzzer_sound(void);
+void buzzer_sound_once(void);
+
 
 void tim3_buzzer_sound_config(void);
 
