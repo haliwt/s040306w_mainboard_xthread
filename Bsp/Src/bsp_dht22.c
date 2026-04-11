@@ -192,10 +192,6 @@ void updateDht11_sensorData_toDisp(void)
 		tx_thread_sleep(100);//tx_thread_sleep(20);
 	
 
-     //dht11_read_data(&gctl_t.gDht11_temperature, &gctl_t.gDht11_humidity);
-//sendData_Real_TimeHum(gctl_t.gDht11_humidity ,gctl_t.gDht11_temperature);
-	 //tx_thread_sleep(20);
-
 }
 
 
