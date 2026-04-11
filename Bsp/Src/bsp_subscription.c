@@ -604,9 +604,12 @@ void Json_Parse_Command_Fun(void)
 
 	  case PTC_ON_ITEM:
 	  if(gpro_t.gpower_on ==power_on){
-	    if(gctl_t.ptc_warning ==0){
-        buzzer_sound();
-         PTC_SetHigh();
+	   
+         buzzer_sound();
+
+		 if(gpro_t.stopTwoHours_flag==0 && gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
+                PTC_SetHigh();
+		 }
 		 gpro_t.rx_ptc_flag = 1;//gctl_t.gDry=1;
 		 gctl_t.ptc_prohibit_on_flag =0; //WT.EDIT 2026.03-30
 
@@ -622,7 +625,7 @@ void Json_Parse_Command_Fun(void)
 		   tx_thread_sleep(200);
          
 		
-         }
+         
          }
 	     gctl_t.app_timer_power_on_flag = 0;
 		 buzzer_temp_on=0;
