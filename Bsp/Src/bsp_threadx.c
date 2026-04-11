@@ -31,7 +31,7 @@ static void vTaskStart(ULONG thread_input);
 
 static void wifi_run_handler(void);
 static void power_run_handler(void);
-uint8_t power_on_sound_flag ;
+
 
 volatile uint8_t tx_error_flag,counter_flag;
 
@@ -65,7 +65,7 @@ void tx_application_define(void *first_unused_memory)
  static void vTaskMsgPro(ULONG thread_input)
 {
    (void)thread_input;  /* 消除未使用的参数警告 */
- 
+   static uint8_t power_on_sound_flag ;
 	while(1)
     {
 
@@ -73,6 +73,7 @@ void tx_application_define(void *first_unused_memory)
             power_on_sound_flag ++;
             FAN_Stop();  //WT.EDIT.2025.01.03
             buzzer_sound_once();//buzzer_sound();//buzzer_sound();
+            read_sensorData();
 		
 
         }
