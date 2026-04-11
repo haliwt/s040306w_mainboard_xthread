@@ -755,14 +755,6 @@ void every_power_on_run(void)
 				SendWifiData_To_Cmd(0x03,0x0);
 				tx_thread_sleep(100);
 			}
-
-
-		
-
-
-
-		 
-
 	}
   
     gctl_t.gModel=1;
@@ -799,8 +791,4 @@ void app_timer_power_on_reference(void)
 					SendWifiData_To_Cmd(0x04,0x0);
 					tx_thread_sleep(100);
 			}
-
-
-
-		  
 }

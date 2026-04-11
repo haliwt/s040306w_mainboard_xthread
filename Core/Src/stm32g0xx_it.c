@@ -228,7 +228,9 @@ void USART1_IRQHandler(void)
 }
 #endif 
 /**
-  * @brief This function handles USART2 global interrupt / USART2 wake-up interrupt through EXTI line 26.
+  * @brief This function handles USART2 global interrupt 
+  * USART2 wake-up interrupt through EXTI line 26.
+  * wifi 
   */
 void USART2_IRQHandler(void)
 {

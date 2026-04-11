@@ -52,6 +52,9 @@ typedef struct {
 
 
 static serviceInfo    sg_info;
+static char		message[180];//	= {0};// message[256]
+static int		message_len ;//	= 0;
+
 
 
 // led attributes, corresponding to struct LedInfo
@@ -114,14 +117,15 @@ static void Mqtt_power_off_Value(void)
 ********************************************************************************/
 void property_topic_publish(void)
 {
-    char topic[180] = {0};
-    int  size;
+    //char topic[180] = {0};
+    //int  size;
+    message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 
     gctl_t.randomName[0]=HAL_GetUIDw0();
-    size = snprintf(topic, sizeof(topic), "AT+TCMQTTPUB=\"$thing/up/property/%s/UYIJIA01-%d\",0,", PRODUCT_ID,gctl_t.randomName[0]);
+    message_len = snprintf(message, sizeof(message), "AT+TCMQTTPUB=\"$thing/up/property/%s/UYIJIA01-%d\",0,", PRODUCT_ID,gctl_t.randomName[0]);
     //at_send_data((uint8_t *)topic, size);
-    tx_thread_sleep(300);
-    USART2_DMA_Send((uint8_t *)topic, size);
+    tx_thread_sleep(200);
+    USART2_DMA_Send((uint8_t *)message, message_len);
     tx_thread_sleep(300);
 }
 /********************************************************************************
@@ -135,8 +139,9 @@ void property_topic_publish(void)
 ********************************************************************************/
 static void property_report_state(void)
 {
-    char       message[180]    = {0};
-    int        message_len     = 0;
+   // char       message[180]    = {0};
+   // int        message_len     = 0;
+    message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 
     Mqtt_Value_Init();
    message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up01\\\"\\,\\\"params\\\":{\\\"open\\\":%d\\,\\\"Anion\\\":%d\\,\\\"ptc\\\":%d\\,\\\"sonic\\\":%d\\,\\\"state\\\":%d\\,\\\"find\\\":%d\\,\\\"temperature\\\":%d}}\"\r\n",
@@ -153,8 +158,9 @@ static void property_report_state(void)
 
 void property_report_update_data(void)
 {
-	char  message[180]    = {0};
-	int   message_len	   = 0;
+	//char  message[180]    = {0};
+	//int   message_len	   = 0;
+	 message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 	
 	 Mqtt_Value_update_data();
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up02\\\"\\,\\\"params\\\":{\\\"open\\\":%d\\,\\\"Anion\\\":%d\\,\\\"ptc\\\":%d\\,\\\"sonic\\\":%d\\,\\\"state\\\":%d\\,\\\"find\\\":%d\\,\\\"temperature\\\":%d}}\"\r\n",
@@ -171,9 +177,9 @@ void property_report_update_data(void)
 static void property_report_power_off_state(void)
 {
 
-	char       message[180]    = {0};// message[256]
-    int        message_len     = 0;
-
+	//char       message[180]    = {0};// message[256]
+ //   int        message_len     = 0;
+    message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
    Mqtt_power_off_Value();
    message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up01\\\"\\,\\\"params\\\":{\\\"open\\\":%d\\,\\\"Anion\\\":%d\\,\\\"ptc\\\":%d\\,\\\"sonic\\\":%d\\,\\\"state\\\":%d\\,\\\"find\\\":%d\\,\\\"temperature\\\":%d}}\"\r\n",
                              sg_info.open,sg_info.anion,sg_info.ptc,sg_info.sonic,sg_info.state,sg_info.find,sg_info.set_temperature);
@@ -200,8 +206,10 @@ static void property_report_power_off_state(void)
 static void property_report_ReadTempHum(uint8_t tempvalue,uint8_t humvalue)
 {
 
-	   char	message[128]    = {0};
-	   int	message_len	  = 0;
+	  // char	message[128]    = {0};
+	  /// int	message_len	  = 0;
+
+	   message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 	   message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up00\\\"\\,\\\"params\\\":{\\\"nowtemperature\\\":%d\\,\\\"Humidity\\\":%d}}\"\r\n"
 								,tempvalue,humvalue);
 								  
@@ -213,8 +221,9 @@ static void property_report_ReadTempHum(uint8_t tempvalue,uint8_t humvalue)
 
 static void property_report_SetState(uint8_t dat)
 {
-     char	message[128]    = {0};
-	 int	message_len	  = 0;
+    // char	message[128]    = {0};
+	// int	message_len	  = 0;
+	 message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 	
 	
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up04\\\"\\,\\\"params\\\":{\\\"state\\\":%d}}\"\r\n",dat);
@@ -235,9 +244,9 @@ static void property_report_SetState(uint8_t dat)
 ********************************************************************************/
 static void property_report_SetTemp(uint8_t temp)
 {
-     char	message[128]    = {0};
-	 int	message_len	  = 0;
-	
+     ///char	message[128]    = {0};
+	 //int	message_len	  = 0;
+	 message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 	
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up03\\\"\\,\\\"params\\\":{\\\"temperature\\\":%d}}\"\r\n",temp);
 								  
@@ -249,8 +258,10 @@ static void property_report_SetTemp(uint8_t temp)
 }
 static void property_report_SetOpen(uint8_t open)
 {
-     char	message[128]    = {0};
-	 int	message_len	  = 0;
+     //char	message[128]    = {0};
+	 ///int	message_len	  = 0;
+
+	  message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 	
 	
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up04\\\"\\,\\\"params\\\":{\\\"open\\\":%d}}\"\r\n",open);
@@ -271,8 +282,10 @@ static void property_report_SetOpen(uint8_t open)
 ********************************************************************************/
 static void property_report_SetSonic(uint8_t datsonic)
 {
-     char	message[128]    = {0};
-	 int	message_len	  = 0;
+     //char	message[128]    = {0};
+	 ///int	message_len	  = 0;
+
+	  message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 	
 	
 	message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up02\\\"\\,\\\"params\\\":{\\\"sonic\\\":%d}}\"\r\n"
@@ -293,8 +306,9 @@ static void property_report_SetSonic(uint8_t datsonic)
 ********************************************************************************/
 static void property_report_SetAnion(uint8_t datanion)
 {
-     char	message[128]    = {0};
-	 int	message_len	  = 0;
+     //char	message[128]    = {0};
+	 //int	message_len	  = 0;
+	 message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 	
 	
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up03\\\"\\,\\\"params\\\":{\\\"Anion\\\":%d}}\"\r\n"
@@ -315,8 +329,9 @@ static void property_report_SetAnion(uint8_t datanion)
 ********************************************************************************/
 static void property_report_SetPtc(uint8_t datptc)
 {
-     char	message[128]    = {0};
-	 int	message_len	  = 0;
+     //char	message[128]    = {0};
+	 ///int	message_len	  = 0;
+	  message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 	
 	
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up04\\\"\\,\\\"params\\\":{\\\"ptc\\\":%d}}\"\r\n"
@@ -340,8 +355,9 @@ static void property_report_SetPtc(uint8_t datptc)
 ********************************************************************************/
 static void property_report_SetFan(uint8_t fan)
 {
-     char	message[128]    = {0};
-	 int	message_len	  = 0;
+     //char	message[128]    = {0};
+	 ///int	message_len	  = 0;
+	  message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 	
 	
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up05\\\"\\,\\\"params\\\":{\\\"find\\\":%d}}\"\r\n",fan);
@@ -362,8 +378,10 @@ static void property_report_SetFan(uint8_t fan)
 static void property_report_SetTime(uint8_t time)
 {
 
-	char   message[128]    = {0};
-	int    message_len	 = 0;
+	//char   message[128]    = {0};
+	///int    message_len	 = 0;
+
+	 message[0] = '\0'; // 只需将第一个字符设为结束符，逻辑上就成了空字符串
 	   
 	   
 	message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up05\\\"\\,\\\"params\\\":{\\\"find\\\":%d}}\"\r\n",
