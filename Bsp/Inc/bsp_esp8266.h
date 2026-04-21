@@ -82,7 +82,7 @@ typedef struct ESP8266_DATA
 
 extern ESP8266DATATypedef net_t;
 
-void InitWifiModule(void);
+
 
 
 

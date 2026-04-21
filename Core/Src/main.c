@@ -8,7 +8,8 @@
   *
   * version: 1.0  compatible older and new PCB .in "main.h"
   *    #define NEW_PCB  ON/OFF.DATA.2026-04-07
-  *
+  *  data:2026-04-21 : add auto check wifi is not connect is success .
+  *                    reconnect wifi function .
   *
   * 
   *

@@ -36,8 +36,10 @@ static uint8_t wifi_link_net_fun(void)
 void confirm_wifi_link_net_state(void)
 {
 
-//   HAL_UART_Transmit(&huart2, "AT+TCMQTTSTATE?\r\n", strlen("AT+TCMQTTSTATE?\r\n"), 5000);
+   //HAL_UART_Transmit(&huart2, "AT+TCMQTTSTATE?\r\n", strlen("AT+TCMQTTSTATE?\r\n"), 5000);
 
+	at_send_data((const uint8_t *)"AT+TCMQTTSTATE?\r\n", strlen("AT+TCMQTTSTATE?\r\n"));
+    tx_thread_sleep(100);
 
 }
 

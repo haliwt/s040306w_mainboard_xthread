@@ -144,40 +144,40 @@ uint8_t DHT11_Read_TempAndHumidity(DHT11_Data_TypeDef *DHT11_Data)
 	/*?????????????? ???????,???????*/   
 	if(DHT11_Data_IN()==Bit_RESET)     
 	{
-    /*???????? ?80us ??? ??????*/  
-    while(DHT11_Data_IN()==Bit_RESET);
+		/*???????? ?80us ??? ??????*/  
+		while(DHT11_Data_IN()==Bit_RESET);
 
-    /*????????? 80us ??? ??????*/
-    while(DHT11_Data_IN()==Bit_SET);
+		/*????????? 80us ??? ??????*/
+		while(DHT11_Data_IN()==Bit_SET);
 
-    /*??????*/   
-    DHT11_Data->humi_high8bit= DHT11_ReadByte();
-    DHT11_Data->humi_low8bit = DHT11_ReadByte();
-    DHT11_Data->temp_high8bit= DHT11_ReadByte();
-    DHT11_Data->temp_low8bit = DHT11_ReadByte();
-    DHT11_Data->check_sum    = DHT11_ReadByte();
+		/*??????*/   
+		DHT11_Data->humi_high8bit= DHT11_ReadByte();
+		DHT11_Data->humi_low8bit = DHT11_ReadByte();
+		DHT11_Data->temp_high8bit= DHT11_ReadByte();
+		DHT11_Data->temp_low8bit = DHT11_ReadByte();
+		DHT11_Data->check_sum    = DHT11_ReadByte();
 
-    /*????,????????*/
-    DHT11_Mode_Out_PP();
-    /*????*/
-    DHT11_Dout_HIGH();
-    
-    /* ??????? */
-    humi_temp=DHT11_Data->humi_high8bit*100+DHT11_Data->humi_low8bit;
-    DHT11_Data->humidity =(float)humi_temp/100;
-    
-    humi_temp=DHT11_Data->temp_high8bit*100+DHT11_Data->temp_low8bit;
-    DHT11_Data->temperature=(float)humi_temp/100;    
-    
-    /*???????????*/
-    temp = DHT11_Data->humi_high8bit + DHT11_Data->humi_low8bit + 
-           DHT11_Data->temp_high8bit+ DHT11_Data->temp_low8bit;
-    if(DHT11_Data->check_sum==temp)
-    { 
-      return SUCCESS;
-    }
-    else 
-      return ERROR;
+		/*????,????????*/
+		DHT11_Mode_Out_PP();
+		/*????*/
+		DHT11_Dout_HIGH();
+		
+		/* ??????? */
+		humi_temp=DHT11_Data->humi_high8bit*100+DHT11_Data->humi_low8bit;
+		DHT11_Data->humidity =(float)humi_temp/100;
+		
+		humi_temp=DHT11_Data->temp_high8bit*100+DHT11_Data->temp_low8bit;
+		DHT11_Data->temperature=(float)humi_temp/100;    
+		
+		/*???????????*/
+		temp = DHT11_Data->humi_high8bit + DHT11_Data->humi_low8bit + 
+			DHT11_Data->temp_high8bit+ DHT11_Data->temp_low8bit;
+		if(DHT11_Data->check_sum==temp)
+		{ 
+		return SUCCESS;
+		}
+		else 
+		return ERROR;
 	}	
 	else
 		return ERROR;

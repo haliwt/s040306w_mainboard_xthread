@@ -124,8 +124,7 @@ void power_on_handler(void)
     
 		  MqttData_Publish_Init();
 		  tx_thread_sleep(200);
-     }
-	 else if(gctl_t.app_timer_power_on_flag == 1){
+     } else if(gctl_t.app_timer_power_on_flag == 1){
 
            	gctl_t.set_wind_speed_value=100;
             MqttData_Publis_SetFan(gctl_t.set_wind_speed_value);//WT.EDIT 2025.12.19
@@ -133,6 +132,7 @@ void power_on_handler(void)
             MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
 
 	 }
+	
      	
     read_sensorData();
     gctl_t.gTimer_senddata_panel = 8;

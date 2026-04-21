@@ -236,6 +236,7 @@ void USART2_IRQHandler(void)
 {
 
  /* USER CODE BEGIN USART2_IRQn 0 */
+ //wifi USART2
  volatile uint8_t data;
 
   if(LL_USART_IsActiveFlag_RXNE_RXFNE(USART2)){

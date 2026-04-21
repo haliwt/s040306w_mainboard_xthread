@@ -445,7 +445,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
     case 6:
 
   
-       //confirm_wifi_link_net_state();
+       confirm_wifi_link_net_state(); //WT.EDIT 2026-04-21
     
 
        wifi_t.gTimer_auto_detected_net_state_times=0;  

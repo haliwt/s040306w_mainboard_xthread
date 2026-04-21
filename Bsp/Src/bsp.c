@@ -214,20 +214,14 @@ static void Auto_SmartPhone_TryToLink_TencentCloud(void)
 	   gpro_t.gTimer_power_on_first_link_tencent=0;
        power_on_login_tencent_cloud_flag++;
 
-	   readFlash_value = read_flash_value();
-	   if(readFlash_value == 0x00000001){
+	  // readFlash_value = read_flash_value();
+	  // if(readFlash_value == 0x00000001){
 	      // HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 0xffff);//??
 	       at_send_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
-		   tx_thread_sleep(1000);//HAL_Delay(1000);
-	   }
-	   else{
-	        SendWifiData_To_Cmd(0x1F,0x00);
-			tx_thread_sleep(10);
-
-
-	   }
+		   tx_thread_sleep(2000);//HAL_Delay(1000);
+	   
 	  
-	}
+	 }
    
    if(wifi_link_net_state()==1 && power_on_login_tencent_cloud_flag ==4){
 			//wifi_t.linking_tencent_cloud_doing =0;

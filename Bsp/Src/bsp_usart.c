@@ -335,18 +335,18 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		     gpro_t.power_off_run_step=1;
              gpro_t.gpower_on = power_off;
 			 PTC_SetLow();
-              if(gpro_t.soft_version ==2){
-                SendWifiData_Answer_Cmd(0x01,0x0); //power off .
-                tx_thread_sleep(100); 
-              }
-              else{
+             
+              SendWifiData_Answer_Cmd(0x01,0x0); //power off .
+              tx_thread_sleep(100); 
+			  SendWifiData_Answer_Cmd(0x01,0x02); //compatible older version 
+	           tx_thread_sleep(100);
+           
 			  	
-			    SendWifiData_Answer_Cmd(0x01,0x02); //compatible older version 
-	            tx_thread_sleep(100);
+			
 			     
               }
       
-       }
+       
 
      break;
 

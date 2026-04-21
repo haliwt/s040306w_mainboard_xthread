@@ -65,23 +65,6 @@ uint8_t at_send_data(const uint8_t* pdata, uint16_t len)
 *Return Ref:NO
 *
 ****************************************************************************************************/
-void InitWifiModule(void)
-{
-	
-	if(gctl_t.wifi_config_net_lable==0){
-		 gctl_t.wifi_config_net_lable++;
-			
-			//WIFI_IC_ENABLE();
-	
-	
-			//at_send_data("AT+RST\r\n", strlen("AT+RST\r\n"));
-
-	     USART2_DMA_Send((uint8_t*)"AT+RST\r\n", strlen("AT+RST\r\n"));
-		 tx_thread_sleep(1000);//HAL_Delay(1000);
-	}
-		
-}
-
 
 
 
