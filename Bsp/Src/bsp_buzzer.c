@@ -32,7 +32,7 @@ void buzzer_sound_once(void)
 {
    
    tim3_buzzer_sound_config();
-   //LL_mDelay(1);//tx_thread_sleep(1);
+   //beep_delay_ms(20);
    delay_ms(20);
    tim3_stop_buzzer_sound_config();
    LL_TIM_DisableCounter(TIM3);

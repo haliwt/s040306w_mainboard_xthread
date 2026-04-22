@@ -99,7 +99,8 @@ void SysTick_Handler(void)
  */
 void delay_us(uint32_t us)
 {
-  uint32_t ticks = us * (SystemCoreClock / 1000000); // 目标时钟周期数
+  #if 0
+   uint32_t ticks = us * (SystemCoreClock / 1000000); // 目标时钟周期数
     uint32_t told = SysTick->VAL;
     uint32_t tnow, tcnt = 0;
     uint32_t reload = SysTick->LOAD;
@@ -116,6 +117,28 @@ void delay_us(uint32_t us)
             told = tnow;
         }
     }
+	#else 
+	
+	uint32_t start = SysTick->VAL;
+	uint32_t ticks = us * (SystemCoreClock / 1000000);	 // 64 ticks = 1us
+	uint32_t reload = SysTick->LOAD;
+	uint32_t now;
+	uint32_t elapsed = 0;
+
+	while (elapsed < ticks)
+	{
+		now = SysTick->VAL;
+
+		if (now <= start)
+			elapsed += start - now; 		 // 正常递减
+		else
+			elapsed += start + (reload - now); // SysTick 重装载
+
+		start = now;
+	}
+
+
+	#endif 
 
 }
 
