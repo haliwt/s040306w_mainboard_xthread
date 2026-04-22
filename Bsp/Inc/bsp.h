@@ -73,6 +73,7 @@
 
 #define DEBUG_FLAG        Enable_EventRecorder //(Enable_EventRecorder? 1:0)
 
+#define DEBUG_ENABLE      1
 
 #define WIFI_RX_NUMBERS         1
 

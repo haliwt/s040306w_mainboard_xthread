@@ -6,9 +6,19 @@
 /***********************************************************************************************************
 											函数声明
 ***********************************************************************************************************/
-#define STACK_SIZE_ONE  1792//3072//2048//1024//896//768
+// 使用数组对齐，确保 8 字节对齐
+#define ALIGN_8BYTE(size) (((size) + 7) & ~7)
+
+// 建议将堆栈大小适当调大一点点，或者使用预留在 RAM 最后的区域
+//static uint64_t stack_msg_pro_ptr[ALIGN_8BYTE(STACK_SIZE_ONE) / 8];
+//static uint64_t stack_start_pro_ptr[ALIGN_8BYTE(STATC_SIZE_TWO) / 8];
+
+
+
+#define STACK_SIZE_ONE  1536//1792//3072//2048//1024//896//768
 #define STATC_SIZE_TWO  512//256
 
+/*在 ThreadX 里，优先级数字越小，优先级越高：*/
 
 static TX_THREAD thread_msg;
 static TX_THREAD thread_start;
@@ -38,7 +48,8 @@ volatile uint8_t tx_error_flag,counter_flag;
 
 static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr);
 
-
+static void debug_stack_check(void);
+ULONG unused =0;
 /**
  * @brief  :  static void vTaskStart(void *pvParameters
  * @note    
@@ -48,7 +59,7 @@ static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr);
 
 void tx_application_define(void *first_unused_memory)
 {
-   //tx_thread_stack_error_notify(tx_thread_stack_error_handler);
+   tx_thread_stack_error_notify(tx_thread_stack_error_handler);
 
     // 创建线程、信号量、事件组、队列
      threadx_handler();
@@ -81,8 +92,12 @@ void tx_application_define(void *first_unused_memory)
 	     power_run_handler();
        
          wifi_run_handler();
+         #if DEBUG_ENABLE
+		   debug_stack_check();
 
-        
+		 #endif 
+
+         LL_IWDG_ReloadCounter(IWDG);
 		 tx_thread_sleep(20);//100
 		
 	}
@@ -135,28 +150,28 @@ void threadx_handler(void)
 //					uart1_rx_queue_buffer,
 //					sizeof(uart1_rx_queue_buffer));
   
-	tx_thread_create(&thread_msg,                    /* 任务控制块地址 */ 
- 	                 "MsgPro",                    /* 任务名 */
-                     vTaskMsgPro,                 /* 启动任务函数地址 */
-                     0,                           /* 传递给任务的参数 */
+	tx_thread_create(&thread_msg,                  /* 任务控制块地址 */ 
+ 	                 "MsgPro",                     /* 任务名 */
+                     vTaskMsgPro,                  /* 启动任务函数地址 */
+                     0,                            /* 传递给任务的参数 */
                      stack_msg_pro,                /* 堆栈基地址 */
                      STACK_SIZE_ONE,               /* 堆栈空间大小 */ 
-                     1,								/* 任务优先级*/
-                     1,								/* 任务抢占阀值 */
-                     TX_NO_TIME_SLICE,               /* 不开启时间片 */
-                     TX_AUTO_START);                /* 创建后立即启动 */
+                     1,							   /* 任务优先级*/
+                     1,							   /* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
+                     TX_NO_TIME_SLICE,             /* 不开启时间片 */
+                     TX_AUTO_START);               /* 创建后立即启动 */
  #if 1
 
-    tx_thread_create(&thread_start,           /* 任务控制块地址 */    
-    				 "Start",                 /* 任务名 */
-                     vTaskStart,               /* 启动任务函数地址 */
-                     0,                       /* 传递给任务的参数 */
-                     stack_start_pro,         /* 堆栈基地址 */
-                     STATC_SIZE_TWO,			/* 堆栈空间大小 */  
-                     0, 						/* 任务优先级*/
-                     0, 						/* 任务抢占阀值 */
-                     TX_NO_TIME_SLICE, 			/* 不开启时间片 */
-                     TX_AUTO_START);             /* 创建后立即启动 */
+    tx_thread_create(&thread_start,                /* 任务控制块地址 */    
+    				 "Start",                      /* 任务名 */
+                     vTaskStart,                   /* 启动任务函数地址 */
+                     0,                            /* 传递给任务的参数 */
+                     stack_start_pro,              /* 堆栈基地址 */
+                     STATC_SIZE_TWO,			   /* 堆栈空间大小 */  
+                     0, 						   /* 任务优先级*/
+                     0, 						   /* 任务抢占阀值 */
+                     TX_NO_TIME_SLICE, 			   /* 不开启时间片 */
+                     TX_AUTO_START);               /* 创建后立即启动 */
   #endif 
 
 
@@ -252,6 +267,23 @@ static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr)
      tx_error_flag ++;
     // 或者进入安全模式
 }
+#if DEBUG_ENABLE
+static void debug_stack_check(void)
+{
+    ULONG i;
+   // ULONG unused = 0;
+   ULONG temp_unused = 0; // 使用局部变量进行统计
+    // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
+    for (i = 0; i < STACK_SIZE_ONE; i++)
+    {
+        if (stack_msg_pro[i] == 0xEF)
+            temp_unused++;
+        else
+            break; 
+    }
+	unused = temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+    // 剩下的 unused 就是你安全的“护城河”
+    // 如果 unused < 100 字节，你的 G030 就危险了！
+}
 
-
-
+#endif 
