@@ -161,9 +161,6 @@ void SystemClock_Config(void)
   /* Update CMSIS variable (which can be updated also through SystemCoreClockUpdate function) */
   LL_SetSystemCoreClock(64000000);
 
-   /* 让 SysTick 使用 HCLK = 64MHz */
-   SysTick->CTRL |= SysTick_CTRL_CLKSOURCE_Msk;
-
    /* Update the time base */
   if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
   {

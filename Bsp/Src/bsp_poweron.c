@@ -618,7 +618,7 @@ void power_off_handler(void)
 			Publish_Data_Warning(fan_warning,0);
 			tx_thread_sleep(200);
 			
-          }
+            }
         gpro_t.power_off_run_step = 6;
       break;
 

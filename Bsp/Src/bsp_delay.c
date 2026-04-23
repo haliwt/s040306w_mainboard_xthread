@@ -124,6 +124,7 @@ void delay_us(uint32_t us)
 	uint32_t reload = SysTick->LOAD;
 	uint32_t now;
 	uint32_t elapsed = 0;
+	 SysTick->CTRL |= SysTick_CTRL_ENABLE_Msk;
 
 	while (elapsed < ticks)
 	{

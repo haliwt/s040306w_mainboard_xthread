@@ -79,4 +79,18 @@ static void beep_delay_ms(uint32_t ms)
     }
 }
 
+#if 0
+void delay_us_nop(uint32_t us) 
+{
+    // 64MHz 频率下，1us 约执行 64 个时钟周期
+    // 扣除循环跳转开销，这里大约取 12~16 次循环
+    uint32_t delay = us * 12; 
+    while (delay--) {
+        __NOP(); 
+		__NOP(); 
+	    __NOP();
+		__NOP();
+    }
+}
 
+#endif 
