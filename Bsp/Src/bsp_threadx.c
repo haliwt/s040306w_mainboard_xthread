@@ -43,13 +43,15 @@ static void wifi_run_handler(void);
 static void power_run_handler(void);
 
 
-volatile uint8_t tx_error_flag,counter_flag;
+volatile uint8_t tx_error_flag;
 
 
 static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr);
-
+#if DEBUG_ENABLE
 static void debug_stack_check(void);
 ULONG unused =0;
+
+#endif 
 /**
  * @brief  :  static void vTaskStart(void *pvParameters
  * @note    
@@ -59,7 +61,11 @@ ULONG unused =0;
 
 void tx_application_define(void *first_unused_memory)
 {
-   tx_thread_stack_error_notify(tx_thread_stack_error_handler);
+   #if DEBUG_ENABLE
+     // --- 关键点：在创建任务之前填充魔术字 ---
+     memset(stack_msg_pro, 0xEF, sizeof(stack_msg_pro));
+   #endif 
+    tx_thread_stack_error_notify(tx_thread_stack_error_handler);
 
     // 创建线程、信号量、事件组、队列
      threadx_handler();
@@ -88,7 +94,7 @@ void tx_application_define(void *first_unused_memory)
 		
 
         }
-         counter_flag ++;
+     
 	     power_run_handler();
        
          wifi_run_handler();
@@ -98,7 +104,7 @@ void tx_application_define(void *first_unused_memory)
 		 #endif 
 
          LL_IWDG_ReloadCounter(IWDG);
-		 tx_thread_sleep(20);//100
+		 tx_thread_sleep(2);//10ms * 20 = 200ms
 		
 	}
       

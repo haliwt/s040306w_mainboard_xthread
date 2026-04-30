@@ -143,16 +143,16 @@ void wifi_auto_detected_link_state(void)
         
           if(gpro_t.gpower_on == power_off){
 		     MqttData_Publish_PowerOff_Ref();
-               tx_thread_sleep(200);//HAL_Delay(200);
+               tx_thread_sleep(20);//HAL_Delay(200);
 
           }
           
           Subscriber_Data_FromCloud_Handler();
-          tx_thread_sleep(200);//HAL_Delay(200);
+          tx_thread_sleep(20);//HAL_Delay(200);
          
 
           SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-          tx_thread_sleep(100);
+          tx_thread_sleep(10);
    }
    
    if(gpro_t.gTimer_power_on_auto_link  > 6 && link_counter_times < 3){
@@ -161,7 +161,7 @@ void wifi_auto_detected_link_state(void)
       link_counter_times =5;
       if(net_t.wifi_link_net_success==0){
          SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x0); //WT.EDIT 2025.04.02 0x1F: wifi link net is succes 
-         tx_thread_sleep(100);
+         tx_thread_sleep(10);
 
 	  }
 
@@ -188,7 +188,7 @@ static void Auto_InitWifiModule_Hardware(void)
        net_t.linking_tencent_cloud_doing = 1;
 	   //at_send_data("AT+RESTORE\r\n", strlen("AT+RESTORE\r\n")); //
 	   at_send_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
-	   tx_thread_sleep(1000);//HAL_Delay(1000);
+	   tx_thread_sleep(100);//HAL_Delay(1000);
 
 	}
 	if(gpro_t.gTimer_power_on_first_link_tencent > 2 &&  power_on_login_tencent_cloud_flag==1 ){
@@ -217,7 +217,7 @@ static void Auto_SmartPhone_TryToLink_TencentCloud(void)
 	  // if(readFlash_value == 0x00000001){
 	      // HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 0xffff);//??
 	       at_send_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
-		   tx_thread_sleep(2000);//HAL_Delay(1000);
+		   tx_thread_sleep(20);//HAL_Delay(1000);
 	   
 	  
 	 }
@@ -227,7 +227,7 @@ static void Auto_SmartPhone_TryToLink_TencentCloud(void)
 			net_t.linking_tencent_cloud_doing= 0;
             power_on_login_tencent_cloud_flag++;
             SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-            tx_thread_sleep(100);
+            tx_thread_sleep(10);
 	}
     else if(wifi_link_net_state()==0 && power_on_login_tencent_cloud_flag ==4){
        power_on_login_tencent_cloud_flag++;

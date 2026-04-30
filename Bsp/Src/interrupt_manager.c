@@ -49,8 +49,7 @@ void tim17_isr_callback_handler(void)
 
     tm0 ++ ;
       
-     
-	 if(tm0 > 99){//10ms *100 = 1000ms =1s
+    if(tm0 > 99){//10ms *100 = 1000ms =1s
         tm0 =0;
      
 	   gpro_t.gTimer_twohours_seconds_counter++;
