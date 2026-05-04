@@ -358,6 +358,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	
 			 gpro_t.rx_ptc_flag = 1;
 			 gctl_t.ptc_prohibit_on_flag=0;
+			 gpro_t.ptc_actiov_f++;
 			 
 			 if(gpro_t.stopTwoHours_flag==0){//two hours have a rest ten minutes .
 	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
@@ -380,6 +381,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	          gpro_t.rx_ptc_flag = 0;
 		      PTC_SetLow();
 			  gctl_t.ptc_prohibit_on_flag =1;
+			  gpro_t.ptc_actiov_f++;
 		  
           SendWifiData_Answer_Cmd(0x02,0x0); //
           tx_thread_sleep(10); 
@@ -581,48 +583,56 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	 break;
 
-	 case 0x18: //WT.EDIT 2026.03.02
+	 case 0x18: //WT.EDIT 2026.03.02 0x18:通知风扇关闭和打开--在休息10分钟后.
          if(pdata[3]==1){ // recach 2 hours fan stop
                gpro_t.fan_rx_stop_flag =1 ;
 			   gpro_t.stopTwoHours_flag=1;
+		       gpro_t.ptc_actiov_f++;
 		     
 			   gctl_t.gTimer_senddata_panel=0;
                FAN_Stop();
 			   PTC_SetLow(); //ptc off;
 			   PLASMA_SetLow() ; //plasma turn off.
                ultrasonic_close();
+			   SendWifiData_Answer_Cmd(0x18 ,0x01);//copy cmd
+			   tx_thread_sleep(100);
          }
-		 else{
-            gpro_t.fan_rx_stop_flag = 0;
-		    fan_full_run();//WT.EDIT 2026.01.26
-			if(gpro_t.rx_ptc_flag ==1 && gctl_t.ptc_prohibit_on_flag==0){
-			  	PTC_SetHigh();
+//		 else if(pdata[3]==0){
+//            gpro_t.fan_rx_stop_flag = 0;
+//		    fan_full_run();//WT.EDIT 2026.01.26
+//			if(gpro_t.rx_ptc_flag ==1 && gctl_t.ptc_prohibit_on_flag==0){
+//			  	PTC_SetHigh();
 				
-             }
-			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
-			 if(gctl_t.gUlransonic==1) ultrasonic_open();
-        }
+//             }
+//			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
+//			 if(gctl_t.gUlransonic==1) ultrasonic_open();
+//			  SendWifiData_Answer_Cmd(0x18 ,0x0);//copy cmd
+//			  tx_thread_sleep(100);
+//        }
 
 	 break;
 
 	  case 0x19: //works 2 hours ,then have a rest 10 minutes ->notice 
 
-	    if(pdata[3]==1){ // recach 2 hours 
+	    if(pdata[3]==1){ // works run four recach 2 hours 
 
            gpro_t.stopTwoHours_flag=1;
 	
-	
+	       gpro_t.ptc_actiov_f++;
 		   gctl_t.gTimer_senddata_panel =0;
 	
 		    PTC_SetLow(); //ptc off;
 			PLASMA_SetLow() ; //plasma turn off.
             ultrasonic_close();
+			SendWifiData_Answer_Cmd(0x19 ,0x01);//copy cmd
+			tx_thread_sleep(100);
 			
 		}
 		else if(pdata[3]==0){
-			  gpro_t.stopTwoHours_flag=0;//WT.EDIT 2026.01.26
+			   gpro_t.stopTwoHours_flag=0;//WT.EDIT 2026.01.26
 			   gpro_t.fan_rx_stop_flag =0 ;
 		       gctl_t.gTimer_senddata_panel=0;
+			   gpro_t.ptc_actiov_f++;
         
               if(gpro_t.rx_ptc_flag >1)gpro_t.rx_ptc_flag=1;//2026.02.27 WT.EDIT
               if(gctl_t.gPlasma > 1) gctl_t.gPlasma =1;
@@ -635,19 +645,21 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			  if(gctl_t.gPlasma==1)PLASMA_SetHigh();
 			  if(gctl_t.gUlransonic==1) ultrasonic_open();
 			 // Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
+			  SendWifiData_Answer_Cmd(0x19 ,0x0);//copy cmd
+			  tx_thread_sleep(100);
 			  
 		}
 	   
 
 	  break;
 
-  
-	  case 0x1B: //write set temperature value .data.2026.01.06
+
+      case 0x1B: //write set temperature value .data.2026.01.06
 	  
         if(pdata[3]== 0x01){
 		       gctl_t.ptc_prohibit_on_flag =0;
 			   gpro_t.rx_ptc_flag = 1;//gctl_t.gDry = 1;
-
+               gpro_t.ptc_actiov_f++;
 			   if(gpro_t.stopTwoHours_flag ==0){
 			       PTC_SetHigh();
 		        
@@ -768,7 +780,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			       PTC_SetLow();
 		       }
 
-		
+		      gpro_t.ptc_actiov_f++;
 				   if(wifi_link_net_state()==1){
 					   MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
 					   tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(350);

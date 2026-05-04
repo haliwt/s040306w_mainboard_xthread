@@ -327,8 +327,9 @@ void ActionEvent_Handler(void)
 				tx_thread_sleep(10);
 
 	   }
-       else if(wifi_link_net_state()==1){
-              gpro_t.rx_ptc_flag =1 ;
+       else if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_actiov_f){//ptc_actiov_f = 0++
+             gpro_t.rx_ptc_flag=1 ;
+			ptc_default = gpro_t.ptc_actiov_f;
 
 			MqttData_Publish_SetPtc(0x01);
 			tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
@@ -346,8 +347,10 @@ void ActionEvent_Handler(void)
 				tx_thread_sleep(10);
 
 		}
-		else if(wifi_link_net_state()==1){//if(ptc_default!= get_ptc_value() && wifi_link_net_state()==1){
+		else if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_actiov_f){//if(ptc_default!= get_ptc_value() && wifi_link_net_state()==1){
 			gpro_t.rx_ptc_flag =0 ;
+
+			ptc_default = gpro_t.ptc_actiov_f;
 		    MqttData_Publish_SetPtc(0x0);
 			tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
 			

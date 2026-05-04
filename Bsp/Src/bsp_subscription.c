@@ -558,7 +558,7 @@ void Json_Parse_Command_Fun(void)
 			#endif 
 			gpro_t.phone_power_on_flag = 1; //ack_app_power_on;
 	       
-		    SendWifiData_To_Cmd(0x20,0x01); //smart phone is power on
+		    SendWifiData_To_Cmd(0x01,0x01); //smart phone is power on
 			tx_thread_sleep(10);//tx_thread_sleep(5);//HAL_Delay(5);
 			MqttData_Publish_SetOpen(1);  
 			tx_thread_sleep(20);//HAL_Delay(100);//tx_thread_sleep(100);//HAL_Delay(100);
@@ -590,10 +590,11 @@ void Json_Parse_Command_Fun(void)
 			
 			gpro_t.phone_power_on_flag = 2; //ack_app_power_on;
 	
-             SendWifiData_To_Cmd(0x20,0x0); //smart phone is power off
+             SendWifiData_To_Cmd(0x01,0x0); //smart phone is power off
              tx_thread_sleep(10);
 			 MqttData_Publish_SetOpen(0); 
 		     tx_thread_sleep(20);
+		
 			buzzer_temp_on=0;
 	
          
