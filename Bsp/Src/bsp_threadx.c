@@ -18,6 +18,17 @@
 #define STACK_SIZE_ONE  1536//1792//3072//2048//1024//896//768
 #define STATC_SIZE_TWO  512//256
 
+//static UCHAR stack_msg_pro[STACK_SIZE_ONE];
+//static UCHAR stack_start_pro[STATC_SIZE_TWO];
+
+
+
+
+__attribute__((aligned(8))) static UCHAR stack_msg_pro[STACK_SIZE_ONE];
+__attribute__((aligned(8))) static UCHAR stack_start_pro[STATC_SIZE_TWO];
+
+
+
 /*在 ThreadX 里，优先级数字越小，优先级越高：*/
 
 static TX_THREAD thread_msg;
@@ -29,8 +40,6 @@ TX_SEMAPHORE decoder_semaphore;
 //static uint8_t uart1_rx_queue_buffer[UART1_RX_BUF_SIZE * sizeof(uint8_t)];
 
 
-static UCHAR stack_msg_pro[STACK_SIZE_ONE];
-static UCHAR stack_start_pro[STATC_SIZE_TWO];
 
 static void vTaskMsgPro(ULONG thread_input);
 static void vTaskStart(ULONG thread_input);
@@ -163,7 +172,7 @@ void threadx_handler(void)
                      stack_msg_pro,                /* 堆栈基地址 */
                      STACK_SIZE_ONE,               /* 堆栈空间大小 */ 
                      1,							   /* 任务优先级*/
-                     1,							   /* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
+                     0,							   /* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
                      TX_NO_TIME_SLICE,             /* 不开启时间片 */
                      TX_AUTO_START);               /* 创建后立即启动 */
  #if 1
