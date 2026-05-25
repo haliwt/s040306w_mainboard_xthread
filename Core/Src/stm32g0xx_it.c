@@ -131,11 +131,21 @@ void DMA1_Channel2_3_IRQHandler(void)
   if(LL_DMA_IsActiveFlag_TC2(DMA1) != RESET) {
 		  LL_DMA_ClearFlag_TC2(DMA1);
 		  
+		  LL_DMA_DisableChannel(DMA1, LL_DMA_CHANNEL_2);//USART1 -> TX
+
+		  while(!LL_USART_IsActiveFlag_TC(USART1));
+
+		  LL_USART_ClearFlag_TC(USART1);
+
+		  LL_USART_DisableDMAReq_TX(USART1);
+
+		  gpro_t.usart1_dma_done = 1;
+		  
   	}
    else if(LL_DMA_IsActiveFlag_TC3(DMA1) != RESET) {
 		 LL_DMA_ClearFlag_TC3(DMA1);
 		 
-	 }
+	}
 	 
 
   /* USER CODE END DMA1_Channel2_3_IRQn 0 */
@@ -160,10 +170,11 @@ void DMA1_Ch4_5_DMAMUX1_OVR_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Ch4_5_DMAMUX1_OVR_IRQn 0 */
   if(LL_DMA_IsActiveFlag_TC4(DMA1)){
 	 LL_DMA_ClearFlag_TC4(DMA1);
-	 }
-    else if(LL_DMA_IsActiveFlag_TC5(DMA1)){
+   }
+   else if(LL_DMA_IsActiveFlag_TC5(DMA1)){
 	LL_DMA_ClearFlag_TC5(DMA1);
-  	}
+
+   }
   /* USER CODE END DMA1_Ch4_5_DMAMUX1_OVR_IRQn 0 */
   /* USER CODE BEGIN DMA1_Ch4_5_DMAMUX1_OVR_IRQn 1 */
 	

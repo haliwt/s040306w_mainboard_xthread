@@ -37,7 +37,7 @@
 #include "bsp_netparse.h"
 #include "bsp_usart.h"
 #include "bsp_usart_wifi.h"
-#include "bsp_dma_usart.h"
+#include "bsp_dma_usart1.h"
 #include "bsp_flash.h"
 
 
@@ -126,7 +126,7 @@ typedef struct PROCESS_T{
    uint8_t copy_cmd_notice_buff[10];
    //copy command 
    uint8_t set_temp_value_success;
- 
+   uint8_t usart1_dma_done;
  
 
 

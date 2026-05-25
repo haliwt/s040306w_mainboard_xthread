@@ -332,7 +332,7 @@ void ActionEvent_Handler(void)
 			ptc_default = gpro_t.ptc_actiov_f;
 
 			MqttData_Publish_SetPtc(0x01);
-			tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
+			tx_thread_sleep(20);////tx_thread_sleep(100);//HAL_Delay(350);
 	     	}
 		}
    	  
@@ -352,7 +352,7 @@ void ActionEvent_Handler(void)
 
 			ptc_default = gpro_t.ptc_actiov_f;
 		    MqttData_Publish_SetPtc(0x0);
-			tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
+			tx_thread_sleep(20);////tx_thread_sleep(100);//HAL_Delay(350);
 			
 		}
 		

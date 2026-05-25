@@ -548,7 +548,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
         
          //SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.07.28
 
-		 /// tx_thread_sleep(100);
+		 /// //tx_thread_sleep(100);
 		  
        break;
 	  
@@ -595,7 +595,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			   PLASMA_SetLow() ; //plasma turn off.
                ultrasonic_close();
 			   SendWifiData_Answer_Cmd(0x18 ,0x01);//copy cmd
-			   tx_thread_sleep(100);
+			   //tx_thread_sleep(100);
          }
 //		 else if(pdata[3]==0){
 //            gpro_t.fan_rx_stop_flag = 0;
@@ -607,7 +607,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 //			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
 //			 if(gctl_t.gUlransonic==1) ultrasonic_open();
 //			  SendWifiData_Answer_Cmd(0x18 ,0x0);//copy cmd
-//			  tx_thread_sleep(100);
+//			  //tx_thread_sleep(100);
 //        }
 
 	 break;
@@ -625,7 +625,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			PLASMA_SetLow() ; //plasma turn off.
             ultrasonic_close();
 			SendWifiData_Answer_Cmd(0x19 ,0x01);//copy cmd
-			tx_thread_sleep(100);
+			//tx_thread_sleep(100);
 			
 		}
 		else if(pdata[3]==0){
@@ -646,7 +646,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			  if(gctl_t.gUlransonic==1) ultrasonic_open();
 			 // Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
 			  SendWifiData_Answer_Cmd(0x19 ,0x0);//copy cmd
-			  tx_thread_sleep(100);
+			  //tx_thread_sleep(100);
 			  
 		}
 	   
@@ -916,7 +916,7 @@ void USART1_IRQHandler(void)
   
   /* USER CODE BEGIN USART1_IRQn 1 */
 	 // 清除错误标志
-  
+      LL_USART_ClearFlag_ORE(USART1);
     if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
     if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
   /* USER CODE END USART1_IRQn 1 */

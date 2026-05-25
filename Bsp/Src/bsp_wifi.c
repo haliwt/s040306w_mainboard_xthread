@@ -75,11 +75,11 @@ void link_wifi_net_handler(void)
 
             case 1:
                // WIFI_IC_ENABLE();
-                tx_thread_sleep(100);
+                //tx_thread_sleep(100);
                at_send_data((const uint8_t *)"AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
-                tx_thread_sleep(100);
+                //tx_thread_sleep(100);
                 gctl_t.randomName[0]=HAL_GetUIDw0();
-			    tx_thread_sleep(100);
+			    //tx_thread_sleep(100);
                 gpro_t.gTimer_link_net_timer_time = 0;
 		
                 
@@ -96,7 +96,7 @@ void link_wifi_net_handler(void)
             			
                         sprintf((char *)device_massage, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,gctl_t.randomName[0]);
             			at_send_data(device_massage, strlen((const char *)device_massage));
-            	  		tx_thread_sleep(100);
+            	  		//tx_thread_sleep(100);
                       
                        gpro_t.link_net_step = 3;
 
@@ -112,7 +112,7 @@ void link_wifi_net_handler(void)
                   
                 at_send_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
 
-			    tx_thread_sleep(100);
+			    //tx_thread_sleep(100);
 			
                
                   gpro_t.link_net_step = 4;
@@ -158,7 +158,7 @@ void link_wifi_net_handler(void)
             net_t.soft_ap_config_success=0;
  //           HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 5000);//å¼?å§‹è¿žæŽ?
             at_send_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
-			tx_thread_sleep(100);
+			//tx_thread_sleep(100);
 	
 	         gpro_t.link_net_step = 7;
             gpro_t.gTimer_link_net_timer_time = 0;

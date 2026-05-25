@@ -365,7 +365,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
 
     		
     		Get_BeiJing_Time_Cmd();
-    	    tx_thread_sleep(10);//tx_thread_sleep(100);//HAL_Delay(20); //WT.EDIT .2024.08.10//HAL_Delay(20);
+    	    tx_thread_sleep(10);////tx_thread_sleep(100);//HAL_Delay(20); //WT.EDIT .2024.08.10//HAL_Delay(20);
     	    beijing_step =1;
          
          break;
@@ -377,7 +377,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
         		gpro_t.wifi_rx_data_counter =0;
         		Get_Beijing_Time();
               
-        	    tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(20); //WT.EDIT .2024.08.10
+        	    tx_thread_sleep(20);////tx_thread_sleep(100);//HAL_Delay(20); //WT.EDIT .2024.08.10
                 
         	
                 beijing_step =2;
@@ -404,9 +404,11 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
 
                     gpro_t.gTimer_works_time_seconds = real_seconds;
                     gpro_t.get_beijing_time_success = 1;
-
-                    SendWifiData_To_PanelTime(gpro_t.disp_works_hours,gpro_t.disp_works_minutes,gpro_t.gTimer_works_time_seconds);
-                    tx_thread_sleep(10);//tx_thread_sleep(50);
+                    if(gpro_t.usart1_dma_done ==1){
+						gpro_t.usart1_dma_done =0;
+                        SendWifiData_To_PanelTime(gpro_t.disp_works_hours,gpro_t.disp_works_minutes,gpro_t.gTimer_works_time_seconds);
+                    //tx_thread_sleep(10);//tx_thread_sleep(50);
+                    }
 
                    gpro_t.get_beijing_flag = 6; //WT.EDIT 2025.01.06
                     

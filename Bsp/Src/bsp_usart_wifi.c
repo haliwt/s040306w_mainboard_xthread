@@ -63,7 +63,8 @@ void USART2_DMA_Send(uint8_t *txBuf,uint16_t txlen)
    
     LL_DMA_EnableChannel(DMA1,LL_DMA_CHANNEL_4);
 
-	 LL_DMA_ClearFlag_TC5(DMA1);//TC5 -> clear transfer complete flag
+	 LL_DMA_ClearFlag_TC4(DMA1);//TC5 -> clear transfer complete flag
+	 LL_DMA_ClearFlag_TE4(DMA1);
 
     LL_USART_EnableDMAReq_TX(USART2);
 

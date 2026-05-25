@@ -9,32 +9,25 @@
 // 使用数组对齐，确保 8 字节对齐
 #define ALIGN_8BYTE(size) (((size) + 7) & ~7)
 
-// 建议将堆栈大小适当调大一点点，或者使用预留在 RAM 最后的区域
-//static uint64_t stack_msg_pro_ptr[ALIGN_8BYTE(STACK_SIZE_ONE) / 8];
-//static uint64_t stack_start_pro_ptr[ALIGN_8BYTE(STATC_SIZE_TWO) / 8];
 
 
-
-#define STACK_SIZE_ONE  1536//1792//3072//2048//1024//896//768
-#define STATC_SIZE_TWO  512//256
-
-//static UCHAR stack_msg_pro[STACK_SIZE_ONE];
-//static UCHAR stack_start_pro[STATC_SIZE_TWO];
+#define STACK_SIZE_MSG  1536//1792//3072//2048//1024//896//768
+#define STATC_SIZE_DEC  512//256
 
 
-
-
-__attribute__((aligned(8))) static UCHAR stack_msg_pro[STACK_SIZE_ONE];
-__attribute__((aligned(8))) static UCHAR stack_start_pro[STATC_SIZE_TWO];
+__attribute__((aligned(8))) static UCHAR stack_msg_pro[STACK_SIZE_MSG];
+__attribute__((aligned(8))) static UCHAR stack_decoder_pro[STATC_SIZE_DEC];
 
 
 
 /*在 ThreadX 里，优先级数字越小，优先级越高：*/
 
 static TX_THREAD thread_msg;
-static TX_THREAD thread_start;
+static TX_THREAD thread_decoder;
 /* 定义信号量 */
 TX_SEMAPHORE decoder_semaphore;
+
+TX_TIMER beep_timer;
 /*队列*/
 //static TX_QUEUE uart1_rx_queue;
 //static uint8_t uart1_rx_queue_buffer[UART1_RX_BUF_SIZE * sizeof(uint8_t)];
@@ -42,7 +35,9 @@ TX_SEMAPHORE decoder_semaphore;
 
 
 static void vTaskMsgPro(ULONG thread_input);
-static void vTaskStart(ULONG thread_input);
+static void vTaskDecoderPro(ULONG thread_input);
+
+static void beep_timer_callback(ULONG input);
 
 
 /* 创建任务通信机制 */
@@ -125,7 +120,7 @@ void tx_application_define(void *first_unused_memory)
   * @param	 None
   * @retval  None
   */
- static void vTaskStart(ULONG thread_input)
+ static void vTaskDecoderPro(ULONG thread_input)
  {
    (void)thread_input;  /* 消除未使用的参数警告 */
   
@@ -159,35 +154,37 @@ void threadx_handler(void)
       /* 创建信号量 */
    tx_semaphore_create(&decoder_semaphore, "DecoderSemaphore", 0);
    
-//	tx_queue_create(&uart1_rx_queue,
-//					"Uart1RxQueue",
-//					TX_1_ULONG,   // 每个消息大小，这里用 1 字节
-//					uart1_rx_queue_buffer,
-//					sizeof(uart1_rx_queue_buffer));
   
 	tx_thread_create(&thread_msg,                  /* 任务控制块地址 */ 
  	                 "MsgPro",                     /* 任务名 */
                      vTaskMsgPro,                  /* 启动任务函数地址 */
                      0,                            /* 传递给任务的参数 */
                      stack_msg_pro,                /* 堆栈基地址 */
-                     STACK_SIZE_ONE,               /* 堆栈空间大小 */ 
+                     STACK_SIZE_MSG,               /* 堆栈空间大小 */ 
                      1,							   /* 任务优先级*/
                      0,							   /* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
                      TX_NO_TIME_SLICE,             /* 不开启时间片 */
                      TX_AUTO_START);               /* 创建后立即启动 */
- #if 1
 
-    tx_thread_create(&thread_start,                /* 任务控制块地址 */    
-    				 "Start",                      /* 任务名 */
-                     vTaskStart,                   /* 启动任务函数地址 */
+
+    tx_thread_create(&thread_decoder,                /* 任务控制块地址 */    
+    				 "decoderPro",                      /* 任务名 */
+                     vTaskDecoderPro,                   /* 启动任务函数地址 */
                      0,                            /* 传递给任务的参数 */
-                     stack_start_pro,              /* 堆栈基地址 */
-                     STATC_SIZE_TWO,			   /* 堆栈空间大小 */  
+                     stack_decoder_pro,              /* 堆栈基地址 */
+                     STATC_SIZE_DEC,			   /* 堆栈空间大小 */  
                      0, 						   /* 任务优先级*/
                      0, 						   /* 任务抢占阀值 */
                      TX_NO_TIME_SLICE, 			   /* 不开启时间片 */
                      TX_AUTO_START);               /* 创建后立即启动 */
-  #endif 
+
+	tx_timer_create(&beep_timer,	               /* timer of  block */
+					 "20msTimer",
+					 beep_timer_callback,      /*callback function */
+					 0,
+					 2, 				        /* 第一次延迟 20ms*/
+					 2, 				         /*周期 20 ticks*/
+					 TX_AUTO_ACTIVATE);           /* 创建后立即启动 */
 
 
  
@@ -273,6 +270,18 @@ void display_board_xtask_notice(void)
     // 投递到队列
    // tx_queue_send(&uart1_rx_queue, &data, TX_NO_WAIT);
 
+}
+
+void beep_timer_callback(ULONG input)
+{
+     (void) input ;
+	 buzzer_sound_close();
+
+}
+
+void open_beep_sound(void)
+{
+  tx_timer_activate(&beep_timer);
 }
 
 static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr)
