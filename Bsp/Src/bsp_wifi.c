@@ -179,7 +179,7 @@ void link_wifi_net_handler(void)
 			 
                 
                SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-               tx_thread_sleep(10);
+               tx_thread_sleep(1);
 			
 			    gpro_t.link_net_step = 8;
                
@@ -190,7 +190,7 @@ void link_wifi_net_handler(void)
                   gpro_t.wifi_led_fast_blink_flag=0;
                   gpro_t.link_net_step = 11;
                   SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x00) ;	 //Link wifi net is fail .WT.EDTI .2024.08.31
-                  tx_thread_sleep(10);
+                  tx_thread_sleep(1);
                   
                 }
                 

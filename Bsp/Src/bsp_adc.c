@@ -47,7 +47,7 @@ void adc_detected_hundler(void)
         Fan_Full_Speed();
 
        fan_detect_voltage=(adc_buffer[0] * 3300 )/4095;
-       tx_thread_sleep(10);
+       tx_thread_sleep(1);
 
 	   if(gpro_t.fan_counter_error > 10)gpro_t.fan_counter_error =0;
 
@@ -187,18 +187,18 @@ void fan_warning_sound(void)
 
 
            buzzer_sound();//Buzzer_KeySound();
-		   tx_thread_sleep(10);//tx_thread_sleep(100);
+		   tx_thread_sleep(1);//tx_thread_sleep(100);
 		   buzzer_sound();//Buzzer_KeySound();
-		   tx_thread_sleep(10);//tx_thread_sleep(100);
+		   tx_thread_sleep(1);//tx_thread_sleep(100);
 		   buzzer_sound();//Buzzer_KeySound();
-			tx_thread_sleep(10);//tx_thread_sleep(100);
+			tx_thread_sleep(1);//tx_thread_sleep(100);
 		   buzzer_sound();//Buzzer_KeySound();
-		   tx_thread_sleep(10);//tx_thread_sleep(100);
+		   tx_thread_sleep(1);//tx_thread_sleep(100);
 		   buzzer_sound();//Buzzer_KeySound();
-		   tx_thread_sleep(10);//tx_thread_sleep(100);
+		   tx_thread_sleep(1);//tx_thread_sleep(100);
           
            SendWifiData_To_Cmd(0x09, 0x01);
-           tx_thread_sleep(10);
+           tx_thread_sleep(1);
 	       if(wifi_link_net_state()==1){
 
               // MqttData_Publis_SetFan(0);

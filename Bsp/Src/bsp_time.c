@@ -171,7 +171,7 @@ static void CompareSetAndActualTemperature(void)
 			    PTC_SetLow();
 		        ptc_state = PTC_STATE_OFF;
 				SendData_Set_Command(0x22, 0x00); // close PTC
-				tx_thread_sleep(10);
+				tx_thread_sleep(1);
 			
 			    
 			return;
@@ -189,7 +189,7 @@ static void CompareSetAndActualTemperature(void)
 				   if(gpro_t.first_ptc_on ==1) gpro_t.first_ptc_on =2;
 				   SendData_Set_Command(0x22, 0x01); // open PTC
 
-				   tx_thread_sleep(10);
+				   tx_thread_sleep(1);
 				  
 
 
@@ -206,7 +206,7 @@ static void CompareSetAndActualTemperature(void)
 					ptc_state = PTC_STATE_ON;
 					SendData_Set_Command(0x22, 0x01); // open PTC
 
-					tx_thread_sleep(10);
+					tx_thread_sleep(1);
 				}
 			} 
         }
@@ -220,7 +220,7 @@ static void CompareSetAndActualTemperature(void)
 			    PTC_SetLow();
 				ptc_state = PTC_STATE_OFF;
 				SendData_Set_Command(0x22, 0x00); // close PTC
-				tx_thread_sleep(10);
+				tx_thread_sleep(1);
 			}
 		}
         
@@ -279,7 +279,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
     else{
 	 if(net_t.wifi_link_net_success ==0){
 	    SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x0); //WT.EDIT 2025.04.02 0x1F: wifi link net is succes 
-	    tx_thread_sleep(10);
+	    tx_thread_sleep(1);
 	 }
      gpro_t.get_beijing_flag = 1;
 
@@ -303,13 +303,13 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
       
                 net_t.linking_tencent_cloud_doing  =0; //receive from tencent command state .
                 SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01);
-                tx_thread_sleep(10);
+                tx_thread_sleep(1);
 
             }
             else{
               
                SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x0); //0x1F: 0x1=wifi link net is succes ,0x0 = wifi link net is fail
-               tx_thread_sleep(10);
+               tx_thread_sleep(1);
                gpro_t.get_beijing_flag = 10;
                net_t.linking_tencent_cloud_doing  =1; //receive from tencent command state .
                gpro_t.send_ack_cmd = 1; //ack_wifi_on;
@@ -365,7 +365,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
 
     		
     		Get_BeiJing_Time_Cmd();
-    	    tx_thread_sleep(10);//tx_thread_sleep(100);//HAL_Delay(20); //WT.EDIT .2024.08.10//HAL_Delay(20);
+    	    tx_thread_sleep(1);//tx_thread_sleep(100);//HAL_Delay(20); //WT.EDIT .2024.08.10//HAL_Delay(20);
     	    beijing_step =1;
          
          break;
@@ -406,7 +406,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
                     gpro_t.get_beijing_time_success = 1;
 
                     SendWifiData_To_PanelTime(gpro_t.disp_works_hours,gpro_t.disp_works_minutes,gpro_t.gTimer_works_time_seconds);
-                    tx_thread_sleep(10);//tx_thread_sleep(50);
+                    tx_thread_sleep(1);//tx_thread_sleep(50);
 
                    gpro_t.get_beijing_flag = 6; //WT.EDIT 2025.01.06
                     
@@ -467,7 +467,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
             net_t.linking_tencent_cloud_doing  =1; //receive from tencent command state .
             gpro_t.wifi_rx_data_counter=0;
             SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x0); //WT.EDIT 2025.04.02 0x1F: wifi link net is succes 
-            tx_thread_sleep(10);
+            tx_thread_sleep(1);
            
           }
           else{
@@ -475,7 +475,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
              net_t.linking_tencent_cloud_doing  =0; //receive from tencent command state .
              gpro_t.get_beijing_flag = 0;
 		     SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //WT.EDIT 2025.04.02 0x1F: wifi link net is succes 
-			 tx_thread_sleep(10);
+			 tx_thread_sleep(1);
           }
         
        }
@@ -498,7 +498,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
           //  WIFI_IC_ENABLE();
        
     		at_send_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
-            tx_thread_sleep(10);//HAL_Delay(1000);
+            tx_thread_sleep(1);//HAL_Delay(1000);
             wifi_t.gTimer_auto_link_net_time =0;
             auto_link_net_flag=1;
 
@@ -529,7 +529,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
    
 //	        HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 0xffff);//瀵�1�?7?婵绻涢幒?
             at_send_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
-            tx_thread_sleep(10);//HAL_Delay(1000);
+            tx_thread_sleep(1);//HAL_Delay(1000);
          
            
 		
@@ -573,13 +573,13 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
             //tx_thread_sleep(200);//HAL_Delay(200);
 
             SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //0x1F: wifi link net is succes 
-			tx_thread_sleep(10);
+			tx_thread_sleep(1);
              gpro_t.get_beijing_flag = 0;
 		
          }
          else{
 			 SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x0); //WT.EDIT 2025.04.02 0x1F: wifi link net is succes 
-			 tx_thread_sleep(10);
+			 tx_thread_sleep(1);
              gpro_t.get_beijing_flag = 10;
          }
 	   
