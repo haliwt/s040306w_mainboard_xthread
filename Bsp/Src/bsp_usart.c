@@ -108,7 +108,7 @@ typedef enum{
     fan_on_off = 0x0B,
 
      //notice no sound 
-    ack_power_on_off = 0x10,
+    //ack_power_on_off = 0x10,
     ack_ptc_on_off = 0x12,
     ack_plasma_on_ff= 0x13,
     ack_ultrasonic_on_off = 0x14,
@@ -314,7 +314,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				
 		        buzzer_sound();//buzzer_sound_fun();
 	            SendWifiData_Answer_Cmd(0x01,0x01);
-	            tx_thread_sleep(1);
+	            tx_thread_sleep(2);
 				
 				gpro_t.gpower_on = power_on;
 				fan_full_run();//WT.EDIT 2026.01.26
@@ -333,6 +333,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
              
               SendWifiData_Answer_Cmd(0x01,0x0); //power off .
               tx_thread_sleep(2); 
+			  
 			  SendWifiData_Answer_Cmd(0x01,0x02); //compatible older version 
 	           tx_thread_sleep(2);
            
@@ -340,6 +341,44 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
       
        
 
+     break;
+
+	 case 0x10: //power on or off ,don't buzzer sound .
+	 
+	 if(pdata[3] == 0x01){ //open
+                
+		if(gpro_t.gpower_on != power_on){
+
+			gpro_t.process_run_step=0;
+
+
+			SendWifiData_Answer_Cmd(0x01,0x01);
+			tx_thread_sleep(2);
+
+			gpro_t.gpower_on = power_on;
+			fan_full_run();//WT.EDIT 2026.01.26
+			PLASMA_SetHigh();
+			ultrasonic_open();   //ultrasnoic ON 
+			PTC_SetHigh();
+		}
+
+		}
+        else if(pdata[3] == 0x0){ //close 
+
+
+			if(gpro_t.gpower_on != power_off){
+				gpro_t.power_off_run_step=1;
+				gpro_t.gpower_on = power_off;
+				PTC_SetLow();
+
+				SendWifiData_Answer_Cmd(0x01,0x0); //power off .
+				tx_thread_sleep(2); 
+				SendWifiData_Answer_Cmd(0x01,0x02); //compatible older version 
+				tx_thread_sleep(2);
+
+			}
+           
+	    }
      break;
 
 	  case ptc_on_off: //PTC key of command .
@@ -474,41 +513,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		 
      break;
 
-	 case 0x10: //power on or off don't sound .
 
-	     if(gctl_t.app_timer_power_on_flag ==1) return ;
-	     if(pdata[3] == 0x01){ //open
-           
-		   gpro_t.process_run_step=0;
-	       gpro_t.gpower_on = power_on;
-		   SendWifiData_Answer_Cmd(0x10,0x01);
-	       tx_thread_sleep(1);
-		    fan_full_run();//WT.EDIT 2026.01.26
-		    if(gctl_t.app_timer_power_on_flag ==0){
-			    PLASMA_SetHigh();
-	             ultrasonic_open();   //ultrasnoic ON 
-	             PTC_SetHigh();
-
-		    }
-	         
-	    }
-        else if(pdata[3] == 0x0){ //close 
-
-			    PTC_SetLow(); //ptc off
-				PLASMA_SetLow() ; //plasma turn off.
-	            ultrasonic_close();
-			
-              SendWifiData_Answer_Cmd(0x10,0x0); //power off .
-              tx_thread_sleep(1); 
-      
-             gpro_t.power_off_run_step=1;
-             gpro_t.gpower_on = power_off;
-			 
-		     
-        }
-
-
-	 break;
 
       case 0x11:
 		    gpro_t.second_disp_flag = pdata[3];
