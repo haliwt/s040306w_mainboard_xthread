@@ -56,7 +56,7 @@ void tim17_isr_callback_handler(void)
 
         gpro_t.gTimer_link_net_timer_time++;
 
-        gctl_t.gTimer_fan_adc_times++;
+       
 	   gctl_t.gTimer_linkTencentCounter++;
 	
 	

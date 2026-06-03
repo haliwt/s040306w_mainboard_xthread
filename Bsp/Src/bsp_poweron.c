@@ -97,7 +97,7 @@ static void power_on_init_handler(void)
      
          gctl_t.set_temperature_value=40; //power on default set temperature value is 40 degree,don't compare
  
-		 gctl_t.gTimer_fan_adc_times=0;
+		
 		
 		 gctl_t.set_wind_speed_value= 100;
 		
@@ -723,7 +723,7 @@ void power_off_handler(void)
 		  gctl_t.ptc_warning =0;
 		  gctl_t.fan_warning =0;
        
-		 gctl_t.gTimer_fan_adc_times=0;
+
          gpro_t.process_run_step=0;//gpro_t.process_run_step
           gctl_t.rx_set_temp_flag=0; 
          gctl_t.set_temperature_flag = 0; 

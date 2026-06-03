@@ -42,8 +42,8 @@ uint16_t mean_fan_buf[SAMPLE_COUNT];
 void adc_detected_hundler(void)
 {
     if(gpro_t.fan_rx_stop_flag ==1  || gpro_t.stopTwoHours_flag ==1) return ;//WT.EDIT 2026.03.03
-    if(gctl_t.gTimer_fan_adc_times > 4 && gpro_t.stopTwoHours_flag ==0 && gpro_t.fan_warning_flag==0){ //detected 3 times is 60s 
-        gctl_t.gTimer_fan_adc_times =0;
+    if(gpro_t.stopTwoHours_flag ==0 && gpro_t.fan_warning_flag==0){ //detected 3 times is 60s 
+     
         Fan_Full_Speed();
 
        fan_detect_voltage=(adc_buffer[0] * 3300 )/4095;
