@@ -3,14 +3,13 @@
 
 
 // --- 1. 定义任务的时间周期（单位：毫秒，假设基础Tick为1ms） ---
-#define PERIOD_WIFI_STATE      300   // 10ms*300 = 30000ms = 3s
-#define PERIOD_WIFI_UPDATE     50   // ADC采样：50ms/次
-#define PERIOD_WORKS_HOURS     200  // 屏幕刷新：200ms/次
-#define PERIOD_FAN_ADC         1000 // 云端通讯：1000ms/次
-#define PERIOD_DHT11_READ      2000 // 温湿度读取：2000ms/次 (DHT11物理限制)
-#define PERIOD_WIFI_TEMP       300
-#define PERIOD_READ_DHT11      200
-#define PERIOD_FAN_SPEED       100
+#define PERIOD_WIFI_STATE      300    // 10ms*300 = 3000ms = 3s
+#define PERIOD_WIFI_UPDATE     200    // 10ms*200 = 2000ms = 2s
+#define PERIOD_WORKS_HOURS     150    //  10ms*150 = 1500ms = 1.5s
+#define PERIOD_FAN_ADC         250    //  10ms*250 = 2500ms = 2.5s
+#define PERIOD_WIFI_TEMP       500    //   10ms * 500 = 50000ms = 5s 
+#define PERIOD_READ_DHT11      100    //   10ms * 100 = 1000ms = 1s
+#define PERIOD_FAN_SPEED       130    //   10ms * 130 = 1300ms = 1.3s
 
 
 // --- 2. 定义分时任务控制结构体 ---
@@ -270,8 +269,7 @@ static void handler_wifi_state(void)
 	
 
 	counter++;
-	updateDht11_sensorData_toDisp();
-	tx_thread_sleep(1);
+
 
 	if(net_t.wifi_link_net_success ==1 && counter > 1 && gpro_t.soft_version == 0){ //WT.EDIT 2026.02.27
 		counter =0;
@@ -328,7 +326,7 @@ static void handler_wifi_update_data(void)
 			 gctl_t.first_link_tencent_cloud_flag++;
 
             Subscriber_Data_FromCloud_Handler();
-    	    tx_thread_sleep(1);
+    	    tx_thread_sleep(20);
 	    }
 		
 		   SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01);
@@ -389,7 +387,7 @@ static void handler_wifi_update_temp_humidity(void)
     
     if(wifi_link_net_state() ==1){
 			
-				Update_Dht11_Totencent_Value();
+		Update_Dht11_Totencent_Value();
      }
 	 
  }
@@ -421,6 +419,8 @@ static void handler_read_dht11(void)
     if(gctl_t.gPlasma > 1) gctl_t.gPlasma =1;
 	if(gctl_t.gUlransonic > 1) gctl_t.gUlransonic =1;
 	if(gpro_t.stopTwoHours_flag==0)gpro_t.fan_rx_stop_flag =0;
+
+	read_sensorData();
 
 }
 
