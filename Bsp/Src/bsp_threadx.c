@@ -15,17 +15,12 @@
 
 
 
-#define STACK_SIZE_ONE  1536//1792//3072//2048//1024//896//768
-#define STATC_SIZE_TWO  512//256
-
-//static UCHAR stack_msg_pro[STACK_SIZE_ONE];
-//static UCHAR stack_start_pro[STATC_SIZE_TWO];
+#define STACK_SIZE_UI   1536//1792//3072//2048//1024//896//768
+#define STACK_SIZE_DEC  512//256
 
 
-
-
-__attribute__((aligned(8))) static UCHAR stack_msg_pro[STACK_SIZE_ONE];
-__attribute__((aligned(8))) static UCHAR stack_start_pro[STATC_SIZE_TWO];
+__attribute__((aligned(8))) static UCHAR stack_msg_pro[STACK_SIZE_UI];
+__attribute__((aligned(8))) static UCHAR stack_start_pro[STACK_SIZE_DEC];
 
 
 
@@ -35,6 +30,9 @@ static TX_THREAD thread_msg;
 static TX_THREAD thread_start;
 /* 定义信号量 */
 TX_SEMAPHORE decoder_semaphore;
+
+TX_TIMER  buzzer_timer;
+
 /*队列*/
 //static TX_QUEUE uart1_rx_queue;
 //static uint8_t uart1_rx_queue_buffer[UART1_RX_BUF_SIZE * sizeof(uint8_t)];
@@ -43,6 +41,7 @@ TX_SEMAPHORE decoder_semaphore;
 
 static void vTaskMsgPro(ULONG thread_input);
 static void vTaskStart(ULONG thread_input);
+static void buzzer_timer_callback(ULONG input);
 
 
 /* 创建任务通信机制 */
@@ -170,7 +169,7 @@ void threadx_handler(void)
                      vTaskMsgPro,                  /* 启动任务函数地址 */
                      0,                            /* 传递给任务的参数 */
                      stack_msg_pro,                /* 堆栈基地址 */
-                     STACK_SIZE_ONE,               /* 堆栈空间大小 */ 
+                     STACK_SIZE_UI,               /* 堆栈空间大小 */ 
                      1,							   /* 任务优先级*/
                      1,							   /* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
                      TX_NO_TIME_SLICE,             /* 不开启时间片 */
@@ -182,14 +181,21 @@ void threadx_handler(void)
                      vTaskStart,                   /* 启动任务函数地址 */
                      0,                            /* 传递给任务的参数 */
                      stack_start_pro,              /* 堆栈基地址 */
-                     STATC_SIZE_TWO,			   /* 堆栈空间大小 */  
+                     STACK_SIZE_DEC,			   /* 堆栈空间大小 */  
                      0, 						   /* 任务优先级*/
                      0, 						   /* 任务抢占阀值 */
                      TX_NO_TIME_SLICE, 			   /* 不开启时间片 */
                      TX_AUTO_START);               /* 创建后立即启动 */
   #endif 
 
-
+    tx_timer_create(&buzzer_timer,
+    			    "BuzzerTimer",
+    			    buzzer_timer_callback,
+    			    0,
+    			    2,                           /*第一次延时 20ms*/
+    			    2,                           /* 周期是20tick*/
+    			    TX_NO_ACTIVATE);
+   
  
 }
 /*
@@ -199,7 +205,6 @@ void threadx_handler(void)
 *	形    参: 无
 *	返 回 值: 无
 **********************************************************************************************************/
-
 static void power_run_handler(void)
 {
     switch(gpro_t.gpower_on){ 
@@ -282,6 +287,19 @@ static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr)
      tx_error_flag ++;
     // 或者进入安全模式
 }
+
+void buzzer_timer_callback(ULONG input)
+{
+   (void)input;
+   buzzer_sound_close();
+}
+
+void buzzer_sound_open(void)
+{
+  tx_timer_activate(&buzzer_timer);
+}
+
+
 #if DEBUG_ENABLE
 static void debug_stack_check(void)
 {

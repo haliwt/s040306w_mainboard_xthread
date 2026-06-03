@@ -13,6 +13,7 @@ void display_board_xtask_notice(void);
 
 extern volatile uint8_t tx_error_flag;
 
+void buzzer_sound_open(void);
 
 
 #endif 

@@ -128,7 +128,7 @@ typedef struct Msg
     uint8_t   data_length;
 	uint8_t   rc_data_length;
 	uint8_t   total_data_length;
-    uint8_t   rx_end_code;
+ 
 	uint8_t   rx_total_numbers;
 	uint8_t   rx_data[4];
 	uint8_t   usData[12];
@@ -182,42 +182,23 @@ void usart1_isr_callback_handler(uint8_t data)
 	 break;
 
 	 case 1:
-			rx_data_counter++;
-			gl_tMsg.usData[rx_data_counter]=data;
 
-	        if(gl_tMsg.usData[rx_data_counter]==0x01 || gl_tMsg.usData[rx_data_counter]==0x02){
-			 
-				 rx_state = 2;
-			 }
-			 else{
-				rx_state = 0;
-				
-             }
-
-	 break;
-
-	 case 2:
-	    // if(gpro_t.decoder_success_flag==0){
-		 	
-		   rx_data_counter++;
+	       rx_data_counter++;
            gl_tMsg.usData[rx_data_counter]=data;
 		   
 		  if(gl_tMsg.usData[rx_data_counter]==0xFE && rx_data_counter> 4){
-		      rx_state = 3;
+		      rx_state = 2;
 		  }
 		 
      break;
 			 
-	 case 3:
+	 case 2:
 		       rx_data_counter++;
 	           gl_tMsg.usData[rx_data_counter]=data;
 			 
 	           rx_state = 0;
                gl_tMsg.rx_total_numbers = rx_data_counter;
-
-			   gl_tMsg.rx_end_code = 0;
-			   
-		       gpro_t.decoder_success_flag=1;
+                gpro_t.decoder_success_flag=1;
 
 			   gl_tMsg.bcc_check_code = data;
 
@@ -226,7 +207,7 @@ void usart1_isr_callback_handler(uint8_t data)
 	 break;
 
 	 default:
-	   rx_state =0;
+	  
 
 	 break;
 
@@ -508,8 +489,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
      break;
 
 	  case buzzer_sound_s: //buzzer sound command 
-          if(pdata[3] == 0x01)
-            buzzer_sound();
+          if(pdata[3] == 0x01)buzzer_sound();
+
+           
 		 
      break;
 
@@ -540,8 +522,12 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  break;
 	  
 	  case 0x16 : //buzzer sound command with answer .
+         if(pdata[3] == 0x01){
+		 	gpro_t.buzzer_sound_f =1;
+		 	buzzer_sound();
 
-        buzzer_sound();
+         }
+      
         
          //SendWifiData_Answer_Cmd(0x16,0x01); //WT.EDIT 2025.07.28
 
@@ -711,32 +697,26 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			     ptc_onoff_default++;
                  PTC_SetHigh();
 		   	
-//		         if(gpro_t.soft_version == 0x02){
-//					 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.07.28
-//			         tx_thread_sleep(pdMS_TO_TICKS(100));
-//		         }
+				#if 0
 				 if(ptc_set_wifi !=gpro_t.rx_ptc_flag){
 				 	ptc_set_wifi =gpro_t.rx_ptc_flag;
 					 if(wifi_link_net_state()==1){ 
-						  MqttData_Publish_SetPtc(0x01);
+						MqttData_Publish_SetPtc(0x01);
 						tx_thread_sleep(20);
 						
 					  }
 				 }
+				 #endif 
 		   	}   	
 	   }
        else if(pdata[3]== 0x0){
-	   	 if(gpro_t.stopTwoHours_flag >1 )gpro_t.stopTwoHours_flag=0; //This is be solved bug.
-		 if(gctl_t.ptc_prohibit_on_flag >1) gctl_t.ptc_prohibit_on_flag=0;
-		 
-               gpro_t.rx_ptc_flag =0 ;//gctl_t.gDry =0;
-               ptc_onoff_default++;
+	   	 
+		     gpro_t.rx_ptc_flag =0 ;//gctl_t.gDry =0;
+              ptc_onoff_default++;
 	    
 	          PTC_SetLow();
-         if(gpro_t.soft_version == 0x02){
-//		   SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.07.28
-//           tx_thread_sleep(pdMS_TO_TICKS(100));
-         	}
+
+		 #if 0
 		  if(ptc_set_wifi !=gpro_t.rx_ptc_flag){
 				 	ptc_set_wifi =gpro_t.rx_ptc_flag;
 		  if(wifi_link_net_state()==1){ 
@@ -744,7 +724,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			tx_thread_sleep(20);
 		  }
 		  }
-         
+         #endif 
 	  }
 	
    
@@ -900,9 +880,10 @@ void USART1_IRQHandler(void)
   
   /* USER CODE BEGIN USART1_IRQn 1 */
 	 // 清除错误标志
-    if (LL_USART_IsActiveFlag_ORE(USART1))  LL_USART_ClearFlag_ORE(USART1);
-    if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
-    if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
+  //  if (LL_USART_IsActiveFlag_ORE(USART1))  
+	LL_USART_ClearFlag_ORE(USART1);
+    //if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
+    ///if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
   /* USER CODE END USART1_IRQn 1 */
 }
 
@@ -913,7 +894,7 @@ void USART1_IRQHandler(void)
 **/
 void decoder_handler(void)
 {
-   // gpro_t.decoder_success_flag=0;
+    gpro_t.decoder_success_flag=0;
 	check_bcc_code = bcc_check(gl_tMsg.usData,gl_tMsg.rx_total_numbers);
 	if(check_bcc_code == gl_tMsg.bcc_check_code){
 		usart1_protocol_state_machine(gl_tMsg.usData);
