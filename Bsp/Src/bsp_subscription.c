@@ -614,7 +614,7 @@ void Json_Parse_Command_Fun(void)
 		 gpro_t.rx_ptc_flag = 1;//gctl_t.gDry=1;
 		 gctl_t.ptc_prohibit_on_flag =0; //WT.EDIT 2026.03-30
 
-		  gctl_t.gTimer_senddata_panel=8;  
+
 		  gctl_t.ptc_prohibit_on_flag = 0;
 		  gctl_t.set_temp_first_closeptc =0;
 		  gctl_t.rx_set_temp_flag =0;
@@ -645,7 +645,7 @@ void Json_Parse_Command_Fun(void)
          gctl_t.app_timer_power_on_flag = 0;
 	
         
-		 gctl_t.gTimer_senddata_panel=8;
+
 		 gctl_t.ptc_prohibit_on_flag = 1;
 		 gctl_t.set_temp_first_closeptc =0;
 		 gctl_t.rx_set_temp_flag =0;
@@ -669,7 +669,7 @@ void Json_Parse_Command_Fun(void)
 			 buzzer_sound();
 			
             gctl_t.gPlasma=0;
-			gctl_t.gTimer_senddata_panel=8;
+	
 			SendWifiData_To_Cmd(0x03,0x0);
 	  	   tx_thread_sleep(1);//HAL_Delay(5);
 	  	    MqttData_Publish_SetPlasma(0);
@@ -686,7 +686,7 @@ void Json_Parse_Command_Fun(void)
 			 buzzer_sound();
          
              gctl_t.gPlasma=1;
-              gctl_t.gTimer_senddata_panel=8;
+            
 			
 			SendWifiData_To_Cmd(0x03,0x01);
 	  	   tx_thread_sleep(1);//HAL_Delay(5);
@@ -704,7 +704,7 @@ void Json_Parse_Command_Fun(void)
 
           
               gctl_t.gUlransonic=0;
-             gctl_t.gTimer_senddata_panel=8; 
+       
 	
 			SendWifiData_To_Cmd(0x04,0x0);
 			tx_thread_sleep(1);//HAL_Delay(5);
@@ -722,7 +722,7 @@ void Json_Parse_Command_Fun(void)
 		     buzzer_sound();
            
               gctl_t.gUlransonic=1;
-              gctl_t.gTimer_senddata_panel=8;
+    
         
 		
 			SendWifiData_To_Cmd(0x04,0x01);

@@ -1,10 +1,61 @@
 #include "bsp.h"
 
 
+
+// --- 1. 定义任务的时间周期（单位：毫秒，假设基础Tick为1ms） ---
+#define PERIOD_WIFI_STATE      300   // 10ms*300 = 30000ms = 3s
+#define PERIOD_WIFI_UPDATE     50   // ADC采样：50ms/次
+#define PERIOD_WORKS_HOURS     200  // 屏幕刷新：200ms/次
+#define PERIOD_FAN_ADC         1000 // 云端通讯：1000ms/次
+#define PERIOD_DHT11_READ      2000 // 温湿度读取：2000ms/次 (DHT11物理限制)
+#define PERIOD_WIFI_TEMP       300
+#define PERIOD_READ_DHT11      200
+#define PERIOD_FAN_SPEED       100
+
+
+// --- 2. 定义分时任务控制结构体 ---
+typedef struct {
+    uint32_t last_tick;        // 记录上一次真正运行时的系统绝对时间戳
+    //uint32_t counter;       // 时间计数器
+    uint32_t period;        // 任务运行周期
+    void (*task_handler)(void); // 任务函数指针
+} TimeSharingTask_t;
+
+static void handler_wifi_state(void);
+static void handler_wifi_update_data(void);
+static void handler_works_hours(void);
+static void handler_fan_adc(void);
+static void handler_wifi_update_temp_humidity(void);
+static void handler_read_dht11(void);
+static void handler_fan_speed_state(void);
+
+
+
+
+
+// --- 4. 初始化分时任务表 ---
+TimeSharingTask_t g_tasks[] = {
+    {0, PERIOD_WIFI_STATE,       handler_wifi_state},
+    {0, PERIOD_WIFI_UPDATE,      handler_wifi_update_data},
+    {0, PERIOD_WORKS_HOURS,      handler_works_hours},
+    {0, PERIOD_FAN_ADC,          handler_fan_adc},
+    {0, PERIOD_WIFI_TEMP,        handler_wifi_update_temp_humidity},
+    {0, PERIOD_READ_DHT11,       handler_read_dht11},
+    {0, PERIOD_FAN_SPEED,        handler_fan_speed_state}
+    
+	
+};
+
+#define TASK_NUM (sizeof(g_tasks) / sizeof(TimeSharingTask_t))
+
+
 static void power_off_stop_fun(void);
 void every_power_on_run(void);
 uint8_t fan_run_one_minute_flag;
 static void app_timer_power_on_reference(void);
+static void power_on_init_handler(void);
+static void power_on_cycle_handler(void);
+
 
 
 /**********************************************************************
@@ -17,17 +68,36 @@ static void app_timer_power_on_reference(void);
 **********************************************************************/
 void power_on_handler(void)
 {
-    static uint8_t counter,sw_flag,counter_flag;
+	if( gpro_t.process_run_step < 20){
+	  power_on_init_handler();
+	}
+    else
+       power_on_cycle_handler();
+
+}
+
+/************************************************************************************
+*
+*Function Name: static void power_on_init_handler(void)
+*Fucntion :
+*Input Ref:NO
+*Return Ref:NO
+*
+************************************************************************************/
+static void power_on_init_handler(void)
+{
+
+	static uint8_t counter,sw_flag,counter_flag;
     switch(gpro_t.process_run_step){
 
 	case 0: //1
 	     
           gpro_t.power_off_run_step=0;
           /*power on initial reference---start */
-         gctl_t.gTimer_senddata_panel=0; //main board function run action.
+      
      
          gctl_t.set_temperature_value=40; //power on default set temperature value is 40 degree,don't compare
-         gctl_t.gTimer_ptc_adc_times=0;
+ 
 		 gctl_t.gTimer_fan_adc_times=0;
 		
 		 gctl_t.set_wind_speed_value= 100;
@@ -135,7 +205,7 @@ void power_on_handler(void)
 	
      	
     read_sensorData();
-    gctl_t.gTimer_senddata_panel = 8;
+
     gpro_t.process_run_step= 5;
 
 	 break;
@@ -144,54 +214,104 @@ void power_on_handler(void)
 		
         ActionEvent_Handler();
 		read_sensorData();
-        gpro_t.gTimer_read_dht11_to_disp = 10;
-	    gpro_t.process_run_step= 6;
+       
+	    gpro_t.process_run_step= 0xff;
 
 	break;
-	     
-		
-    case 6: //repeat process 
-		
-	   if(gpro_t.gTimer_update_todisplay > 4){
-				   gpro_t.gTimer_update_todisplay=0;
-				   counter++;
-				   updateDht11_sensorData_toDisp();
-				  	tx_thread_sleep(1);
-				   
-				   if(net_t.wifi_link_net_success ==1 && counter > 1 && gpro_t.soft_version == 0){ //WT.EDIT 2026.02.27
-					  counter =0;
-					  sw_flag = sw_flag ^ 0x01;
-					  if(sw_flag == 1){
-						  SendWifiData_olderCmd(0x1F,0x01);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-						  tx_thread_sleep(1);
-					  }
-					  else{
-					   SendWifiData_To_Data(0x1F,0x01);
-					   tx_thread_sleep(1);
-					  }
-					  
-				   }
-				   else if(net_t.wifi_link_net_success ==0 && counter > 1 && gpro_t.soft_version ==0){ //WT.EDIT 2026.02.27
-					  counter =0;
-					   sw_flag = sw_flag ^ 0x01;
-					  if(sw_flag == 1){
-						  SendWifiData_olderCmd(0x1F,0x0);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-						  tx_thread_sleep(1);
-					  }
-					  else{
-						SendWifiData_To_Data(0x1F,0x0);
-					   tx_thread_sleep(1);
-					  }
-				   }
-				   
-			  }
 
-       gpro_t.process_run_step=7 ;
+	default:
 
+	break;
 
- break;
-        
-  case 7: 
+    	}
+}
+/************************************************************************************
+*
+*Function Name: static void power_on_cycle_handler(void)
+*Fucntion :
+*Input Ref:NO
+*Return Ref:NO
+*
+************************************************************************************/
+static void power_on_cycle_handler(void)
+{
+
+      // 获取当前系统的绝对时间戳
+      uint32_t current_tick = tx_time_get();
+
+      // 第二步：通过时间片轮询核心算法，分时调用各个功能模块
+	   for (uint8_t i = 0; i < TASK_NUM; i++) {
+		   //g_tasks[i].counter++; // 基础 Tick 自增
+		   if ((current_tick - g_tasks[i].last_tick) >= g_tasks[i].period) {
+		   
+		        // 滚动更新该任务的历史时间戳基准
+               g_tasks[i].last_tick = current_tick;
+			 
+			   g_tasks[i].task_handler(); // 触发对应周期的执行函数
+		   
+	   }
+
+	   }
+
+}
+/************************************************************************************
+*
+*Function Name: static void power_on_cycle_handler(void)
+*Fucntion :
+*Input Ref:NO
+*Return Ref:NO
+*
+************************************************************************************/
+static void handler_wifi_state(void)
+{
+    // 如果这些变量之前是全局的，保持原样；如果是局部的，必须加 static 保持状态
+    static uint8_t counter = 0;
+    static uint8_t sw_flag = 0;
+	
+
+	counter++;
+	updateDht11_sensorData_toDisp();
+	tx_thread_sleep(1);
+
+	if(net_t.wifi_link_net_success ==1 && counter > 1 && gpro_t.soft_version == 0){ //WT.EDIT 2026.02.27
+		counter =0;
+		sw_flag = sw_flag ^ 0x01;
+		if(sw_flag == 1){
+			SendWifiData_olderCmd(0x1F,0x01);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
+			tx_thread_sleep(1);
+		}
+		else{
+			SendWifiData_To_Data(0x1F,0x01);
+			tx_thread_sleep(1);
+		}
+
+	}
+	else if(net_t.wifi_link_net_success ==0 && counter > 1 && gpro_t.soft_version ==0){ //WT.EDIT 2026.02.27
+		counter =0;
+		sw_flag = sw_flag ^ 0x01;
+		if(sw_flag == 1){
+			SendWifiData_olderCmd(0x1F,0x0);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
+			tx_thread_sleep(1);
+		}
+		else{
+			SendWifiData_To_Data(0x1F,0x0);
+			tx_thread_sleep(1);
+		}
+	}
+
+			  
+}
+
+/**
+*
+*@brief 
+*@notice
+*@param
+*@retval
+*
+**/
+static void handler_wifi_update_data(void)
+{
 
    if(gpro_t.wifi_led_fast_blink_flag==0 && net_t.wifi_link_net_success ==1){
       if(gctl_t.app_timer_power_on_flag==0 && gctl_t.first_link_tencent_cloud_flag ==1){
@@ -215,11 +335,19 @@ void power_on_handler(void)
            tx_thread_sleep(1);
 	}
     
-      gpro_t.process_run_step=8 ;
- break; 
+}
 
-
- case 8:
+ /**
+ *
+ *@brief 
+ *@notice
+ *@param
+ *@retval
+ *
+ **/
+static void handler_works_hours(void)
+{
+ 
      if(gpro_t.fan_warning_flag > 1 || gpro_t.ptc_warning  > 1){
         if(gpro_t.fan_warning_flag > 1 ) gpro_t.fan_warning_flag = 0; //strictly forbid 
 	    if(gpro_t.ptc_warning  > 1)gpro_t.ptc_warning = 0;
@@ -228,32 +356,54 @@ void power_on_handler(void)
 
 	 works_run_two_hours_state();
    
-	gpro_t.process_run_step= 9;
-  break;
+	
+}
 
-
-  case 9:
+  /**
+  *
+  *@brief 
+  *@notice
+  *@param
+  *@retval
+  *
+  **/
+static void handler_fan_adc(void)
+{
   	 
-       adc_detected_hundler();
+     adc_detected_hundler();
 	   
-        gpro_t.process_run_step= 10; 
+}
 
-  break;
 
-  case 10:
+  /**
+*
+*@brief 
+*@notice
+*@param
+*@retval
+*
+**/
+
+static void handler_wifi_update_temp_humidity(void)
+{
     
-
-	   if(wifi_link_net_state() ==1 && gpro_t.gTimer_update_tencet_dht11 >5){
-				gpro_t.gTimer_update_tencet_dht11=0;
+    if(wifi_link_net_state() ==1){
+			
 				Update_Dht11_Totencent_Value();
-        }
+     }
 	 
-       gpro_t.process_run_step= 11; 
+ }
+  /**
+*
+*@brief 
+*@notice
+*@param
+*@retval
+*
+**/
 
-
-  break;
-
-  case 11:
+static void handler_read_dht11(void)
+ {
 
      if(gctl_t.set_temperature_flag > 1 || gctl_t.set_temperature_value > 40 || gctl_t.ptc_prohibit_on_flag > 1
 	 	  ||gctl_t.app_timer_power_on_flag > 2 || gctl_t.set_temp_first_closeptc > 1 || gpro_t.soft_version > 2){
@@ -265,38 +415,31 @@ void power_on_handler(void)
 		if(gpro_t.soft_version > 2)gpro_t.soft_version = 0 ;
 	 }
 
-    if(gpro_t.gTimer_read_dht11_to_disp >3){
-		gpro_t.gTimer_read_dht11_to_disp=0;
-	   read_sensorData();
-
-    }
+  
 
     if(gpro_t.rx_ptc_flag >1)gpro_t.rx_ptc_flag=1;//2026.02.27 WT.EDIT
     if(gctl_t.gPlasma > 1) gctl_t.gPlasma =1;
 	if(gctl_t.gUlransonic > 1) gctl_t.gUlransonic =1;
 	if(gpro_t.stopTwoHours_flag==0)gpro_t.fan_rx_stop_flag =0;
 
-	gpro_t.process_run_step= 12;	
+}
 
-   break;
+   /**
+   *
+   *@brief 
+   *@notice
+   *@param
+   *@retval
+   *
+   **/
 
-   case 12:
-   	    counter ++ ;
-   		if(gpro_t.stopTwoHours_flag ==0 && counter > 50){
-			   counter =0;
-			   Fan_RunSpeed_Fun();
-		 }
-
-		gpro_t.process_run_step=6;
-
-   break;
-
+static void handler_fan_speed_state(void)
+{
    
-
-     default:
-	
-	 break;
-  }
+   	 if(gpro_t.stopTwoHours_flag ==0 ){
+	   
+		Fan_RunSpeed_Fun();
+	}
 }
 
 
@@ -508,7 +651,7 @@ void smartphone_timer_power_on_and_normal_handler(void)
 		     gctl_t.set_wind_speed_value =100;
 	      
 		     MqttData_Publish_Update_Data();
-		    tx_thread_sleep(20);
+		     tx_thread_sleep(20);
 
 			
 	 
@@ -580,7 +723,6 @@ void power_off_handler(void)
 		  gctl_t.ptc_warning =0;
 		  gctl_t.fan_warning =0;
        
-		 gctl_t.gTimer_ptc_adc_times=0;
 		 gctl_t.gTimer_fan_adc_times=0;
          gpro_t.process_run_step=0;//gpro_t.process_run_step
           gctl_t.rx_set_temp_flag=0; 
@@ -641,8 +783,8 @@ void power_off_handler(void)
 			}
         }
 
-	   if(gpro_t.gTimer_update_todisplay > 3){
-			gpro_t.gTimer_update_todisplay=0;
+	   if(gpro_t.gTimer_update_tencet_dht11  > 3){
+			gpro_t.gTimer_update_tencet_dht11=0;
 
 			read_sensorData();
 	

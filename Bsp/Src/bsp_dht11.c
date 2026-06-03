@@ -207,12 +207,12 @@ void static Dht11_Read_TempHumidity_Handler(DHT11_Data_TypeDef * pdth11)
 	 else{
 
 	    dht11_read_flag=1;
-		gpro_t.gTimer_read_dth11_sensor =0;
+		
 
 	 }
 	}
 
-	if(gpro_t.gTimer_read_dth11_sensor > 2 && dht11_read_flag==1){
+	if(dht11_read_flag==1){
             dht11_read_flag=0;
 
 	}

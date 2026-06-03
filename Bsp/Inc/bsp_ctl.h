@@ -124,16 +124,9 @@ typedef struct _RUN_T{
 
 	  
       //timer ref 
-	  uint8_t gTimer_fan_adc_times;
-	  uint8_t gTimer_ptc_adc_times;
-      
-	
+	 volatile uint8_t gTimer_fan_adc_times;
 
-	 uint8_t gTimer_senddata_panel;
-	
-
-   
-	 uint8_t gTimer_linkTencentCounter;
+      volatile  uint8_t gTimer_linkTencentCounter;
 	 
 	
 	

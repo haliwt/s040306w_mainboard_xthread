@@ -55,7 +55,7 @@ void tim17_isr_callback_handler(void)
 	   gpro_t.gTimer_twohours_seconds_counter++;
 
         gpro_t.gTimer_link_net_timer_time++;
-	    gctl_t.gTimer_senddata_panel++;
+
         gctl_t.gTimer_fan_adc_times++;
 	   gctl_t.gTimer_linkTencentCounter++;
 	
@@ -76,12 +76,12 @@ void tim17_isr_callback_handler(void)
        gpro_t.gTimer_detect_fan_error++;
      
 	   gpro_t.gTimer_power_on_auto_link++;
-	   gpro_t.gTimer_update_todisplay++;
+	
 	   gpro_t.gTimer_update_tencet_dht11++;
 
         gpro_t.gTimer_poweroff_fan++;
-		gpro_t.gTimer_read_dth11_sensor ++;
-		gpro_t.gTimer_read_dht11_to_disp++;
+		
+
 
         if(gpro_t.gTimer_twohours_seconds_counter > 59){
 			gpro_t.gTimer_twohours_seconds_counter=0;	

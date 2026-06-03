@@ -157,28 +157,29 @@ typedef struct PROCESS_T{
    volatile uint8_t decoder_success_flag; //interrupt be used to flag.
    uint8_t fan_counter_error ;
    uint8_t fan_rx_stop_flag;
+   uint8_t ptc_actiov_f;
 
    
    uint8_t disp_works_hours ;    
    uint8_t disp_works_minutes ;
-   uint8_t gTimer_works_time_seconds ;
+ volatile  uint8_t gTimer_works_time_seconds ;
    //timer time
-   uint8_t gTimer_power_on_first_link_tencent;
-   uint8_t gTimer_get_data_from_tencent_data;
-   uint8_t gTimer_link_net_timer_time;
-   uint8_t gTimer_dc_power_on_auto_link_net;
-   uint8_t ptc_actiov_f;
+ volatile  uint8_t gTimer_power_on_first_link_tencent;
+ volatile  uint8_t gTimer_get_data_from_tencent_data;
+ volatile  uint8_t gTimer_link_net_timer_time;
+ volatile  uint8_t gTimer_dc_power_on_auto_link_net;
+  
 
    volatile uint8_t gTimer_detect_fan_error;
 
    volatile uint8_t gTimer_power_on_auto_link;
-   volatile uint8_t gTimer_update_todisplay;
+
    volatile uint8_t gTimer_update_tencet_dht11;
-   uint8_t gTimer_poweroff_fan;
-   uint8_t gTimer_read_dth11_sensor ;
-   uint8_t gTimer_read_dht11_to_disp;
-   uint8_t gTimer_twohours_seconds_counter;	
-   uint8_t gTimer_conter_twohours_minutes;
+ volatile uint8_t gTimer_poweroff_fan;
+
+
+  volatile uint8_t gTimer_twohours_seconds_counter;	
+  volatile uint8_t gTimer_conter_twohours_minutes;
 
   
 
