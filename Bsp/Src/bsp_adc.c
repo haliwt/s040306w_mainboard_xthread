@@ -41,7 +41,10 @@ uint16_t mean_fan_buf[SAMPLE_COUNT];
 **********************************************************************/
 void adc_detected_hundler(void)
 {
-    if(gpro_t.fan_rx_stop_flag ==1  || gpro_t.stopTwoHours_flag ==1) return ;//WT.EDIT 2026.03.03
+	static uint8_t fan_counter_error = 0;
+
+
+	if(gpro_t.fan_rx_stop_flag ==1  || gpro_t.stopTwoHours_flag ==1) return ;//WT.EDIT 2026.03.03
     if(gpro_t.stopTwoHours_flag ==0 && gpro_t.fan_warning_flag==0){ //detected 3 times is 60s 
      
         Fan_Full_Speed();
@@ -49,15 +52,15 @@ void adc_detected_hundler(void)
        fan_detect_voltage=(adc_buffer[0] * 3300 )/4095;
        tx_thread_sleep(1);
 
-	   if(gpro_t.fan_counter_error > 10)gpro_t.fan_counter_error =0;
+	   if(fan_counter_error > 10)fan_counter_error =0;
 
 	   if(gpro_t.fan_warning_flag > 1)gpro_t.fan_warning_flag=0;
 
 	   if(fan_detect_voltage < 150  &&  gpro_t.fan_warning_flag==0){
 
 
-		  	gpro_t.fan_counter_error ++;
-			  if(gpro_t.fan_counter_error  > 5){
+		  	fan_counter_error ++;
+			  if(fan_counter_error  > 5){
 			      gpro_t.fan_warning_flag=1;
 				  gctl_t.ptc_prohibit_on_flag = 1;
 				  gpro_t.rx_ptc_flag = 0;
@@ -67,13 +70,15 @@ void adc_detected_hundler(void)
 
 	   }
 	   else{
-	      gpro_t.fan_counter_error =0;
+	      fan_counter_error =0;
 
 	   }
 
 	   
     }
    if(gpro_t.fan_warning_flag==1){
+   	
+	  fan_counter_error =0;
       fan_warning_sound();
 
    	}
@@ -156,13 +161,20 @@ void ADC_GetValues(void)
 *****************************************************************/
 static uint16_t ADC_PTC_ReadVoltage(void)
 {
-    uint16_t raw_value;
+    uint16_t raw_value,time_out;
     LL_ADC_REG_SetSequencerRanks(ADC1, LL_ADC_REG_RANK_2, LL_ADC_CHANNEL_1);
     LL_ADC_SetChannelSamplingTime(ADC1, LL_ADC_CHANNEL_1, LL_ADC_SAMPLINGTIME_COMMON_1);
 
 	LL_ADC_REG_StartConversion(ADC1);
 
-	while(!LL_ADC_IsActiveFlag_EOC(ADC1));
+    time_out = 0;
+	while(!LL_ADC_IsActiveFlag_EOC(ADC1)){
+        time_out++;
+		if(time_out > 10000){
+               return 0;
+		}
+
+	}
 
 	raw_value= LL_ADC_REG_ReadConversionData12(ADC1);
 	
@@ -200,11 +212,7 @@ void fan_warning_sound(void)
            SendWifiData_To_Cmd(0x09, 0x01);
            tx_thread_sleep(1);
 	       if(wifi_link_net_state()==1){
-
-              // MqttData_Publis_SetFan(0);
-	           //tx_thread_sleep(pdMS_TO_TICKS(200));//HAL_Delay(350);
-
-    		   Publish_Data_Warning(fan_warning,warning);
+                Publish_Data_Warning(fan_warning,warning);
     	        tx_thread_sleep(20);//HAL_Delay(200);
 
            }

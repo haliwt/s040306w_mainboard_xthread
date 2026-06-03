@@ -155,7 +155,7 @@ typedef struct PROCESS_T{
    uint8_t fan_warning_flag;
    uint8_t soft_version;
    volatile uint8_t decoder_success_flag; //interrupt be used to flag.
-   uint8_t fan_counter_error ;
+
    uint8_t fan_rx_stop_flag;
    uint8_t ptc_actiov_f;
 

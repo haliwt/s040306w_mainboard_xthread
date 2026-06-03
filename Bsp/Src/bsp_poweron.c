@@ -115,7 +115,7 @@ static void power_on_init_handler(void)
 		 gctl_t.ptc_warning =0;
 		 gctl_t.ptc_warning =0;
 	     gpro_t.fan_warning_flag =0;
-		 gpro_t.fan_counter_error =0;
+	
 	
 		 gpro_t.gTimer_detect_fan_error=0;
 		/*end*/
@@ -717,7 +717,7 @@ void power_off_handler(void)
          //power off init two hours flag
 	     gpro_t.stopTwoHours_flag=0;
 		 gpro_t.process_run_step=0;
-	     gpro_t.fan_counter_error =0;
+	
 		 gpro_t.fan_rx_stop_flag=0;
 
 		  gctl_t.ptc_warning =0;
