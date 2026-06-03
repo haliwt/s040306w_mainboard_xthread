@@ -35,7 +35,6 @@ uint8_t rx_inputBuf[12];
 uint8_t check_bcc_code;
 uint8_t rx1_data;
 uint8_t counter_power_flag;
-uint8_t ptc_onoff_default ;
 
 
 //提供注册接口
@@ -648,6 +647,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		        
 				 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.07.28
 		         tx_thread_sleep(1);
+				 gpro_t.ptc_actiov_f++;
 				 if(wifi_link_net_state()==1){ 
 					  MqttData_Publish_SetPtc(0x01);
 					  tx_thread_sleep(20);
@@ -694,36 +694,34 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		   if(gpro_t.stopTwoHours_flag ==0 && gctl_t.ptc_prohibit_on_flag==0){
 			  
 			     gpro_t.rx_ptc_flag = 1;//gctl_t.gDry = 1;
-			     ptc_onoff_default++;
+			   
                  PTC_SetHigh();
+		         gpro_t.ptc_actiov_f ++;
 		   	
 				#if 0
-				 if(ptc_set_wifi !=gpro_t.rx_ptc_flag){
-				 	ptc_set_wifi =gpro_t.rx_ptc_flag;
-					 if(wifi_link_net_state()==1){ 
-						MqttData_Publish_SetPtc(0x01);
-						tx_thread_sleep(20);
-						
-					  }
-				 }
+				
+				if(wifi_link_net_state()==1){ 
+					MqttData_Publish_SetPtc(0x01);
+					tx_thread_sleep(20);
+				}
 				 #endif 
 		   	}   	
 	   }
        else if(pdata[3]== 0x0){
 	   	 
 		     gpro_t.rx_ptc_flag =0 ;//gctl_t.gDry =0;
-              ptc_onoff_default++;
+             
 	    
 	          PTC_SetLow();
+			  gpro_t.ptc_actiov_f++;
 
 		 #if 0
-		  if(ptc_set_wifi !=gpro_t.rx_ptc_flag){
-				 	ptc_set_wifi =gpro_t.rx_ptc_flag;
+		 
 		  if(wifi_link_net_state()==1){ 
 			MqttData_Publish_SetPtc(0x0);
 			tx_thread_sleep(20);
 		  }
-		  }
+		  
          #endif 
 	  }
 	
@@ -745,13 +743,13 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			   if(gctl_t.set_temperature_value > gctl_t.gDht11_temperature && gpro_t.stopTwoHours_flag ==0){
 			
 			        
-					  ptc_onoff_default++;
+					 
                       gpro_t.rx_ptc_flag=1;
 				      PTC_SetHigh();
 					  
 			   }
 			   else{
-			   	   ptc_onoff_default++;
+			   	  
 				   gpro_t.rx_ptc_flag =0 ;//gctl_t.gDry =0;
 
 			       PTC_SetLow();
