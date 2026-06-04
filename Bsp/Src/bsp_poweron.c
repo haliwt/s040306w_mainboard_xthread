@@ -152,7 +152,7 @@ static void power_on_init_handler(void)
 	 	//tx_thread_sleep(1);
     }
     every_power_on_run();
-	read_sensorData();
+	//read_sensorData();
 	
 	 gpro_t.process_run_step= 2;
 
@@ -183,7 +183,7 @@ static void power_on_init_handler(void)
 		     	app_timer_power_on_reference();
 			 	
 		  }
-		 read_sensorData();
+		// read_sensorData();
 	     gpro_t.process_run_step= 4;
 	break;
 
@@ -203,7 +203,7 @@ static void power_on_init_handler(void)
 	 }
 	
      	
-    read_sensorData();
+   // read_sensorData();
 
     gpro_t.process_run_step= 5;
 
