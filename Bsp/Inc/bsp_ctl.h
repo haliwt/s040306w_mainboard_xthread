@@ -86,14 +86,14 @@ typedef struct _RUN_T{
 
  //fan:
     
-	 uint8_t  gFan;
+
     //ptc:
    
     // uint8_t  gDry;
 
-	  uint8_t  gUlransonic;
-      uint8_t  gModel;
-	  uint8_t gPlasma;
+	  bool  gUlransonic;
+      bool  gModel;
+	  bool gPlasma;
 
   uint8_t  mode_ai_switch_flag;
     

@@ -244,7 +244,9 @@ static void power_on_cycle_handler(void)
 		   if ((current_tick - g_tasks[i].last_tick) >= g_tasks[i].period) {
 		   
 		        // 滚动更新该任务的历史时间戳基准
-               g_tasks[i].last_tick = current_tick;
+               //g_tasks[i].last_tick = current_tick;
+               // 改进：滚动累加周期，消除长跑下的时间漂移
+               g_tasks[i].last_tick += g_tasks[i].period;
 			 
 			   g_tasks[i].task_handler(); // 触发对应周期的执行函数
 		   
@@ -664,7 +666,7 @@ void SetPowerOff_ForDoing(void)
    
     // gctl_t.set_wind_speed_value =10;
  
-    gctl_t.gFan = 0;
+ 
     gpro_t.rx_ptc_flag = 0;//gctl_t.gDry = 0;
   
 	gctl_t.gPlasma =0;       //"é„1¤7?é‘„1¤7?"
@@ -735,7 +737,7 @@ void power_off_handler(void)
 	      SetPowerOff_ForDoing();
 		  gpro_t.power_off_run_step = 2;
        
-     // break;
+      break;
 
       case 2:
         
@@ -759,9 +761,14 @@ void power_off_handler(void)
         break;
 
         case 5:
-            if(gctl_t.ptc_warning == 1){
+            if(gctl_t.fan_warning == 1){
 			Publish_Data_Warning(fan_warning,0);
 			tx_thread_sleep(20);
+			
+            }
+			if(gctl_t.ptc_warning == 1){
+			   Publish_Data_Warning(ptc_temp_warning,0);
+			  tx_thread_sleep(20);
 			
             }
         gpro_t.power_off_run_step = 6;
@@ -840,7 +847,7 @@ void every_power_on_run(void)
    if(gctl_t.app_timer_power_on_flag==0){
      
      // gctl_t.gModel=1;
-      gctl_t.gFan = 1;
+     
       gpro_t.rx_ptc_flag = 1;//gctl_t.gDry = 1;
   
   
