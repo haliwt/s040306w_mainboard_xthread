@@ -538,8 +538,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  
       case 0x27: //AI command without buzzer sound
 	  case 0x17: //AI notice
+	  case 0x07:
 	  
-	  if(pdata[3] == 0x02){
+	  if(pdata[3] == 0x02|| pdata[3]==0){
 	 
 		
           gctl_t.gModel=2;

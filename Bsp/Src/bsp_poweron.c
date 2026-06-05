@@ -86,7 +86,8 @@ void power_on_handler(void)
 static void power_on_init_handler(void)
 {
 
-	static uint8_t counter,sw_flag,counter_flag;
+	static uint8_t counter,sw_flag,counter_flag,i;
+	uint32_t boot_tick;
     switch(gpro_t.process_run_step){
 
 	case 0: //1
@@ -213,7 +214,13 @@ static void power_on_init_handler(void)
 		
         ActionEvent_Handler();
 		read_sensorData();
-       
+
+		
+        boot_tick = tx_time_get();
+		for(i=0;i < TASK_NUM;i ++){
+
+		     g_tasks[i].last_tick = boot_tick;
+		}
 	    gpro_t.process_run_step= 0xff;
 
 	break;

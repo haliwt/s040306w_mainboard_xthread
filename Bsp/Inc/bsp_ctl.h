@@ -92,7 +92,7 @@ typedef struct _RUN_T{
     // uint8_t  gDry;
 
 	  bool  gUlransonic;
-      bool  gModel;
+      uint8_t  gModel;
 	  bool gPlasma;
 
   uint8_t  mode_ai_switch_flag;
