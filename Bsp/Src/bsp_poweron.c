@@ -686,12 +686,6 @@ void SetPowerOff_ForDoing(void)
 	
 
 }
-
-
-
-
-
-
 /**********************************************************************
     *
     *Functin Name: void power_off_handler(void)
@@ -702,18 +696,14 @@ void SetPowerOff_ForDoing(void)
 ************************************************************************/
 void power_off_handler(void)
 {
-
+    static uint8_t dc_power = 0;
    
     switch(gpro_t.power_off_run_step){
 
-    case 1:
-		  SendWifiData_Answer_Cmd(0x01,0x0); //power off .
-          tx_thread_sleep(1); 
-          gpro_t.gTimer_poweroff_fan=0;
-         
-	
-       
-        //timer timing 
+	case 0:
+		gpro_t.process_run_step=0;
+         gpro_t.gTimer_poweroff_fan=0;
+         //timer timing 
         gctl_t.set_wind_speed_value=10;
 		gctl_t.gModel =1;
 		gctl_t.app_timer_power_on_flag =0;
@@ -724,6 +714,7 @@ void power_off_handler(void)
          //power off init two hours flag
 	     gpro_t.stopTwoHours_flag=0;
 		 gpro_t.process_run_step=0;
+		     
 	
 		 gpro_t.fan_rx_stop_flag=0;
 
@@ -736,25 +727,34 @@ void power_off_handler(void)
          gctl_t.set_temperature_flag = 0; 
 		 gpro_t.first_ptc_on=0;
 		 fan_detect_voltage=100;
-         fan_run_one_minute_flag=1;
-		 gpro_t.gTimer_poweroff_fan =0;
+		 if(dc_power ==0){
+		 	dc_power ++;
+		    fan_run_one_minute_flag=0;
+
+		 }
+		 else{ 
+		 	dc_power = 2;
+            fan_run_one_minute_flag=1;
+		 }
+		    gpro_t.gTimer_poweroff_fan =0;
+		 
 		 
 	      SetPowerOff_ForDoing();
-		  gpro_t.power_off_run_step = 2;
+		  gpro_t.power_off_run_step = 1;
        
       break;
 
-      case 2:
+      case 1:
         
        if(wifi_link_net_state() == 1){
 
           MqttData_Publish_PowerOff_Ref(); 
           tx_thread_sleep(20); //WT.EDTI 2024.11.19 
        }
-         gpro_t.power_off_run_step = 4;
+         gpro_t.power_off_run_step = 2;
        break;
 
-       case 4:
+       case 2:
 
           if(gctl_t.ptc_warning == 1){
 		 	
@@ -762,48 +762,32 @@ void power_off_handler(void)
 		  	tx_thread_sleep(20);
             
           }
-           gpro_t.power_off_run_step = 5;
+           gpro_t.power_off_run_step = 3;
         break;
 
-        case 5:
-            if(gctl_t.fan_warning == 1){
-			Publish_Data_Warning(fan_warning,0);
-			tx_thread_sleep(20);
-			
-            }
-			if(gctl_t.ptc_warning == 1){
-			   Publish_Data_Warning(ptc_temp_warning,0);
-			  tx_thread_sleep(20);
-			
-            }
-        gpro_t.power_off_run_step = 6;
-      break;
-
-
-      case 6:
-	   
-
-        gpro_t.stopTwoHours_flag =0;
+        case 3:
+          
        
-        power_off_stop_fun();
-
-        if(gpro_t.soft_version == 0){
-			
-			if(gpro_t.gTimer_poweroff_fan > 60 &&  fan_run_one_minute_flag==1){
+       if(gpro_t.gTimer_poweroff_fan > 60 &&  fan_run_one_minute_flag==1){
                  fan_run_one_minute_flag++;
                  FAN_Stop();
-			}
-        }
-
-	   if(gpro_t.gTimer_update_tencet_dht11  > 3){
-			gpro_t.gTimer_update_tencet_dht11=0;
-
-			read_sensorData();
-	
 		}
-		
+        gpro_t.power_off_run_step = 4;
 
      break;
+
+	 case 4:
+
+	    power_off_stop_fun();
+
+	   if(gpro_t.gTimer_update_tencet_dht11  > 10 && dc_power != 1){
+				gpro_t.gTimer_update_tencet_dht11=0;
+	 
+				read_sensorData();
+		}
+	   gpro_t.power_off_run_step = 3;
+
+	 break;
 
      }
 
