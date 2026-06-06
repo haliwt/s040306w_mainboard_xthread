@@ -151,8 +151,8 @@ typedef struct PROCESS_T{
    uint8_t wifi_led_fast_blink_flag;
    uint8_t get_beijing_time_success;
    uint8_t link_net_step;
-   uint8_t ptc_warning ;
-   uint8_t fan_warning_flag;
+   bool ptc_warning ;
+   bool fan_warning_flag;
    uint8_t soft_version;
    volatile uint8_t decoder_success_flag; //interrupt be used to flag.
 

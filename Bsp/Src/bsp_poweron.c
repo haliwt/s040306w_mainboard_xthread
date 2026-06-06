@@ -4,8 +4,8 @@
 
 // --- 1. 定义任务的时间周期（单位：毫秒，假设基础Tick为1ms） ---
 #define PERIOD_WIFI_STATE      300    // 10ms*300 = 3000ms = 3s
-#define PERIOD_WIFI_UPDATE     200    // 10ms*200 = 2000ms = 2s
-#define PERIOD_WORKS_HOURS     150    //  10ms*150 = 1500ms = 1.5s
+#define PERIOD_WIFI_UPDATE     150    // 10ms*200 = 2000ms = 2s
+#define PERIOD_WORKS_HOURS     200    //  10ms*150 = 1500ms = 1.5s
 #define PERIOD_FAN_ADC         250    //  10ms*250 = 2500ms = 2.5s
 #define PERIOD_WIFI_TEMP       500    //   10ms * 500 = 50000ms = 5s 
 #define PERIOD_READ_DHT11      100    //   10ms * 100 = 1000ms = 1s
@@ -355,13 +355,7 @@ static void handler_wifi_update_data(void)
 static void handler_works_hours(void)
 {
  
-     if(gpro_t.fan_warning_flag > 1 || gpro_t.ptc_warning  > 1){
-        if(gpro_t.fan_warning_flag > 1 ) gpro_t.fan_warning_flag = 0; //strictly forbid 
-	    if(gpro_t.ptc_warning  > 1)gpro_t.ptc_warning = 0;
-		
-     }
-
-	 works_run_two_hours_state();
+     works_run_two_hours_state();
    
 	
 }
