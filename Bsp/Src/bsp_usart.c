@@ -294,13 +294,15 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			
 	        buzzer_sound();//buzzer_sound_fun();
 	        SendWifiData_Answer_Cmd(0x01,0x01);
-	        tx_thread_sleep(1);
+	        tx_thread_sleep(2);
 			
 			gpro_t.gpower_on = power_on;
 			fan_full_run();//WT.EDIT 2026.01.26
 			PLASMA_SetHigh();
 	        ultrasonic_open();   //ultrasnoic ON 
 	        PTC_SetHigh();
+			SendWifiData_Answer_Cmd(0x01,0x01);
+	        tx_thread_sleep(5);
 				
 
 		}
@@ -309,10 +311,10 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		     counter_power_flag ++;
 			 buzzer_sound();
 		     SendWifiData_Answer_Cmd(0x01,0x0); //power off .
-             tx_thread_sleep(1); 
+             tx_thread_sleep(5); 
 			 PTC_SetLow();
              PLASMA_SetLow();
-		     gpro_t.power_off_run_step=1;
+		     gpro_t.power_off_run_step=0;
              gpro_t.gpower_on = power_off;
 			
             
@@ -538,8 +540,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  
       case 0x27: //AI command without buzzer sound
 	  case 0x17: //AI notice
+	  case 0x07:
 	  
-	  if(pdata[3] == 0x02){
+	  if(pdata[3] == 0x02|| pdata[3]==0){
 	 
 		
           gctl_t.gModel=2;

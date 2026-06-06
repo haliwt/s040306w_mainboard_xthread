@@ -722,10 +722,7 @@ void Json_Parse_Command_Fun(void)
 		     buzzer_sound();
            
               gctl_t.gUlransonic=1;
-    
-        
-		
-			SendWifiData_To_Cmd(0x04,0x01);
+    		SendWifiData_To_Cmd(0x04,0x01);
 			tx_thread_sleep(1);//HAL_Delay(5);
 			 MqttData_Publish_SetUltrasonic(1);
 			tx_thread_sleep(20);//tx_thread_sleep(100);	//HAL_Delay(350);
@@ -739,10 +736,7 @@ void Json_Parse_Command_Fun(void)
 	  if(gpro_t.gpower_on ==power_on){
 
             buzzer_sound();
-            gctl_t.gModel=2;
-       
-             
-    	    SendWifiData_To_Cmd(0x27,0x02);
+	       SendWifiData_To_Cmd(0x27,0);
 		   tx_thread_sleep(1);
 		    MqttData_Publish_AitState(2);
     	     tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
@@ -758,10 +752,8 @@ void Json_Parse_Command_Fun(void)
 	  case STATE_AI_MODEL_ITEM: // beijing timing 0x09
 	  	 if(gpro_t.gpower_on ==power_on){
 		      buzzer_sound();
-              gctl_t.gModel=1;
-             
-            
-    		   SendWifiData_To_Cmd(0x27,0x01);
+			 
+              SendWifiData_To_Cmd(0x27,0x01);
                tx_thread_sleep(1);
 			    MqttData_Publish_AitState(1);
     		  tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
