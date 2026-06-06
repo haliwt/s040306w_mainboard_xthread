@@ -67,6 +67,7 @@
 #include "bsp_wifi_fun.h"
 #include "bsp_wifi.h"
 #include "bsp_subscription.h"
+#include "bsp_peripheral.h"
 
 
 #define Enable_EventRecorder  0

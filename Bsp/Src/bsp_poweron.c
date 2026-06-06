@@ -5,12 +5,12 @@
 // --- 1. 定义任务的时间周期（单位：毫秒，假设基础Tick为1ms） ---
 #define PERIOD_WIFI_STATE      300    // 10ms*300 = 3000ms = 3s
 #define PERIOD_WIFI_UPDATE     150    // 10ms*200 = 2000ms = 2s
-#define PERIOD_WORKS_HOURS     200    //  10ms*150 = 1500ms = 1.5s
+#define PERIOD_WORKS_HOURS     400    //  10ms*150 = 1500ms = 1.5s
 #define PERIOD_FAN_ADC         250    //  10ms*250 = 2500ms = 2.5s
-#define PERIOD_WIFI_TEMP       500    //   10ms * 500 = 50000ms = 5s 
+#define PERIOD_WIFI_TEMP       600    //   10ms * 500 = 50000ms = 5s 
 #define PERIOD_READ_DHT11      100    //   10ms * 100 = 1000ms = 1s
 #define PERIOD_FAN_SPEED       130    //   10ms * 130 = 1300ms = 1.3s
-
+#define PERIOD_PERIPHERAL      200
 
 // --- 2. 定义分时任务控制结构体 ---
 typedef struct {
@@ -27,7 +27,7 @@ static void handler_fan_adc(void);
 static void handler_wifi_update_temp_humidity(void);
 static void handler_read_dht11(void);
 static void handler_fan_speed_state(void);
-
+static void handler_module_action(void);
 
 
 
@@ -40,7 +40,8 @@ TimeSharingTask_t g_tasks[] = {
     {0, PERIOD_FAN_ADC,          handler_fan_adc},
     {0, PERIOD_WIFI_TEMP,        handler_wifi_update_temp_humidity},
     {0, PERIOD_READ_DHT11,       handler_read_dht11},
-    {0, PERIOD_FAN_SPEED,        handler_fan_speed_state}
+    {0, PERIOD_FAN_SPEED,        handler_fan_speed_state},
+    {0,PERIOD_PERIPHERAL,        handler_module_action}
     
 	
 };
@@ -212,7 +213,7 @@ static void power_on_init_handler(void)
 
 	case 5:
 		
-        ActionEvent_Handler();
+        module_action_handler();
 		read_sensorData();
 
 		
@@ -319,14 +320,13 @@ static void handler_wifi_state(void)
 **/
 static void handler_wifi_update_data(void)
 {
-
    if(gpro_t.wifi_led_fast_blink_flag==0 && net_t.wifi_link_net_success ==1){
       if(gctl_t.app_timer_power_on_flag==0 && gctl_t.first_link_tencent_cloud_flag ==1){
 	
 		  gctl_t.first_link_tencent_cloud_flag++;
 
-               MqttData_Publish_Update_Data();
-			  tx_thread_sleep(20);//HAL_Delay(200);
+             MqttData_Publish_Update_Data();
+			 tx_thread_sleep(20);//HAL_Delay(200);
              SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
              tx_thread_sleep(1);
           
@@ -358,6 +358,19 @@ static void handler_works_hours(void)
      works_run_two_hours_state();
    
 	
+}
+
+
+static void handler_module_action(void)
+{
+   
+   if((gpro_t.fan_rx_stop_flag ==0 && gpro_t.stopTwoHours_flag ==0)){//(gctl_t.app_timer_power_on_flag == 1)
+		 
+			 
+		module_action_handler();
+	 }
+	
+
 }
 
   /**
@@ -444,154 +457,7 @@ static void handler_fan_speed_state(void)
 }
 
 
-/************************************************************************************
-*
-*Function Name: void ActionEvent_Handler(void)
-*Fucntion :
-*Input Ref:NO
-*Return Ref:NO
-*
-************************************************************************************/
-void ActionEvent_Handler(void)
-{
 
-   static uint8_t ptc_default =0xff,plasma_default =0xff,ultrasonic_default =0xff;
-   static uint8_t app_timer_power_counter;
-
-   if(gpro_t.stopTwoHours_flag ==1) return ; //WT.EDIT 2025.10.29
-   
-   if(gpro_t.rx_ptc_flag==1 && gctl_t.ptc_prohibit_on_flag ==0){//if( gctl_t.gDry==1 && gctl_t.ptc_prohibit_on_flag ==0){
-	if(gpro_t.fan_warning_flag !=1 && gpro_t.ptc_warning !=1 ){ //PTC warning flag
-
-      PTC_SetHigh();
-
-	   if(gctl_t.app_timer_power_on_flag == 1){
-	   	
-                SendWifiData_To_Cmd(0x02,0x01);
-				tx_thread_sleep(1);
-
-	   }
-       else if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_actiov_f){//ptc_actiov_f = 0++
-             gpro_t.rx_ptc_flag=1 ;
-			ptc_default = gpro_t.ptc_actiov_f;
-
-			MqttData_Publish_SetPtc(0x01);
-			tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
-	     	}
-		}
-   	  
-	}
-	else if(gpro_t.rx_ptc_flag ==0){
-		
-	  
-		PTC_SetLow();
-		if(gctl_t.app_timer_power_on_flag == 1){
-			    gctl_t.ptc_prohibit_on_flag =1;
-                SendWifiData_To_Cmd(0x02,0);
-				tx_thread_sleep(1);
-
-		}
-		else if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_actiov_f){//if(ptc_default!= get_ptc_value() && wifi_link_net_state()==1){
-			gpro_t.rx_ptc_flag =0 ;
-
-			ptc_default = gpro_t.ptc_actiov_f;
-		    MqttData_Publish_SetPtc(0x0);
-			tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
-			
-		}
-		
-   }
-   
-
-   //plasma
-    if(gctl_t.gPlasma == 1){
-		
-	     PLASMA_SetHigh();
-
-	     if(gctl_t.app_timer_power_on_flag == 1){
-                SendWifiData_To_Cmd(0x03,0x01);
-				tx_thread_sleep(1);
-
-		 }
-		 if(plasma_default!=gpro_t.plasma_switch_flag && wifi_link_net_state()==1){
-		 	gpro_t.plasma_switch_flag++;
-			plasma_default = gpro_t.plasma_switch_flag;	
-		
-		   MqttData_Publish_SetPlasma(0x01);
-		   tx_thread_sleep(20);
-		 
-		}
-	}
-	else if(gctl_t.gPlasma == 0){
-
-		PLASMA_SetLow();
-		if(gctl_t.app_timer_power_on_flag == 1){
-                SendWifiData_To_Cmd(0x03,0);
-				tx_thread_sleep(1);
-
-		 }
-		 if(plasma_default!=gpro_t.plasma_switch_flag && wifi_link_net_state()==1){
-		 	gpro_t.plasma_switch_flag++;
-			plasma_default = gpro_t.plasma_switch_flag;
-		
-		   MqttData_Publish_SetPlasma(0);
-		  tx_thread_sleep(20);
-		 
-		}
-	}
-	//driver bug
-	if(gctl_t.gUlransonic ==1){
-		
-	     ultrasonic_open();
-		 if(gctl_t.app_timer_power_on_flag == 1){
-                SendWifiData_To_Cmd(0x04,0x01);
-				tx_thread_sleep(1);
-
-		 }
-	
-	 if(ultrasonic_default!=gpro_t.ultrasonic_switch_flag && wifi_link_net_state()==1){
-	 	gpro_t.ultrasonic_switch_flag++;
-	    ultrasonic_default = gpro_t.ultrasonic_switch_flag;
-		 
-		 MqttData_Publish_SetUltrasonic(0x01);
-		tx_thread_sleep(20);
-	 } 
-		
-	}
-	else if(gctl_t.gUlransonic ==0){
-
-	    ultrasonic_close();
-		if(gctl_t.app_timer_power_on_flag == 1){
-                SendWifiData_To_Cmd(0x04,0);
-				tx_thread_sleep(1);
-
-		 }
-		
-		if(ultrasonic_default!=gpro_t.ultrasonic_switch_flag && wifi_link_net_state()==1){
-			gpro_t.ultrasonic_switch_flag++;
-			ultrasonic_default = gpro_t.ultrasonic_switch_flag;	
-			 
-			MqttData_Publish_SetUltrasonic(0);
-		    tx_thread_sleep(20);
-			
-		}
-
-	}
-   
-	 Fan_RunSpeed_Fun();
-    
-	
-	if(app_timer_power_counter < 3 && gctl_t.app_timer_power_on_flag == 1){
-	   app_timer_power_counter++;
-
-    }
-	else if(app_timer_power_counter > 2 && gctl_t.app_timer_power_on_flag == 1){
-	   app_timer_power_counter=0;
-
-	   gctl_t.app_timer_power_on_flag =0;
-
-	}
- }
 
 /************************************************************************************
 *

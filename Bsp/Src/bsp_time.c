@@ -64,12 +64,6 @@ void works_run_two_hours_state(void)
          ultrasonic_close();
 
   }
-  else if((gpro_t.fan_rx_stop_flag ==0 && gpro_t.stopTwoHours_flag ==0)\
-  	     ||(gctl_t.app_timer_power_on_flag == 1)){ //300ms
-           
-          
-            ActionEvent_Handler();
-   }
 
 	if(gpro_t.fan_rx_stop_flag ==1){
                FAN_Stop();
@@ -128,7 +122,7 @@ void works_run_two_hours_state(void)
       else if(define_twohours_flag==0 && gpro_t.stopTwoHours_flag ==0){ //300ms
             
           
-            ActionEvent_Handler();
+            module_action_handler();
       }
 
      if(gpro_t.gTimer_poweroff_fan > 5){

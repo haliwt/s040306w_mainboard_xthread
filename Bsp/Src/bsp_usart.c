@@ -412,6 +412,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			buzzer_sound();
 			
 			 gctl_t.gPlasma = 1;
+		     gpro_t.plasma_switch_flag ++;
 			 if(gpro_t.stopTwoHours_flag==0){
 				 PLASMA_SetHigh() ;
    
@@ -427,6 +428,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			
 			 
 			 gctl_t.gPlasma = 0;
+		     gpro_t.plasma_switch_flag ++;
 			 PLASMA_SetLow();
 
 			SendWifiData_Answer_Cmd(0x03,0x0); //
@@ -444,6 +446,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  if(pdata[3]  == 0x01){  //open 
 			 buzzer_sound();
 			gctl_t.gUlransonic =1;
+		     gpro_t.ultrasonic_switch_flag ++;
    
 			if(gpro_t.stopTwoHours_flag==0){
 				 ultrasonic_open();
@@ -456,7 +459,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  }
 		  else if(pdata[3] == 0x0){ //close 
               buzzer_sound();
+			
 			gctl_t.gUlransonic = 0;
+		    gpro_t.ultrasonic_switch_flag++;
    
 			ultrasonic_close();
 			
