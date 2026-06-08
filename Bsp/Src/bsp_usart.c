@@ -764,12 +764,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 			       PTC_SetLow();
 		       }
-
+              gpro_t.tx_wifi_temperature_f = 1;
 		      gpro_t.ptc_actiov_f++;
-				   if(wifi_link_net_state()==1){
-					   MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
-					   tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(350);
-					}
+				  
 			   	
 			  }
 		   

@@ -11,7 +11,7 @@
 #define PERIOD_READ_DHT11      100    //   10ms * 100 = 1000ms = 1s
 #define PERIOD_FAN_SPEED       130    //   10ms * 130 = 1300ms = 1.3s
 #define PERIOD_PERIPHERAL      50     //   10ms* 50 = 500ms
-#define PERIOD_RX_WIFI_DATA    2
+#define PERIOD_LINK_WIFI    2
 #define PERIOD_DISP_AI_WIF     160
 
 // --- 2. 定义分时任务控制结构体 ---
@@ -46,7 +46,7 @@ TimeSharingTask_t g_tasks[] = {
     {0, PERIOD_READ_DHT11,       handler_read_dht11},
     {0, PERIOD_FAN_SPEED,        handler_fan_speed_state},
     {0,PERIOD_PERIPHERAL,        handler_module_action},
-    {0,PERIOD_RX_WIFI_DATA,      handler_rx_widi_data},
+    {0,PERIOD_LINK_WIFI,         handler_rx_widi_data},
     {0,PERIOD_DISP_AI_WIF,       handler_send_ai_wif}
    
     
@@ -367,6 +367,7 @@ static void power_on_cycle_handler(void)
 
       // 获取当前系统的绝对时间戳
       uint32_t current_tick = tx_time_get();
+	  #if 0
 
       // 第二步：通过时间片轮询核心算法，分时调用各个功能模块
 	   for (uint8_t i = 0; i < TASK_NUM; i++) {
@@ -383,6 +384,32 @@ static void power_on_cycle_handler(void)
 	   }
 
 	   }
+	   #else 
+        // 通过时间片轮询核心算法，分时调用各个功能模块
+    for (uint8_t i = 0; i < TASK_NUM; i++) 
+    {
+        if ((current_tick - g_tasks[i].last_tick) >= g_tasks[i].period) 
+        {
+            // 【工业级进化：防轰炸饱和截断】
+            // 如果卡顿/被高优先级抢占的时间超过了 2 个周期，直接对齐当前时间，放弃追赶
+            if ((current_tick - g_tasks[i].last_tick) > (g_tasks[i].period * 2)) 
+            {
+                g_tasks[i].last_tick = current_tick;
+            }
+            else 
+            {
+                // 如果只是正常范围内的轻微抖动，滚动累加周期，死锁锁相，消除长期长跑漂移
+                g_tasks[i].last_tick += g_tasks[i].period;
+            }
+            
+            // 触发对应周期的执行函数（确保不为 NULL，防止空指针崩溃）
+            if (g_tasks[i].task_handler != NULL)
+            {
+                g_tasks[i].task_handler(); 
+            }
+        }
+    }
+	   #endif 
 
 }
 #endif 

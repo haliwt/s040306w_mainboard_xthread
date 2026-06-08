@@ -159,6 +159,7 @@ typedef struct PROCESS_T{
 
    uint8_t fan_rx_stop_flag;
    uint8_t ptc_actiov_f;
+   uint8_t tx_wifi_temperature_f;
 
    
    uint8_t disp_works_hours ;    
