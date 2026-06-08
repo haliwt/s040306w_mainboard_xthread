@@ -112,7 +112,7 @@ void tx_application_define(void *first_unused_memory)
 		 #endif 
 
          LL_IWDG_ReloadCounter(IWDG);
-		 tx_thread_sleep(2);//10ms * 20 = 200ms
+		 tx_thread_sleep(1);//10ms * 20 = 200ms
 		
 	}
       
@@ -213,16 +213,11 @@ static void power_run_handler(void)
 		 
 			
             power_on_handler();
-            link_wifi_to_tencent_handler(); //detected ADC of value 
-            ai_mode_display_fun();
+           // link_wifi_to_tencent_handler(); //detected ADC of value 
+            //ai_mode_display_fun();
 		
 
-			//ack_handler();
-            if(gpro_t.process_run_step > 20 || gpro_t.stopTwoHours_flag > 1){
-				 if(gpro_t.process_run_step > 20 )gpro_t.process_run_step=6; //WT.EDIT 2025.10.07
-				 if(gpro_t.stopTwoHours_flag > 1 )gpro_t.stopTwoHours_flag =0;
-            }
-		   
+		
 			
 		  break;
 
@@ -248,16 +243,7 @@ static void power_run_handler(void)
 *******************************************************************************/
 static void wifi_run_handler(void)
 {
-      if(gpro_t.process_run_step > 10){
-
-		      gpro_t.process_run_step=6;
-			  
-
-		  }
-          else if(gpro_t.wifi_led_fast_blink_flag > 1){
-		  	 gpro_t.wifi_led_fast_blink_flag=0;
-			
-		  }
+       
 		  
 		  if(gpro_t.wifi_led_fast_blink_flag==0 ){
              wifi_communication_tnecent_handler();//

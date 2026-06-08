@@ -6,11 +6,13 @@
 #define PERIOD_WIFI_STATE      300    // 10ms*300 = 3000ms = 3s
 #define PERIOD_WIFI_UPDATE     150    // 10ms*200 = 2000ms = 2s
 #define PERIOD_WORKS_HOURS     400    //  10ms*150 = 1500ms = 1.5s
-#define PERIOD_FAN_ADC         250    //  10ms*250 = 2500ms = 2.5s
+#define PERIOD_FAN_ADC         500    //  10ms*250 = 2500ms = 2.5s
 #define PERIOD_WIFI_TEMP       600    //   10ms * 500 = 50000ms = 5s 
 #define PERIOD_READ_DHT11      100    //   10ms * 100 = 1000ms = 1s
 #define PERIOD_FAN_SPEED       130    //   10ms * 130 = 1300ms = 1.3s
-#define PERIOD_PERIPHERAL      200
+#define PERIOD_PERIPHERAL      50     //   10ms* 50 = 500ms
+#define PERIOD_RX_WIFI_DATA    2
+#define PERIOD_DISP_AI_WIF     160
 
 // --- 2. 定义分时任务控制结构体 ---
 typedef struct {
@@ -28,10 +30,12 @@ static void handler_wifi_update_temp_humidity(void);
 static void handler_read_dht11(void);
 static void handler_fan_speed_state(void);
 static void handler_module_action(void);
+static void handler_rx_widi_data(void);
+static void handler_send_ai_wif(void);
 
+volatile uint8_t time_slot ;
 
-
-
+#if 1
 // --- 4. 初始化分时任务表 ---
 TimeSharingTask_t g_tasks[] = {
     {0, PERIOD_WIFI_STATE,       handler_wifi_state},
@@ -41,10 +45,120 @@ TimeSharingTask_t g_tasks[] = {
     {0, PERIOD_WIFI_TEMP,        handler_wifi_update_temp_humidity},
     {0, PERIOD_READ_DHT11,       handler_read_dht11},
     {0, PERIOD_FAN_SPEED,        handler_fan_speed_state},
-    {0,PERIOD_PERIPHERAL,        handler_module_action}
+    {0,PERIOD_PERIPHERAL,        handler_module_action},
+    {0,PERIOD_RX_WIFI_DATA,      handler_rx_widi_data},
+    {0,PERIOD_DISP_AI_WIF,       handler_send_ai_wif}
+   
     
 	
 };
+
+#else 
+
+void static task_time_slot_scheduler(void)
+{
+   static uint16_t wifi_counter_1,wifi_counter_2,counter_1,counter_2;
+   static uint16_t counter_3,counter_4,counter_5,counter_6;
+   switch(time_slot){
+
+    case 0:
+	   wifi_counter_1 ++;
+       if(wifi_counter_1 >300 ){//200
+        wifi_counter_1=0;
+	   handler_wifi_state();
+
+       }
+
+    break;
+
+    case 1:
+		wifi_counter_2++;
+		if(wifi_counter_2 > 150){
+			wifi_counter_2=0;
+		handler_wifi_update_data();
+
+	    }
+
+	break;
+
+	case 2:
+		counter_1++;
+		if(counter_1 > 400){
+			counter_1 =0;
+		handler_works_hours();
+
+	    }
+
+	break;
+
+	case 3:
+
+	counter_2++;
+		if(counter_2 > 500){
+			counter_2 =0;
+		 handler_fan_adc();
+		}
+
+	break;
+
+	case 4:
+	counter_3++;
+		if(counter_3 > 600){
+				counter_3 =0;
+			handler_wifi_update_temp_humidity();
+		}
+
+	break;
+
+	case 5:
+	counter_4++;
+			if(counter_4 > 100){
+				counter_4 =0;
+				handler_read_dht11();
+				}
+
+	break;
+
+	case 6:
+	counter_5++;
+			if(counter_5 > 270){
+				counter_5 =0;
+				handler_fan_speed_state();
+				}
+
+	break;
+
+	case 7:
+	counter_6++;
+			if(counter_6 > 60){
+				counter_6 =0;
+				handler_module_action();
+
+			}
+
+	break;
+
+	case 8:
+	   link_wifi_to_tencent_handler(); //detected ADC of value 
+        
+
+	break;
+
+	case 9:
+	 ai_mode_display_fun();
+
+	break;
+
+
+   }
+
+   time_slot ++;
+   if(time_slot > 9)time_slot = 0;//10ms * 10 = 100ms
+}
+
+
+
+#endif 
 
 #define TASK_NUM (sizeof(g_tasks) / sizeof(TimeSharingTask_t))
 
@@ -71,9 +185,15 @@ void power_on_handler(void)
 	if( gpro_t.process_run_step < 20){
 	  power_on_init_handler();
 	}
-    else
-       power_on_cycle_handler();
+    else{
+	   #if 0
+       task_scheduler();
+	   #else
+	   
+	   power_on_cycle_handler();
+	   #endif 
 
+	}
 }
 
 /************************************************************************************
@@ -216,13 +336,14 @@ static void power_on_init_handler(void)
         module_action_handler();
 		read_sensorData();
 
-		
+#if 1	
         boot_tick = tx_time_get();
 		for(i=0;i < TASK_NUM;i ++){
 
 		     g_tasks[i].last_tick = boot_tick;
 		}
-	    gpro_t.process_run_step= 0xff;
+#endif 
+	    gpro_t.process_run_step= 0xfe;//0xff ->? -1
 
 	break;
 
@@ -240,6 +361,7 @@ static void power_on_init_handler(void)
 *Return Ref:NO
 *
 ************************************************************************************/
+#if 1
 static void power_on_cycle_handler(void)
 {
 
@@ -263,6 +385,7 @@ static void power_on_cycle_handler(void)
 	   }
 
 }
+#endif 
 /************************************************************************************
 *
 *Function Name: static void power_on_cycle_handler(void)
@@ -438,15 +561,14 @@ static void handler_read_dht11(void)
 
 }
 
-   /**
-   *
-   *@brief 
-   *@notice
-   *@param
-   *@retval
-   *
-   **/
-
+/**
+	*
+	*@brief 
+	*@notice
+	*@param
+	*@retval
+	*
+**/
 static void handler_fan_speed_state(void)
 {
    
@@ -455,7 +577,34 @@ static void handler_fan_speed_state(void)
 		Fan_RunSpeed_Fun();
 	}
 }
+/**
+	*
+	*@brief 
+	*@notice
+	*@param
+	*@retval
+	*
+**/
 
+static void handler_rx_widi_data(void)
+{
+ link_wifi_to_tencent_handler();
+}
+/**
+	*
+	*@brief 
+	*@notice
+	*@param
+	*@retval
+	*
+**/
+
+static void handler_send_ai_wif(void)
+{
+	ai_mode_display_fun();
+
+
+}
 
 
 
@@ -573,7 +722,7 @@ void power_off_handler(void)
 	  
          //power off init two hours flag
 	     gpro_t.stopTwoHours_flag=0;
-		 gpro_t.process_run_step=0;
+	
 		     
 	
 		 gpro_t.fan_rx_stop_flag=0;
@@ -582,7 +731,6 @@ void power_off_handler(void)
 		  gctl_t.fan_warning =0;
        
 
-         gpro_t.process_run_step=0;//gpro_t.process_run_step
           gctl_t.rx_set_temp_flag=0; 
          gctl_t.set_temperature_flag = 0; 
 		 gpro_t.first_ptc_on=0;
@@ -706,7 +854,7 @@ void every_power_on_run(void)
       gctl_t.gUlransonic = 1; // "æ¤¹è¾«æ«„1¤7"
     
 	
-       gpro_t.process_run_step=0;
+     
 	
 
 	

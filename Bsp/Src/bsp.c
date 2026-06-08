@@ -139,7 +139,7 @@ void wifi_auto_detected_link_state(void)
 			 link_counter_times =5;
            //wifi_t.linking_tencent_cloud_doing = 0;
            net_t.linking_tencent_cloud_doing  =0;
-           gpro_t.process_run_step=0;
+          
         
           if(gpro_t.gpower_on == power_off){
 		     MqttData_Publish_PowerOff_Ref();

@@ -54,7 +54,7 @@ void adc_detected_hundler(void)
 
 	   if(fan_counter_error > 10)fan_counter_error =0;
 
-	   if(gpro_t.fan_warning_flag > 1)gpro_t.fan_warning_flag=0;
+	
 
 	   if(fan_detect_voltage < 150  &&  gpro_t.fan_warning_flag==0){
 
