@@ -732,11 +732,20 @@ void SetPowerOff_ForDoing(void)
 ************************************************************************/
 void power_off_handler(void)
 {
-    static uint8_t dc_power = 0;
+    static uint8_t dc_power = 0,power_on_sound_flag=0;
    
     switch(gpro_t.power_off_run_step){
 
 	case 0:
+
+		if(power_on_sound_flag==0){
+            power_on_sound_flag ++;
+            FAN_Stop();  //WT.EDIT.2025.01.03
+            buzzer_sound_once();//buzzer_sound();//buzzer_sound();
+            read_sensorData();
+		
+
+        }
 		gpro_t.process_run_step=0;
          gpro_t.gTimer_poweroff_fan=0;
          //timer timing 

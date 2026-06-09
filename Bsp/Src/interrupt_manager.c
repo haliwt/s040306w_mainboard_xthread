@@ -43,11 +43,18 @@ void callback_register_fun(void)
 *******************************************************************************/
 void tim17_isr_callback_handler(void)
 {
-   static  uint8_t tm0;
+  volatile static  uint8_t tm0=0,tm1=0;
 
  
 
     tm0 ++ ;
+
+	if(++tm1 > 1){
+        tm1 = 0;
+		gpro_t.time_20ms_f = 1;
+
+	}
+	
       
     if(tm0 > 99){//10ms *100 = 1000ms =1s
         tm0 =0;

@@ -164,6 +164,9 @@ typedef struct PROCESS_T{
    
    uint8_t disp_works_hours ;    
    uint8_t disp_works_minutes ;
+
+
+ volatile  uint8_t time_20ms_f ;
  volatile  uint8_t gTimer_works_time_seconds ;
    //timer time
  volatile  uint8_t gTimer_power_on_first_link_tencent;

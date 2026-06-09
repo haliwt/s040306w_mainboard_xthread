@@ -94,18 +94,13 @@ void tx_application_define(void *first_unused_memory)
 	while(1)
     {
 
-		if(power_on_sound_flag==0){
-            power_on_sound_flag ++;
-            FAN_Stop();  //WT.EDIT.2025.01.03
-            buzzer_sound_once();//buzzer_sound();//buzzer_sound();
-            read_sensorData();
-		
 
-        }
      
 	     power_run_handler();
-       
-         wifi_run_handler();
+         if(gpro_t.time_20ms_f ==1){
+		 	gpro_t.time_20ms_f=0;
+            wifi_run_handler();
+         }
          #if DEBUG_ENABLE
 		   debug_stack_check();
 
@@ -243,16 +238,41 @@ static void power_run_handler(void)
 *******************************************************************************/
 static void wifi_run_handler(void)
 {
-       
+       static uint8_t time_slot =0;
 		  
 		  if(gpro_t.wifi_led_fast_blink_flag==0 ){
-             wifi_communication_tnecent_handler();//
+
+		     switch(time_slot){
+
+			   case 0:
+
+		         wifi_communication_tnecent_handler();//
+
+		      break;
+
+			  case 1:
         
              getBeijingTime_cofirmLinkNetState_handler();
+
+			  break;
+
+			  case 2:
 	
              wifi_auto_detected_link_state();
+
+			  break;
+
+			  default:
+			  	break;
+
+
+
+		     }
 		
            }
+
+		  time_slot ++;
+		  if(time_slot > 2) time_slot = 0;
 
 }
 
