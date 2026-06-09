@@ -278,7 +278,7 @@ void usart1_isr_callback_handler(uint8_t data)
 static void usart1_protocol_state_machine(uint8_t *pdata)
 {
 
-   static uint8_t ptc_set_wifi = 0xff;
+   static uint8_t ptc_set_wifi = 0xff,timer_time_f = 0;
    switch(pdata[2]){
 
    case 0:
@@ -553,23 +553,12 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
           gctl_t.gModel=2;
           gctl_t.mode_ai_switch_flag =1;
         
-		  
-	      if(wifi_link_net_state()==1){
-	          MqttData_Publish_AitState(2);
-			   tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(350);
-	       }
-        
-          
-       }
+	   }
        else if(pdata[3] == 0x01){ //AI mode 
        
 	     gctl_t.gModel=1;
 	     gctl_t.mode_ai_switch_flag =1;
-         if(wifi_link_net_state()==1){
-	         MqttData_Publish_AitState(1);
-			 tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(350);
-	      }
-		 
+       
        }
 
 
@@ -773,6 +762,33 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			}
 		
 		
+	 break;
+
+	 case 0x2B:
+
+	    if(pdata[4]==0x01 && gpro_t.gpower_on == power_on){
+
+		   timer_time_f = pdata[5] ;
+
+		   if(timer_time_f  > 0){
+              gctl_t.gModel=2;
+              gctl_t.mode_ai_switch_flag =1;
+		    
+
+		   }
+		   else{
+		       gctl_t.gModel=1;
+			   gctl_t.mode_ai_switch_flag =1;
+					 
+
+		   }
+
+
+
+		}
+	 	
+
+
 	 break;
 
 	 

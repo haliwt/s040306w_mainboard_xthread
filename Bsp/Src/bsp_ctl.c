@@ -30,7 +30,7 @@ void ai_mode_display_fun(void)
 	  tx_thread_sleep(20);
 
 	}
-	else if(gctl_t.gModel ==2){
+	else if(gctl_t.gModel ==2 || gctl_t.gModel ==0){
 	  MqttData_Publish_AitState(2);
 	  tx_thread_sleep(20);
 	
