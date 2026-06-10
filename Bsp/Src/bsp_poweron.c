@@ -580,8 +580,6 @@ static void handler_read_dht11(void)
 	 }
 
   
-
-    if(gpro_t.rx_ptc_flag >1)gpro_t.rx_ptc_flag=1;//2026.02.27 WT.EDIT
     if(gpro_t.stopTwoHours_flag==0)gpro_t.fan_rx_stop_flag =0;
 
 	read_sensorData();

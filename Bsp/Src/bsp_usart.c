@@ -612,7 +612,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		else if(pdata[3]==0){
 			   gpro_t.stopTwoHours_flag=0;//WT.EDIT 2026.01.26
 			   gpro_t.fan_rx_stop_flag =0 ;
-		  
+		     
 			   gpro_t.ptc_actiov_f++;
         
               if(gpro_t.rx_ptc_flag >1)gpro_t.rx_ptc_flag=1;//2026.02.27 WT.EDIT
