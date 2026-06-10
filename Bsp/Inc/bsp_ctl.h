@@ -81,7 +81,7 @@ typedef struct _RUN_T{
    uint8_t app_timer_power_on_flag ;
 
    uint8_t response_wifi_signal_label;
-  uint8_t ptc_prohibit_on_flag ;
+   bool ptc_prohibit_on_flag ;
    uint8_t set_temp_first_closeptc ;
 
  //fan:

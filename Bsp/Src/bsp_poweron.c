@@ -569,11 +569,11 @@ static void handler_wifi_update_temp_humidity(void)
 static void handler_read_dht11(void)
  {
 
-     if(gctl_t.set_temperature_flag > 1 || gctl_t.set_temperature_value > 40 || gctl_t.ptc_prohibit_on_flag > 1
-	 	  ||gctl_t.app_timer_power_on_flag > 2 || gctl_t.set_temp_first_closeptc > 1 || gpro_t.soft_version > 2){
+     if(gctl_t.set_temperature_flag > 1 || gctl_t.set_temperature_value > 40 || 
+	 	  gctl_t.app_timer_power_on_flag > 2 || gctl_t.set_temp_first_closeptc > 1 || gpro_t.soft_version > 2){
 	 	if(gctl_t.set_temperature_flag > 1)gctl_t.set_temperature_flag =0;
 		if(gctl_t.set_temperature_value > 40 && gctl_t.set_temperature_flag ==0)gctl_t.set_temperature_value =40;
-        if(gctl_t.ptc_prohibit_on_flag > 1)gctl_t.ptc_prohibit_on_flag =0;
+   
 		if(gctl_t.app_timer_power_on_flag > 2)gctl_t.app_timer_power_on_flag=0;
 		if( gctl_t.set_temp_first_closeptc > 1)  gctl_t.set_temp_first_closeptc =0;
 		if(gpro_t.soft_version > 2)gpro_t.soft_version = 0 ;

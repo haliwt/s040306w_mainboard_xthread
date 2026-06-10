@@ -613,10 +613,7 @@ void Json_Parse_Command_Fun(void)
                 PTC_SetHigh();
 		 }
 		
-		 gctl_t.ptc_prohibit_on_flag =0; //WT.EDIT 2026.03-30
-
-
-		  gctl_t.ptc_prohibit_on_flag = 0;
+	      gctl_t.ptc_prohibit_on_flag = 0;
 		  gctl_t.set_temp_first_closeptc =0;
 		  gctl_t.rx_set_temp_flag =0;
 		  gpro_t.ptc_actiov_f++;
@@ -641,13 +638,11 @@ void Json_Parse_Command_Fun(void)
 	  	if(gpro_t.gpower_on ==power_on){
          buzzer_sound();
 		 PTC_SetLow();
-		 gctl_t.ptc_prohibit_on_flag =1;//WT.EDIT 2026.03-30
+		
      	 gpro_t.rx_ptc_flag = 0;//gctl_t.gDry=0;
          gctl_t.app_timer_power_on_flag = 0;
 	
-        
-
-		 gctl_t.ptc_prohibit_on_flag = 1;
+         gctl_t.ptc_prohibit_on_flag = 1;
 		 gctl_t.set_temp_first_closeptc =0;
 		 gctl_t.rx_set_temp_flag =0;
 		 gpro_t.ptc_actiov_f++;

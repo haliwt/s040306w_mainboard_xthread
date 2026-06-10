@@ -687,8 +687,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		
         if(pdata[3]== 0x01){
 		  
-		   if(gpro_t.stopTwoHours_flag >1 )gpro_t.stopTwoHours_flag=0; //This is be solved bug.
-		   if(gctl_t.ptc_prohibit_on_flag >1) gctl_t.ptc_prohibit_on_flag=0;
+		  
+	
 		   gpro_t.rx_ptc_flag = 1;//gctl_t.gDry = 1;
 		   if(gpro_t.stopTwoHours_flag ==0 && gctl_t.ptc_prohibit_on_flag==0){
 			  
@@ -725,7 +725,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
    
      break;
 
-	 case 0x23:
+	 case 0x23://direct compare set temperature value . don't buzzer sound .
 		
        if(pdata[3] == 0x01){//phone_cmd_power
 
@@ -748,12 +748,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	   }
        else if(pdata[3]== 0x0 ){
 	   
-		 
-       
-		
-	          gpro_t.rx_ptc_flag = 0;
+		      gpro_t.rx_ptc_flag = 0;
 		      PTC_SetLow();
-			  gctl_t.ptc_prohibit_on_flag =1;
+			  gctl_t.ptc_prohibit_on_flag =0;
 			  gpro_t.ptc_actiov_f++;
 		  
       
@@ -773,7 +770,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				gpro_t.set_temp_value_success=1;
 			   
 			   gctl_t.set_temperature_value = pdata[5] ;
-			   gctl_t.ptc_prohibit_on_flag =0;
+			 
 			   if(gctl_t.set_temperature_value > gctl_t.gDht11_temperature){
 			
 			        
