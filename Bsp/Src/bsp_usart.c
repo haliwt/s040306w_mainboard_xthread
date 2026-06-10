@@ -531,7 +531,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  
 	  case 0x16 : //buzzer sound command with answer .
          if(pdata[3] == 0x01){
-		 	gpro_t.buzzer_sound_f =1;
+		 	
 		 	buzzer_sound();
 
          }
@@ -726,6 +726,43 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	
    
      break;
+
+	 case 0x23:
+		
+       if(pdata[3] == 0x01){//phone_cmd_power
+
+	    
+	
+			 gpro_t.rx_ptc_flag = 1;
+			 gctl_t.ptc_prohibit_on_flag=0;
+			 gpro_t.ptc_actiov_f++;
+			 
+			 if(gpro_t.stopTwoHours_flag==0){//two hours have a rest ten minutes .
+	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
+	             
+	              PTC_SetHigh();
+         }
+             
+         
+           }
+
+		 
+	   }
+       else if(pdata[3]== 0x0 ){
+	   
+		 
+       
+		
+	          gpro_t.rx_ptc_flag = 0;
+		      PTC_SetLow();
+			  gctl_t.ptc_prohibit_on_flag =1;
+			  gpro_t.ptc_actiov_f++;
+		  
+      
+     
+       }
+
+	 break;
 
 
 	 

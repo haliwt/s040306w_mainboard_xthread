@@ -182,13 +182,13 @@ void threadx_handler(void)
                      TX_NO_TIME_SLICE, 			   /* 不开启时间片 */
                      TX_AUTO_START);               /* 创建后立即启动 */
   #endif 
-
+  
     tx_timer_create(&buzzer_timer,
     			    "BuzzerTimer",
     			    buzzer_timer_callback,
     			    0,
     			    2,                           /*第一次延时 20ms*/
-    			    2,                           /* 周期是20tick*/
+    			    0,                           /* 周期是20tick*/
     			    TX_NO_ACTIVATE);
    
  
@@ -305,6 +305,10 @@ void buzzer_sound_open(void)
   tx_timer_activate(&buzzer_timer);
 }
 
+void tx_thread_set_sound_once(void)
+{
+ tx_timer_change(&buzzer_timer,2,0);
+}
 
 #if DEBUG_ENABLE
 static void debug_stack_check(void)

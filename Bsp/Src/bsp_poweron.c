@@ -11,7 +11,7 @@
 #define PERIOD_READ_DHT11      100    //   10ms * 100 = 1000ms = 1s
 #define PERIOD_FAN_SPEED       130    //   10ms * 130 = 1300ms = 1.3s
 #define PERIOD_PERIPHERAL      50     //   10ms* 50 = 500ms
-#define PERIOD_LINK_WIFI    2
+#define PERIOD_LINK_WIFI       2
 #define PERIOD_DISP_AI_WIF     160
 
 // --- 2. 定义分时任务控制结构体 ---
