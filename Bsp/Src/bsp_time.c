@@ -113,9 +113,7 @@ void works_run_two_hours_state(void)
 	  
 	  
 
-	  if(define_twohours_flag==1)gpro_t.stopTwoHours_flag=1;
-	  else if(define_twohours_flag==2)gpro_t.stopTwoHours_flag=1;
-	  else if(define_twohours_flag==0)gpro_t.stopTwoHours_flag=0;
+	 
 	  
 
 	  if(gpro_t.stopTwoHours_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 0 && define_twohours_flag ==1){
@@ -159,7 +157,7 @@ void works_run_two_hours_state(void)
 **/
 static void CompareSetAndActualTemperature(void)
 {
-    if(gpro_t.stopTwoHours_flag ==1 || gctl_t.ptc_prohibit_on_flag ==1)return ;
+    if(gctl_t.ptc_prohibit_on_flag ==1)return ;
 	// 控制 PTC 加热器开关（带滞后控制）
 	uint8_t real_temp = gctl_t.gDht11_temperature;
 	int8_t target_temp;
@@ -193,7 +191,7 @@ static void CompareSetAndActualTemperature(void)
 		        if(real_temp < target_temp && gctl_t.ptc_prohibit_on_flag ==0){
 
 		           gpro_t.rx_ptc_flag= 1;
-				   PTC_SetHigh();
+				   if(gpro_t.stopTwoHours_flag ==0)PTC_SetHigh();
 				   ptc_state = PTC_STATE_ON;
 				   if(gpro_t.first_ptc_on ==1) gpro_t.first_ptc_on =2;
 				   SendData_Set_Command(0x22, 0x01); // open PTC
@@ -211,7 +209,7 @@ static void CompareSetAndActualTemperature(void)
 				if (real_temp < (target_temp - 2)) {
 					
 					gpro_t.rx_ptc_flag  = 1;
-				     PTC_SetHigh();
+					if(gpro_t.stopTwoHours_flag ==0)PTC_SetHigh();
 					ptc_state = PTC_STATE_ON;
 					SendData_Set_Command(0x22, 0x01); // open PTC
 

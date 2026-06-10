@@ -132,7 +132,7 @@ typedef struct PROCESS_T{
 
 
    uint8_t get_beijing_flag;
-   uint8_t stopTwoHours_flag;
+   bool stopTwoHours_flag;
 
    uint8_t receive_copy_cmd ;
    uint8_t send_ack_cmd;
@@ -140,7 +140,7 @@ typedef struct PROCESS_T{
    //uint8_t gFan_pwm_duty_level;
    uint8_t answer_buzzer_flag ;
  
-   uint8_t rx_ptc_flag;
+   bool rx_ptc_flag;
    uint8_t second_disp_flag;
    uint8_t first_ptc_on;
 	

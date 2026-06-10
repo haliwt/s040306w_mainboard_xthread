@@ -450,7 +450,7 @@ void Tencent_Cloud_Rx_Handler(void)
     else if(strstr((char *)gpro_t.wifi_rx_data_array,"ptc\":1")){
             if(gpro_t.gpower_on ==power_on){
 	          gpro_t.rx_ptc_flag =1;//gctl_t.gDry=1;
-           
+              gctl_t.ptc_prohibit_on_flag = 0;//WT.EDIT 2026-06-10
 			  gctl_t.response_wifi_signal_label = PTC_ON_ITEM;
 				
             }
@@ -607,11 +607,12 @@ void Json_Parse_Command_Fun(void)
 	  if(gpro_t.gpower_on ==power_on){
 	   
          buzzer_sound();
+		 gpro_t.rx_ptc_flag = 1;//gctl_t.gDry=1;
 
 		 if(gpro_t.stopTwoHours_flag==0 && gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
                 PTC_SetHigh();
 		 }
-		 gpro_t.rx_ptc_flag = 1;//gctl_t.gDry=1;
+		
 		 gctl_t.ptc_prohibit_on_flag =0; //WT.EDIT 2026.03-30
 
 

@@ -579,9 +579,7 @@ static void handler_read_dht11(void)
 		if(gpro_t.soft_version > 2)gpro_t.soft_version = 0 ;
 	 }
 
-  
-    if(gpro_t.stopTwoHours_flag==0)gpro_t.fan_rx_stop_flag =0;
-
+ 
 	read_sensorData();
 
 }
@@ -877,7 +875,7 @@ void every_power_on_run(void)
    Fan_Full_Speed();//WT.EDIT 2025.01.03//Fan_RunSpeed_Fun();//FAN_CCW_RUN();
    if(gctl_t.app_timer_power_on_flag==0){
      
-     // gctl_t.gModel=1;
+      gctl_t.gModel=1;
      
       gpro_t.rx_ptc_flag = 1;//gctl_t.gDry = 1;
   
