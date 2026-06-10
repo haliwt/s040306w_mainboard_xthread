@@ -33,12 +33,12 @@ void MX_IWDG_Init(void)
   /* USER CODE END IWDG_Init 0 */
 
   /* USER CODE BEGIN IWDG_Init 1 */
-   // iwdg = 2s 
+   // iwdg = 2s Time_out = (relaod * prescaler)/32000 = s.
   /* USER CODE END IWDG_Init 1 */
   LL_IWDG_Enable(IWDG);
   LL_IWDG_EnableWriteAccess(IWDG);
-  LL_IWDG_SetPrescaler(IWDG, LL_IWDG_PRESCALER_256);
-  LL_IWDG_SetReloadCounter(IWDG, 1999);//400*(64/32000)=1s
+  LL_IWDG_SetPrescaler(IWDG, LL_IWDG_PRESCALER_32);
+  LL_IWDG_SetReloadCounter(IWDG, 8000);//8000*(32/32000)=8s
   while (LL_IWDG_IsReady(IWDG) != 1)
   {
   }
