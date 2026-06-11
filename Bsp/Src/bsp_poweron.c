@@ -53,6 +53,9 @@ TimeSharingTask_t g_tasks[] = {
 	
 };
 
+#define TASK_NUM (sizeof(g_tasks) / sizeof(TimeSharingTask_t))
+
+
 #else 
 
 void static task_time_slot_scheduler(void)
@@ -160,7 +163,7 @@ void static task_time_slot_scheduler(void)
 
 #endif 
 
-#define TASK_NUM (sizeof(g_tasks) / sizeof(TimeSharingTask_t))
+
 
 
 static void power_off_stop_fun(void);
