@@ -59,7 +59,6 @@ void works_run_two_hours_state(void)
   if(gpro_t.stopTwoHours_flag ==1){//WT.EDIT 2025.11.19
 		 two_hours_f = 1;
 
-         
          PLASMA_SetLow(); //
          PTC_SetLow();
          ultrasonic_close();
