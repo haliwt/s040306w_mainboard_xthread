@@ -91,7 +91,7 @@ typedef struct _RUN_T{
    
     // uint8_t  gDry;
 
-	  bool  gUlransonic;
+	  bool  gUltrasonic;
       uint8_t  gModel;
 	  bool gPlasma;
 

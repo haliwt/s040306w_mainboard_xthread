@@ -48,9 +48,6 @@ void buzzer_sound(void)
    
    tim3_stop_buzzer_sound_config();
 
-   //buzzer_sound_open();
-   //tx_thread_sleep(2);
-   
    tim3_buzzer_sound_config();
    tx_thread_set_sound_once();
    buzzer_sound_open();

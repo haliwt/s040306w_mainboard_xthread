@@ -445,7 +445,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
           
 		  if(pdata[3]  == 0x01){  //open 
 			 buzzer_sound();
-			gctl_t.gUlransonic =1;
+			gctl_t.gUltrasonic =1;
 		     gpro_t.ultrasonic_switch_flag ++;
    
 			if(gpro_t.stopTwoHours_flag==0){
@@ -460,7 +460,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  else if(pdata[3] == 0x0){ //close 
               buzzer_sound();
 			
-			gctl_t.gUlransonic = 0;
+			gctl_t.gUltrasonic = 0;
 		    gpro_t.ultrasonic_switch_flag++;
    
 			ultrasonic_close();
@@ -586,7 +586,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				
              }
 			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
-			 if(gctl_t.gUlransonic==1) ultrasonic_open();
+			 if(gctl_t.gUltrasonic==1) ultrasonic_open();
 			  ///SendWifiData_Answer_Cmd(0x18 ,0x0);//copy cmd
 			  ///tx_thread_sleep(1);
         }
@@ -624,7 +624,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				
               }
 			  if(gctl_t.gPlasma==1)PLASMA_SetHigh();
-			  if(gctl_t.gUlransonic==1) ultrasonic_open();
+			  if(gctl_t.gUltrasonic==1) ultrasonic_open();
 			  Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
 			  SendWifiData_Answer_Cmd(0x19 ,0x0);//copy cmd
 			  tx_thread_sleep(1);

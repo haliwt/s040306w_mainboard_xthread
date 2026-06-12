@@ -76,7 +76,11 @@ void Error_Handler(void);
 
 #define OLDER_PCB   0
 
+//<<<<<<< HEAD
 #define NEW_PCB   0
+//=======
+//#define NEW_PCB    1
+//>>>>>>> ee4cdc763ba1d5f3a884c944cca4b61be6ce7ff7
 
 #if NEW_PCB
 

@@ -11,8 +11,9 @@
 #define PERIOD_READ_DHT11      100    //   10ms * 100 = 1000ms = 1s
 #define PERIOD_FAN_SPEED       130    //   10ms * 130 = 1300ms = 1.3s
 #define PERIOD_PERIPHERAL      50     //   10ms* 50 = 500ms
-#define PERIOD_LINK_WIFI       2
-#define PERIOD_DISP_AI_WIF     160
+#define PERIOD_LINK_WIFI       3
+#define PERIOD_DISP_AI_WIF     230
+#define PERIOD_WIFI_REPORT     200
 
 // --- 2. 定义分时任务控制结构体 ---
 typedef struct {
@@ -29,9 +30,10 @@ static void handler_fan_adc(void);
 static void handler_wifi_update_temp_humidity(void);
 static void handler_read_dht11(void);
 static void handler_fan_speed_state(void);
-static void handler_module_action(void);
+static void handler_hardware_module_action(void);
 static void handler_rx_widi_data(void);
 static void handler_send_ai_wif(void);
+static void handler_wifi_report(void);
 
 volatile uint8_t time_slot ;
 
@@ -45,13 +47,17 @@ TimeSharingTask_t g_tasks[] = {
     {0, PERIOD_WIFI_TEMP,        handler_wifi_update_temp_humidity},
     {0, PERIOD_READ_DHT11,       handler_read_dht11},
     {0, PERIOD_FAN_SPEED,        handler_fan_speed_state},
-    {0,PERIOD_PERIPHERAL,        handler_module_action},
+    {0,PERIOD_PERIPHERAL,        handler_hardware_module_action},
     {0,PERIOD_LINK_WIFI,         handler_rx_widi_data},
-    {0,PERIOD_DISP_AI_WIF,       handler_send_ai_wif}
+    {0,PERIOD_DISP_AI_WIF,       handler_send_ai_wif},
+    {0,PERIOD_WIFI_REPORT,       handler_wifi_report}
    
     
 	
 };
+
+#define TASK_NUM (sizeof(g_tasks) / sizeof(TimeSharingTask_t))
+
 
 #else 
 
@@ -160,7 +166,7 @@ void static task_time_slot_scheduler(void)
 
 #endif 
 
-#define TASK_NUM (sizeof(g_tasks) / sizeof(TimeSharingTask_t))
+
 
 
 static void power_off_stop_fun(void);
@@ -443,21 +449,7 @@ static void handler_wifi_state(void)
 
 	}
 }
-#if 0	
-	else if(net_t.wifi_link_net_success ==0 && counter > 1 && gpro_t.soft_version ==0){ //WT.EDIT 2026.02.27
-		counter =0;
-		sw_flag = sw_flag ^ 0x01;
-		if(sw_flag == 1){
-			SendWifiData_olderCmd(0x1F,0x0);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-			tx_thread_sleep(1);
-		}
-		else{
-			SendWifiData_To_Data(0x1F,0x0);
-			tx_thread_sleep(1);
-		}
-	}
-  #endif 
-			  
+  
 
 
 /**
@@ -479,17 +471,15 @@ static void handler_wifi_update_data(void)
 			 tx_thread_sleep(20);//HAL_Delay(200);
              SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
              tx_thread_sleep(1);
-          
-    	}
-	    else if(gctl_t.first_link_tencent_cloud_flag < 4){
+      }
+	  else if(gctl_t.first_link_tencent_cloud_flag < 3){
 			 gctl_t.first_link_tencent_cloud_flag++;
 
             Subscriber_Data_FromCloud_Handler();
     	    tx_thread_sleep(20);
-	    }
+	  }
 		
-		   SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01);
-           tx_thread_sleep(1);
+		  
 	}
     
 }
@@ -510,27 +500,51 @@ static void handler_works_hours(void)
 	
 }
 
+/**
+*
+*@brief 
+*@notice
+*@param
+*@retval
+*
+**/
 
-static void handler_module_action(void)
+static void handler_hardware_module_action(void)
 {
    
    if((gpro_t.fan_rx_stop_flag ==0 && gpro_t.stopTwoHours_flag ==0)){//(gctl_t.app_timer_power_on_flag == 1)
 		 
 			 
-		module_action_handler();
+		module_hardware_control();//module_action_handler();
 	 }
 	
 
 }
+/**
+*
+*@brief dispatch module_hardware_control task 
+*@notice
+*@param
+*@retval
+*
+**/
 
-  /**
-  *
-  *@brief 
-  *@notice
-  *@param
-  *@retval
-  *
-  **/
+static void handler_wifi_report(void)
+{
+
+  module_wifi_report_handler();
+
+}
+
+
+/**
+*
+*@brief 
+*@notice
+*@param
+*@retval
+*
+**/
 static void handler_fan_adc(void)
 {
   	 
@@ -609,6 +623,7 @@ static void handler_fan_speed_state(void)
 	*
 **/
 
+
 static void handler_rx_widi_data(void)
 {
  link_wifi_to_tencent_handler();
@@ -661,13 +676,13 @@ void smartphone_timer_power_on_and_normal_handler(void)
 			}
 
 
-			if(gctl_t.gUlransonic==1){
+			if(gctl_t.gUltrasonic==1){
 
 					SendWifiData_To_Cmd(0x04,0x01);
 					tx_thread_sleep(1);
 			}
 			else {
-					gctl_t.gUlransonic=0;
+					gctl_t.gUltrasonic=0;
 					SendWifiData_To_Cmd(0x04,0x0);
 					tx_thread_sleep(1);
 			}
@@ -707,7 +722,7 @@ void SetPowerOff_ForDoing(void)
     gpro_t.gPtc = 0;//gctl_t.gDry = 0;
   
 	gctl_t.gPlasma =0;       //"é„1¤7?é‘„1¤7?"
-    gctl_t.gUlransonic = 0; // "æ¤¹è¾«æ«„1¤7"
+    gctl_t.gUltrasonic = 0; // "æ¤¹è¾«æ«„1¤7"
 	gctl_t.gModel =1;
 
 
@@ -883,7 +898,7 @@ void every_power_on_run(void)
 	 
       //g_dry_open_flag =1;
       gctl_t.gPlasma =1;       //"é„1¤7?é‘„1¤7?"
-      gctl_t.gUlransonic = 1; // "æ¤¹è¾«æ«„1¤7"
+      gctl_t.gUltrasonic = 1; // "æ¤¹è¾«æ«„1¤7"
     
 	
      
@@ -916,13 +931,13 @@ void every_power_on_run(void)
 
 			}
 
-			if(gctl_t.gUlransonic==1){
+			if(gctl_t.gUltrasonic==1){
 
 					SendWifiData_To_Cmd(0x04,0x01);
 					tx_thread_sleep(1);
 			}
 			else {
-					gctl_t.gUlransonic=0;
+					gctl_t.gUltrasonic=0;
 					SendWifiData_To_Cmd(0x04,0x0);
 					tx_thread_sleep(1);
 			}
@@ -965,13 +980,13 @@ void app_timer_power_on_reference(void)
 			}
 
 
-			if(gctl_t.gUlransonic==1){
+			if(gctl_t.gUltrasonic==1){
 
 					SendWifiData_To_Cmd(0x04,0x01);
 					tx_thread_sleep(1);
 			}
 			else {
-					gctl_t.gUlransonic=0;
+					gctl_t.gUltrasonic=0;
 					SendWifiData_To_Cmd(0x04,0x0);
 					tx_thread_sleep(1);
 			}

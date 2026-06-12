@@ -82,7 +82,7 @@ static void Mqtt_Value_update_data(void)
 	sg_info.ptc  = gpro_t.gPtc;//gctl_t.gDry;
     //sg_info.ptc = g_dry_open_flag;
 	sg_info.anion = gctl_t.gPlasma;
-	sg_info.sonic = gctl_t.gUlransonic ;
+	sg_info.sonic = gctl_t.gUltrasonic ;
     sg_info.find = gctl_t.set_wind_speed_value;
     //if(gctl_t.set_temperature_value <20)gctl_t.set_temperature_value = 20;
 	//else if(gctl_t.set_temperature_value > 40)gctl_t.set_temperature_value = 40;
