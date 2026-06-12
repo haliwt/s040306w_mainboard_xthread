@@ -371,9 +371,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	     buzzer_sound();
 	
-			 gpro_t.rx_ptc_flag = 1;
+			 gpro_t.gPtc = 1;
 			 gctl_t.ptc_prohibit_on_flag=0;
-			 gpro_t.ptc_actiov_f++;
+			 gpro_t.ptc_active_f++;
 			 
 		
 	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0 && gpro_t.stopTwoHours_flag==0){ //PTC warning flag
@@ -393,10 +393,10 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		 
           buzzer_sound();
 		
-	          gpro_t.rx_ptc_flag = 0;
+	          gpro_t.gPtc = 0;
 		      PTC_SetLow();
 			  gctl_t.ptc_prohibit_on_flag =1;
-			  gpro_t.ptc_actiov_f++;
+			  gpro_t.ptc_active_f++;
 		  
           SendWifiData_Answer_Cmd(0x02,0x0); //
           tx_thread_sleep(1); 
@@ -426,7 +426,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  else if(pdata[3]  == 0x0){
 			 buzzer_sound();
 			
-			 
+			
 			 gctl_t.gPlasma = 0;
 		     gpro_t.plasma_switch_flag ++;
 			 PLASMA_SetLow();
@@ -568,7 +568,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
          if(pdata[3]==1){ // recach 2 hours fan stop
                gpro_t.fan_rx_stop_flag =1 ;
 			   gpro_t.stopTwoHours_flag=1;
-		       gpro_t.ptc_actiov_f++;
+		       gpro_t.ptc_active_f++;
 		     
 		
                FAN_Stop();
@@ -581,7 +581,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		 else if(pdata[3]==0){
             gpro_t.fan_rx_stop_flag = 0;
 		    Fan_RunSpeed_Fun();//fan_full_run();//WT.EDIT 2026.01.26
-			if(gpro_t.rx_ptc_flag ==1 && gctl_t.ptc_prohibit_on_flag==0){
+			if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
 			  	PTC_SetHigh();
 				
              }
@@ -599,7 +599,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
            gpro_t.stopTwoHours_flag=1;
 	
-	       gpro_t.ptc_actiov_f++;
+	       gpro_t.ptc_active_f++;
 
 	
 		    PTC_SetLow(); //ptc off;
@@ -613,13 +613,13 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			   gpro_t.stopTwoHours_flag=0;//WT.EDIT 2026.01.26
 			   gpro_t.fan_rx_stop_flag =0 ;
 		     
-			   gpro_t.ptc_actiov_f++;
+			   gpro_t.ptc_active_f++;
         
             
               
 	
               
-              if(gpro_t.rx_ptc_flag ==1 && gctl_t.ptc_prohibit_on_flag==0){
+              if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
 			  	PTC_SetHigh();
 				
               }
@@ -639,14 +639,14 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  
         if(pdata[3]== 0x01){
 		       gctl_t.ptc_prohibit_on_flag =0;
-			 //  gpro_t.rx_ptc_flag = 1;//gctl_t.gDry = 1;
-               gpro_t.ptc_actiov_f++;
+			 //  gpro_t.gPtc = 1;//gctl_t.gDry = 1;
+               gpro_t.ptc_active_f++;
 			   if(gpro_t.stopTwoHours_flag ==0){
 			       PTC_SetHigh();
 		        
 				 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.07.28
 		         tx_thread_sleep(1);
-				 gpro_t.ptc_actiov_f++;
+				 gpro_t.ptc_active_f++;
 				 if(wifi_link_net_state()==1){ 
 					  MqttData_Publish_SetPtc(0x01);
 					  tx_thread_sleep(20);
@@ -657,7 +657,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
       }
       else if(pdata[3]== 0x0){
         
-        //  gpro_t.rx_ptc_flag =0 ;//gctl_t.gDry =0;
+        //  gpro_t.gPtc =0 ;//gctl_t.gDry =0;
 
 	       PTC_SetLow();
         
@@ -689,11 +689,11 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  
 		  
 	
-		   gpro_t.rx_ptc_flag = 1;//gctl_t.gDry = 1;
+		   gpro_t.gPtc = 1;//gctl_t.gDry = 1;
 		   if(gpro_t.stopTwoHours_flag ==0 && gctl_t.ptc_prohibit_on_flag==0){
 			  
 			     PTC_SetHigh();
-		         gpro_t.ptc_actiov_f ++;
+		         gpro_t.ptc_active_f ++;
 		   	
 				#if 0
 				
@@ -706,11 +706,11 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	   }
        else if(pdata[3]== 0x0){
 	   	 
-		     gpro_t.rx_ptc_flag =0 ;//gctl_t.gDry =0;
+		     gpro_t.gPtc =0 ;//gctl_t.gDry =0;
              
 	    
 	          PTC_SetLow();
-			  gpro_t.ptc_actiov_f++;
+			  gpro_t.ptc_active_f++;
 
 		 #if 0
 		 
@@ -731,27 +731,27 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	    
 	
-			 gpro_t.rx_ptc_flag = 1;
+			 gpro_t.gPtc = 1;
 			 gctl_t.ptc_prohibit_on_flag=0;
-			 gpro_t.ptc_actiov_f++;
+			 gpro_t.ptc_active_f++;
 			 
 			 if(gpro_t.stopTwoHours_flag==0){//two hours have a rest ten minutes .
 	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
 	             
 	              PTC_SetHigh();
-         }
+         		}
              
          
-           }
+           	}
 
 		 
 	   }
        else if(pdata[3]== 0x0 ){
 	   
-		      gpro_t.rx_ptc_flag = 0;
+		      gpro_t.gPtc = 0;
 		      PTC_SetLow();
 			  gctl_t.ptc_prohibit_on_flag =0;
-			  gpro_t.ptc_actiov_f++;
+			  gpro_t.ptc_active_f++;
 		  
       
      
@@ -767,7 +767,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			  
 			   if(pdata[5] >19 && pdata[5] < 41){
 			   	gctl_t.ptc_prohibit_on_flag = 0;
-				gpro_t.set_temp_value_success=1;
+			
 			   
 			   gctl_t.set_temperature_value = pdata[5] ;
 			 
@@ -775,18 +775,18 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			
 			        
 					 
-                      gpro_t.rx_ptc_flag=1;
+                      gpro_t.gPtc=1;
 					  if(gpro_t.stopTwoHours_flag ==0)PTC_SetHigh();
 					  
 			   }
 			   else{
 			   	  
-				   gpro_t.rx_ptc_flag =0 ;//gctl_t.gDry =0;
+				   gpro_t.gPtc =0 ;//gctl_t.gDry =0;
 
 			       PTC_SetLow();
 		       }
               gpro_t.tx_wifi_temperature_f = 1;
-		      gpro_t.ptc_actiov_f++;
+		      gpro_t.ptc_active_f++;
 				  
 			   	
 			  }

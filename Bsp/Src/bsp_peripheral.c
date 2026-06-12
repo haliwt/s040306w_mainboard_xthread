@@ -18,7 +18,7 @@ void module_action_handler(void)
 
    if(gpro_t.fan_warning_flag ==1 || gpro_t.ptc_warning ==1) return ; //WT.EDIT 2025.10.29
    
-   if(gpro_t.rx_ptc_flag==1 && gctl_t.ptc_prohibit_on_flag ==0){//if( gctl_t.gDry==1 && gctl_t.ptc_prohibit_on_flag ==0){
+   if(gpro_t.gPtc==1 && gctl_t.ptc_prohibit_on_flag ==0){//if( gctl_t.gDry==1 && gctl_t.ptc_prohibit_on_flag ==0){
 
        ptc_rx_counter ++ ;
       if(gpro_t.stopTwoHours_flag ==0) PTC_SetHigh();
@@ -32,9 +32,9 @@ void module_action_handler(void)
        
 
 
-		if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_actiov_f){//ptc_actiov_f = 0++
+		if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_active_f){//ptc_actiov_f = 0++
            
-			ptc_default = gpro_t.ptc_actiov_f;
+			ptc_default = gpro_t.ptc_active_f;
 	
 
 			MqttData_Publish_SetPtc(0x01);
@@ -43,7 +43,7 @@ void module_action_handler(void)
 		
    	  
 	}
-	else if(gpro_t.rx_ptc_flag ==0){
+	else if(gpro_t.gPtc ==0){
 		
 	    ptc_rx_counter ++ ;
 		PTC_SetLow();
@@ -56,8 +56,8 @@ void module_action_handler(void)
 		
 
 
-	   if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_actiov_f){//if(ptc_default!= get_ptc_value() && wifi_link_net_state()==1){
-		    ptc_default = gpro_t.ptc_actiov_f;
+	   if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_active_f){//if(ptc_default!= get_ptc_value() && wifi_link_net_state()==1){
+		    ptc_default = gpro_t.ptc_active_f;
 		    MqttData_Publish_SetPtc(0x0);
 			tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
 			
@@ -78,7 +78,7 @@ void module_action_handler(void)
 		 }
 		 
 		 if(plasma_default!=gpro_t.plasma_switch_flag && wifi_link_net_state()==1){
-		 	gpro_t.plasma_switch_flag++;
+		 	
 			plasma_default = gpro_t.plasma_switch_flag;	
 		   MqttData_Publish_SetPlasma(0x01);
 		   tx_thread_sleep(20);

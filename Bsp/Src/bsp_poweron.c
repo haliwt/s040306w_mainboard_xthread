@@ -253,7 +253,7 @@ static void power_on_init_handler(void)
 		
        
         gpro_t.stopTwoHours_flag =0;
-		gpro_t.set_temp_value_success=0;
+	
 	
          Fan_Full_Speed();//Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
      
@@ -424,26 +424,26 @@ static void power_on_cycle_handler(void)
 static void handler_wifi_state(void)
 {
     // 如果这些变量之前是全局的，保持原样；如果是局部的，必须加 static 保持状态
-    static uint8_t counter = 0;
+   
     static uint8_t sw_flag = 0;
 	
-
-	counter++;
-
-
-	if(net_t.wifi_link_net_success ==1 && counter > 1 && gpro_t.soft_version == 0){ //WT.EDIT 2026.02.27
+   if( gpro_t.soft_version == 0){ //WT.EDIT 2026.02.27
 		counter =0;
 		sw_flag = sw_flag ^ 0x01;
+	    // 关键优化：用三元运算符直接提取状态值，消灭大面积重复的 if-else 块
+        uint8_t wifi_status = (net_t.wifi_link_net_success == 1) ? 0x01 : 0x00;
 		if(sw_flag == 1){
-			SendWifiData_olderCmd(0x1F,0x01);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
+			SendWifiData_olderCmd(0x1F,wifi_status);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
 			tx_thread_sleep(1);
 		}
 		else{
-			SendWifiData_To_Data(0x1F,0x01);
+			SendWifiData_To_Data(0x1F,wifi_status);
 			tx_thread_sleep(1);
 		}
 
 	}
+}
+#if 0	
 	else if(net_t.wifi_link_net_success ==0 && counter > 1 && gpro_t.soft_version ==0){ //WT.EDIT 2026.02.27
 		counter =0;
 		sw_flag = sw_flag ^ 0x01;
@@ -456,9 +456,9 @@ static void handler_wifi_state(void)
 			tx_thread_sleep(1);
 		}
 	}
-
+  #endif 
 			  
-}
+
 
 /**
 *
@@ -674,12 +674,12 @@ void smartphone_timer_power_on_and_normal_handler(void)
 
 
 
-		   if(gpro_t.rx_ptc_flag==1){
+		   if(gpro_t.gPtc==1){
               
 				SendWifiData_To_Cmd(0x02,0x01);
 				tx_thread_sleep(1);
 			}
-			else if(gpro_t.rx_ptc_flag  ==0){
+			else if(gpro_t.gPtc  ==0){
 					gctl_t.ptc_prohibit_on_flag =1;
                     PTC_SetLow();
 					SendWifiData_To_Cmd(0x02,0x0);
@@ -704,7 +704,7 @@ void SetPowerOff_ForDoing(void)
     // gctl_t.set_wind_speed_value =10;
  
  
-    gpro_t.rx_ptc_flag = 0;//gctl_t.gDry = 0;
+    gpro_t.gPtc = 0;//gctl_t.gDry = 0;
   
 	gctl_t.gPlasma =0;       //"é„1¤7?é‘„1¤7?"
     gctl_t.gUlransonic = 0; // "æ¤¹è¾«æ«„1¤7"
@@ -877,7 +877,7 @@ void every_power_on_run(void)
      
       gctl_t.gModel=1;
      
-      gpro_t.rx_ptc_flag = 1;//gctl_t.gDry = 1;
+      gpro_t.gPtc = 1;//gctl_t.gDry = 1;
   
   
 	 
@@ -903,12 +903,12 @@ void every_power_on_run(void)
     else{
 
 
-	  if(gpro_t.rx_ptc_flag==1){
+	  if(gpro_t.gPtc==1){
               
 				SendWifiData_To_Cmd(0x02,0x01);
 				tx_thread_sleep(1);
 			}
-			else if(gpro_t.rx_ptc_flag  ==0){
+			else if(gpro_t.gPtc  ==0){
 					gctl_t.ptc_prohibit_on_flag =1;
                     PTC_SetLow();
 					SendWifiData_To_Cmd(0x02,0x0);

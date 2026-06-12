@@ -440,7 +440,7 @@ void Tencent_Cloud_Rx_Handler(void)
 	
 	if(strstr((char *)gpro_t.wifi_rx_data_array,"ptc\":0")){
             if(gpro_t.gpower_on ==power_on){
-				  gpro_t.rx_ptc_flag = 0;//gctl_t.gDry=0;
+				  gpro_t.gPtc = 0;//gctl_t.gDry=0;
                   gctl_t.ptc_prohibit_on_flag = 1;//WT.EDIT 2026.03.30
 	           gctl_t.response_wifi_signal_label = PTC_OFF_ITEM;
 	         
@@ -449,7 +449,7 @@ void Tencent_Cloud_Rx_Handler(void)
     }
     else if(strstr((char *)gpro_t.wifi_rx_data_array,"ptc\":1")){
             if(gpro_t.gpower_on ==power_on){
-	          gpro_t.rx_ptc_flag =1;//gctl_t.gDry=1;
+	          gpro_t.gPtc =1;//gctl_t.gDry=1;
               gctl_t.ptc_prohibit_on_flag = 0;//WT.EDIT 2026-06-10
 			  gctl_t.response_wifi_signal_label = PTC_ON_ITEM;
 				
@@ -607,7 +607,7 @@ void Json_Parse_Command_Fun(void)
 	  if(gpro_t.gpower_on ==power_on){
 	   
          buzzer_sound();
-		 gpro_t.rx_ptc_flag = 1;//gctl_t.gDry=1;
+		 gpro_t.gPtc = 1;//gctl_t.gDry=1;
 
 		 if(gpro_t.stopTwoHours_flag==0 && gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
                 PTC_SetHigh();
@@ -616,7 +616,7 @@ void Json_Parse_Command_Fun(void)
 	      gctl_t.ptc_prohibit_on_flag = 0;
 		  gctl_t.set_temp_first_closeptc =0;
 		  gctl_t.rx_set_temp_flag =0;
-		  gpro_t.ptc_actiov_f++;
+		  gpro_t.ptc_active_f++;
 
 
            SendWifiData_To_Cmd(0x02,0x01);
@@ -639,13 +639,13 @@ void Json_Parse_Command_Fun(void)
          buzzer_sound();
 		 PTC_SetLow();
 		
-     	 gpro_t.rx_ptc_flag = 0;//gctl_t.gDry=0;
+     	 gpro_t.gPtc = 0;//gctl_t.gDry=0;
          gctl_t.app_timer_power_on_flag = 0;
 	
          gctl_t.ptc_prohibit_on_flag = 1;
 		 gctl_t.set_temp_first_closeptc =0;
 		 gctl_t.rx_set_temp_flag =0;
-		 gpro_t.ptc_actiov_f++;
+		 gpro_t.ptc_active_f++;
 		 
 	     SendWifiData_To_Cmd(0x02,0x0);
          tx_thread_sleep(1);//HAL_Delay(5);
@@ -772,7 +772,7 @@ void Json_Parse_Command_Fun(void)
             if( gctl_t.set_temperature_value > 40)  gctl_t.set_temperature_value=40;
             if( gctl_t.set_temperature_value <20 )  gctl_t.set_temperature_value=20;
           
-		    gpro_t.set_temp_value_success = 1;//WT.EDIT 2026-03-30
+		
 			gctl_t.ptc_prohibit_on_flag =0;
 		
 			SendWifiData_To_Data(0x2A, gctl_t.set_temperature_value); //smart phone set temperature value .
@@ -950,14 +950,14 @@ void Parse_Json_Statement(void)
     
      if(strstr((char *)TCMQTTRCVPUB,"ptc\":0")){
 				
-		gpro_t.rx_ptc_flag = 0;//gctl_t.gDry=0;
+		gpro_t.gPtc = 0;//gctl_t.gDry=0;
 	 
            
 				  
 		}
 		else if(strstr((char *)TCMQTTRCVPUB,"ptc\":1")){
 				
-				    gpro_t.rx_ptc_flag = 1;//gctl_t.gDry=1;
+				    gpro_t.gPtc = 1;//gctl_t.gDry=1;
 		           
                  
 				  

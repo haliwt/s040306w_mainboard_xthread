@@ -159,20 +159,20 @@ static void CompareSetAndActualTemperature(void)
     if(gctl_t.ptc_prohibit_on_flag ==1)return ;
 	// 控制 PTC 加热器开关（带滞后控制）
 	uint8_t real_temp = gctl_t.gDht11_temperature;
-	int8_t target_temp;
+	uint8_t target_temp = gctl_t.set_temperature_value;
 	
 		// 确定目标温度：有设置用设置值，否则默认 40℃
 		//  target_temp = (gpro_t.set_temp_value_success == 1) ? gctl_t.set_temperature_value : DEFAULT_TEMP;
 		
-		if (gpro_t.set_temp_value_success == 1) {
-			target_temp = gctl_t.set_temperature_value;
-		} else {
-			target_temp = DEFAULT_TEMP;
-		}
+//		if (gpro_t.set_temp_value_success == 1) {
+//			target_temp = gctl_t.set_temperature_value;
+//		} else {
+//			target_temp = DEFAULT_TEMP;
+//		}
 	
 		// 安全保护：超过 60℃ 强制关闭
 		if (real_temp >= target_temp ) {
-			    gpro_t.rx_ptc_flag = 0;
+			    gpro_t.gPtc = 0;
 			    gpro_t.first_ptc_on = 1;   // 下次重新当作第一次
 			    PTC_SetLow();
 		        ptc_state = PTC_STATE_OFF;
@@ -189,7 +189,7 @@ static void CompareSetAndActualTemperature(void)
 			if(gpro_t.first_ptc_on ==0 || gpro_t.first_ptc_on ==1){
 		        if(real_temp < target_temp && gctl_t.ptc_prohibit_on_flag ==0){
 
-		           gpro_t.rx_ptc_flag= 1;
+		           gpro_t.gPtc= 1;
 				   if(gpro_t.stopTwoHours_flag ==0)PTC_SetHigh();
 				   ptc_state = PTC_STATE_ON;
 				   if(gpro_t.first_ptc_on ==1) gpro_t.first_ptc_on =2;
@@ -207,7 +207,7 @@ static void CompareSetAndActualTemperature(void)
 				// 当前关闭状态 → 低于 (目标温度 - 2℃) 才打开
 				if (real_temp < (target_temp - 2)) {
 					
-					gpro_t.rx_ptc_flag  = 1;
+					gpro_t.gPtc  = 1;
 					if(gpro_t.stopTwoHours_flag ==0)PTC_SetHigh();
 					ptc_state = PTC_STATE_ON;
 					SendData_Set_Command(0x22, 0x01); // open PTC
@@ -220,7 +220,7 @@ static void CompareSetAndActualTemperature(void)
 			// 当前开启状态 → 高于等于目标温度才关闭
 			if (real_temp >= target_temp) {
 				
-				 gpro_t.rx_ptc_flag = 0;
+				 gpro_t.gPtc = 0;
 				
 				
 			    PTC_SetLow();

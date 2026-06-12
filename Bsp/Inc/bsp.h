@@ -126,7 +126,7 @@ typedef struct PROCESS_T{
   
    uint8_t copy_cmd_notice_buff[10];
    //copy command 
-   uint8_t set_temp_value_success;
+
 
  
 
@@ -140,7 +140,7 @@ typedef struct PROCESS_T{
    //uint8_t gFan_pwm_duty_level;
    uint8_t answer_buzzer_flag ;
  
-   bool rx_ptc_flag;
+   bool gPtc;
    uint8_t second_disp_flag;
    uint8_t first_ptc_on;
 	
@@ -158,7 +158,7 @@ typedef struct PROCESS_T{
    volatile uint8_t decoder_success_flag; //interrupt be used to flag.
 
    uint8_t fan_rx_stop_flag;
-   uint8_t ptc_actiov_f;
+   uint8_t ptc_active_f;
    uint8_t tx_wifi_temperature_f;
 
    
