@@ -67,15 +67,10 @@ void works_run_two_hours_state(void)
 
   if(two_hours_f == 1 && gpro_t.stopTwoHours_flag ==0){
       two_hours_f ++; 
-       module_action_handler();
+      module_hardware_control();
 
   }
-  else  if(two_hours_f == 2 && gpro_t.fan_rx_stop_flag  ==0){
-	    two_hours_f ++; 
-		   module_action_handler();
-
-
-  	}
+ 
   
 
 	if(gpro_t.fan_rx_stop_flag ==1){
@@ -134,7 +129,7 @@ void works_run_two_hours_state(void)
       else if(define_twohours_flag==0 && gpro_t.stopTwoHours_flag ==0){ //300ms
             
           
-            module_action_handler();
+            module_hardware_control();
       }
 
      if(gpro_t.gTimer_poweroff_fan > 5){

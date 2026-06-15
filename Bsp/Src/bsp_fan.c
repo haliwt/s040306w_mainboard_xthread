@@ -24,15 +24,8 @@ void fan_run_fun(void)
 {
     FAN_COM_SetLow();
 	FAN_RUN_SetHigh();
-	#if NEWPCB_FAN
-	  SetLevel_Fan_PWMA(FAN_PWM_100);
-	#else
-
-
-
-	#endif 
+	SetLevel_Fan_PWMA(FAN_PWM_100);
 	
-
 }
 void FAN_Stop(void)
 {
@@ -57,9 +50,8 @@ void Fan_One_Speed(void)
      if(one_speed != fan_switch_gears_flag){
         fan_switch_gears_flag++;
         one_speed = fan_switch_gears_flag ;  //one_speed =2,5,8
-        #if NEWPCB_FAN
-	       SetLevel_Fan_PWMA(FAN_PWM_100);
-		#endif 
+       SetLevel_Fan_PWMA(FAN_PWM_100);
+	
 
      }
 
@@ -74,10 +66,8 @@ void Fan_Two_Speed(void)
       if(two_speed != fan_switch_gears_flag){
          fan_switch_gears_flag++;
          two_speed = fan_switch_gears_flag;  //two_speed = 3;6,9
-
-         #if NEWPCB_FAN
-	        SetLevel_Fan_PWMA(FAN_PWM_90);
-		 #endif 
+          SetLevel_Fan_PWMA(FAN_PWM_90);
+		
        }
 
 }
@@ -90,9 +80,9 @@ void Fan_Two_Speed(void)
     if(full_speed != fan_switch_gears_flag){
         fan_switch_gears_flag++;
          full_speed = fan_switch_gears_flag;  //full_speed =1,4,7,10
-         #if  NEWPCB_FAN
-             SetLevel_Fan_PWMA(FAN_PWM_80);
-		 #endif 
+        
+         SetLevel_Fan_PWMA(FAN_PWM_100);
+		
     }
 
 }
@@ -169,14 +159,6 @@ void tim16_stop_fan_pmw_config(void)
 
 }
 
-//void fan_run(void)
-//{
-//	if(gpro_t.stopTwoHours_flag ==0 && gpro_t.gpower_on==power_on){
-//				 Fan_RunSpeed_Fun();
-//	}
-
-
-//}
 
 
 

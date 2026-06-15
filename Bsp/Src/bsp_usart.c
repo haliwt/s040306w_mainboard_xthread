@@ -512,7 +512,6 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  case 0x12: //powe off fan run one minute stop .
 	  	 if(pdata[3]==1){ // recach 2 hours fan stop
 
-            // gpro_t.power_off_run_step=1;
                gpro_t.gpower_on = power_off;
 			 
                FAN_Stop();
@@ -575,8 +574,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			   PTC_SetLow(); //ptc off;
 			   PLASMA_SetLow() ; //plasma turn off.
                ultrasonic_close();
-			   //SendWifiData_Answer_Cmd(0x18 ,0x01);//copy cmd
-			   //tx_thread_sleep(1);
+			   SendWifiData_Answer_Cmd(0x18 ,0x01);//copy cmd
+			   tx_thread_sleep(1);
          }
 		 else if(pdata[3]==0){
             gpro_t.fan_rx_stop_flag = 0;
@@ -587,8 +586,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
              }
 			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
 			 if(gctl_t.gUltrasonic==1) ultrasonic_open();
-			  ///SendWifiData_Answer_Cmd(0x18 ,0x0);//copy cmd
-			  ///tx_thread_sleep(1);
+			  SendWifiData_Answer_Cmd(0x18 ,0x0);//copy cmd
+			  tx_thread_sleep(1);
         }
 
 	 break;
@@ -626,8 +625,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			  if(gctl_t.gPlasma==1)PLASMA_SetHigh();
 			  if(gctl_t.gUltrasonic==1) ultrasonic_open();
 			  Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
-			  SendWifiData_Answer_Cmd(0x19 ,0x0);//copy cmd
-			  tx_thread_sleep(1);
+			 SendWifiData_Answer_Cmd(0x19 ,0x0);//copy cmd
+			 tx_thread_sleep(1);
 			  
 		}
 	   
@@ -814,13 +813,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 					 
 
 		   }
-
-
-
-		}
-	 	
-
-
+        }
 	 break;
 
 	 
@@ -902,6 +895,11 @@ static void parse_recieve_copy_data(uint8_t *pddata)
 		}
 	   
 
+	   break;
+
+	   case 0x1F: //link wifi is success from display board return 
+
+           
 	   break;
 
 	   

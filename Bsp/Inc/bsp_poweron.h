@@ -15,7 +15,7 @@ void SetPowerOff_ForDoing(void);
 
 
 
-void every_power_on_run(void);
+void donot_smart_app_power_on_init(void);
 
 
 
@@ -30,6 +30,7 @@ void power_off_action_fun(void);
 void SetPowerOff_ForDoing(void);
 
 
+void module_hardware_control(void);
 
 
 

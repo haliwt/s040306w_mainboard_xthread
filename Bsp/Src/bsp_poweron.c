@@ -8,12 +8,12 @@
 #define PERIOD_WORKS_HOURS     400    //  10ms*150 = 1500ms = 1.5s
 #define PERIOD_FAN_ADC         500    //  10ms*250 = 2500ms = 2.5s
 #define PERIOD_WIFI_TEMP       600    //   10ms * 500 = 50000ms = 5s 
-#define PERIOD_READ_DHT11      100    //   10ms * 100 = 1000ms = 1s
-#define PERIOD_FAN_SPEED       130    //   10ms * 130 = 1300ms = 1.3s
+#define PERIOD_READ_DHT11      300    //   10ms * 100 = 1000ms = 1s
+#define PERIOD_FAN_SPEED       200    //   10ms * 130 = 1300ms = 1.3s
 #define PERIOD_PERIPHERAL      50     //   10ms* 50 = 500ms
 #define PERIOD_LINK_WIFI       3
 #define PERIOD_DISP_AI_WIF     230
-#define PERIOD_WIFI_REPORT     200
+#define PERIOD_WIFI_REPORT     100
 
 // --- 2. 定义分时任务控制结构体 ---
 typedef struct {
@@ -170,7 +170,7 @@ void static task_time_slot_scheduler(void)
 
 
 static void power_off_stop_fun(void);
-void every_power_on_run(void);
+void donot_smart_app_power_on_init(void);
 uint8_t fan_run_one_minute_flag;
 static void app_timer_power_on_reference(void);
 static void power_on_init_handler(void);
@@ -276,62 +276,71 @@ static void power_on_init_handler(void)
   	if(gctl_t.app_timer_power_on_flag > 1)gctl_t.app_timer_power_on_flag=0;
 	
     if(gctl_t.app_timer_power_on_flag ==1){
+		Fan_Full_Speed();
+		gctl_t.gModel=1;
      	smartphone_timer_power_on_and_normal_handler();
-	 	//tx_thread_sleep(1);
+	 
     }
-    every_power_on_run();
-	//read_sensorData();
+    else{
+		donot_smart_app_power_on_init();
+
+    }
+
 	
 	 gpro_t.process_run_step= 2;
 
   break;
 
-  case 2:
-  
-	
-	 read_sensorData();
-	
-	 gpro_t.process_run_step= 3;
-	   
-    break;
-	
-		
-    case 3:
+
+   case 2:
 	
          if(wifi_link_net_state() ==1 && gctl_t.app_timer_power_on_flag ==0){
     
 		    
 	         gctl_t.set_wind_speed_value =100;
+			 Fan_Full_Speed();
 
 		     MqttData_Publish_SetOpen(1);  
-			 tx_thread_sleep(20);
+			
 		
 		 }
 		 else if(gctl_t.app_timer_power_on_flag ==1){
-		     	app_timer_power_on_reference();
+               
+				app_timer_power_on_reference();
 			 	
 		  }
 		// read_sensorData();
 	     gpro_t.process_run_step= 4;
 	break;
 
+
+  case 3:
+  
+	 module_hardware_control();
+	 read_sensorData();
+	
+	 gpro_t.process_run_step= 3;
+	   
+    break;
+
+
   case 4: 
 
      if(wifi_link_net_state() ==1 &&  gctl_t.app_timer_power_on_flag==0){
     
 		  MqttData_Publish_Init();
-		  tx_thread_sleep(20);
-     } else if(gctl_t.app_timer_power_on_flag == 1){
+		 
+     } 
+	 else if(gctl_t.app_timer_power_on_flag == 1){
 
            	gctl_t.set_wind_speed_value=100;
             MqttData_Publis_SetFan(gctl_t.set_wind_speed_value);//WT.EDIT 2025.12.19
-            gctl_t.set_temperature_value=40;
-            MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
+           
 
 	 }
 	
      	
-   // read_sensorData();
+  
 
     gpro_t.process_run_step= 5;
 
@@ -339,7 +348,13 @@ static void power_on_init_handler(void)
 
 	case 5:
 		
-        module_action_handler();
+        if(gctl_t.app_timer_power_on_flag == 1){
+
+           
+            gctl_t.set_temperature_value=40;
+            MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
+
+	     }
 		read_sensorData();
 
 #if 1	
@@ -434,7 +449,7 @@ static void handler_wifi_state(void)
     static uint8_t sw_flag = 0;
 	
    if( gpro_t.soft_version == 0){ //WT.EDIT 2026.02.27
-		counter =0;
+		
 		sw_flag = sw_flag ^ 0x01;
 	    // 关键优化：用三元运算符直接提取状态值，消灭大面积重复的 if-else 块
         uint8_t wifi_status = (net_t.wifi_link_net_success == 1) ? 0x01 : 0x00;
@@ -660,56 +675,13 @@ void smartphone_timer_power_on_and_normal_handler(void)
 	if(gctl_t.app_timer_power_on_flag==1){
 	       gctl_t.gModel =1;
 
-          Parse_Json_Statement();
-		  
-           if( gctl_t.gPlasma==1){ //Anion
-			
-                
-				SendWifiData_To_Cmd(0x03,0x01);
-                tx_thread_sleep(1);
-			
-			}
-			else{
-				gctl_t.gPlasma =0;
-				SendWifiData_To_Cmd(0x03,0x0);
-				tx_thread_sleep(1);
-			}
-
-
-			if(gctl_t.gUltrasonic==1){
-
-					SendWifiData_To_Cmd(0x04,0x01);
-					tx_thread_sleep(1);
-			}
-			else {
-					gctl_t.gUltrasonic=0;
-					SendWifiData_To_Cmd(0x04,0x0);
-					tx_thread_sleep(1);
-			}
-
-
-
-		   if(gpro_t.gPtc==1){
-              
-				SendWifiData_To_Cmd(0x02,0x01);
-				tx_thread_sleep(1);
-			}
-			else if(gpro_t.gPtc  ==0){
-					gctl_t.ptc_prohibit_on_flag =1;
-                    PTC_SetLow();
-					SendWifiData_To_Cmd(0x02,0x0);
-					tx_thread_sleep(1);
-
-			}
-
-		     gctl_t.set_wind_speed_value =100;
+            Parse_Json_Statement();
+		    gctl_t.set_wind_speed_value =100;
 	      
-		     MqttData_Publish_Update_Data();
-		     tx_thread_sleep(20);
+		    MqttData_Publish_Update_Data();
+		     
 
-			
-	 
-		}
+	}
 			
 }
 
@@ -884,7 +856,7 @@ void power_off_action_fun(void)
 *@notice
 *@param
 **/
-void every_power_on_run(void)
+void donot_smart_app_power_on_init(void)
 {
 
    Fan_Full_Speed();//WT.EDIT 2025.01.03//Fan_RunSpeed_Fun();//FAN_CCW_RUN();
@@ -894,17 +866,10 @@ void every_power_on_run(void)
      
       gpro_t.gPtc = 1;//gctl_t.gDry = 1;
   
-  
-	 
-      //g_dry_open_flag =1;
+ 
       gctl_t.gPlasma =1;       //"é„1¤7?é‘„1¤7?"
       gctl_t.gUltrasonic = 1; // "æ¤¹è¾«æ«„1¤7"
     
-	
-     
-	
-
-	
 	  gpro_t.ultrasonic_switch_flag++;
 	  gpro_t.plasma_switch_flag++;
 
@@ -915,48 +880,8 @@ void every_power_on_run(void)
 	  
 
     }
-    else{
-
-
-	  if(gpro_t.gPtc==1){
-              
-				SendWifiData_To_Cmd(0x02,0x01);
-				tx_thread_sleep(1);
-			}
-			else if(gpro_t.gPtc  ==0){
-					gctl_t.ptc_prohibit_on_flag =1;
-                    PTC_SetLow();
-					SendWifiData_To_Cmd(0x02,0x0);
-					tx_thread_sleep(1);
-
-			}
-
-			if(gctl_t.gUltrasonic==1){
-
-					SendWifiData_To_Cmd(0x04,0x01);
-					tx_thread_sleep(1);
-			}
-			else {
-					gctl_t.gUltrasonic=0;
-					SendWifiData_To_Cmd(0x04,0x0);
-					tx_thread_sleep(1);
-			}
-
-	      if( gctl_t.gPlasma==1){ //Anion
-			
-                
-				SendWifiData_To_Cmd(0x03,0x01);
-                tx_thread_sleep(1);
-			
-			}
-			else{
-				gctl_t.gPlasma =0;
-				SendWifiData_To_Cmd(0x03,0x0);
-				tx_thread_sleep(1);
-			}
-	}
   
-    gctl_t.gModel=1;
+    
 }
 /**
 *@brief
@@ -965,7 +890,7 @@ void every_power_on_run(void)
 **/
 void app_timer_power_on_reference(void)
 {
-
+    #if 0
           if(get_ptc_value()==1){
               
 				SendWifiData_To_Cmd(0x02,0x01);
@@ -990,4 +915,38 @@ void app_timer_power_on_reference(void)
 					SendWifiData_To_Cmd(0x04,0x0);
 					tx_thread_sleep(1);
 			}
+
+			if(gctl_t.gPlasma == 1){
+			
+			  SendWifiData_To_Cmd(0x03,0x01);
+			  tx_thread_sleep(1);
+
+
+			}
+			else{
+               
+				SendWifiData_To_Cmd(0x03,0);
+				tx_thread_sleep(1);
+
+			}
+
+	#else 
+     // 1. 局部变量缓存状态，避免多次调用函数或中途状态被其它时片修改
+   // 1. 局部变量初始化时，直接一步到位完成数据清洗（非1即0）
+    uint8_t ptc_val      = (get_ptc_value() == 1) ? 1 : 0;
+    uint8_t ultrasonic   = (gctl_t.gUltrasonic == 1) ? 1 : 0;
+    uint8_t plasma       = (gctl_t.gPlasma == 1) ? 1 : 0;
+    gctl_t.gModel=1;
+    // 2. 一次性打包发送，大幅降低串口与 WiFi 模块的通信开销
+    SendWifiData_To_three_Cmd(0x15, ptc_val,plasma,ultrasonic);
+
+    // 3. 仅需一次 Sleep 释放 CPU 控制权
+    tx_thread_sleep(2);
+
+   
+
+	#endif 
+
+
+			
 }

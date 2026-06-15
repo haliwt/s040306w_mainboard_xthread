@@ -420,7 +420,7 @@ void Tencent_Cloud_Rx_Handler(void)
 	    wifi_t.received_data_from_tencent_cloud=0;
 		wifi_t.get_rx_beijing_time_enable=0;
 		gctl_t.response_wifi_signal_label = APP_TIMER_POWER_ON_REF;
-         rx_app_timer_power_on_flag=1;
+  
 	   // __HAL_UART_CLEAR_OREFLAG(&huart2);
 		strncpy((char*)TCMQTTRCVPUB,(char *)gpro_t.wifi_rx_data_array,40);
 	    
@@ -915,7 +915,7 @@ void Json_Parse_Command_Fun(void)
 void Parse_Json_Statement(void)
 {
 
-   //if(rx_app_timer_power_on_flag == 1){
+
     
     if(strstr((char *)TCMQTTRCVPUB,"sonic\":0")){
 			
@@ -966,15 +966,7 @@ void Parse_Json_Statement(void)
 		
 		
 		
-		
 
-      rx_app_timer_power_on_flag ++;
-
-    //  memset(TCMQTTRCVPUB,'\0',40);
-
-  
-   // }
-   
 
 
 }

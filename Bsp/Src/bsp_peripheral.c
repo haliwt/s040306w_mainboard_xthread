@@ -232,8 +232,7 @@ void module_hardware_control(void)
         ultrasonic_close();
     }
 
-    // 风扇调速驱动
-    Fan_RunSpeed_Fun();
+   
 }
 
 

@@ -176,14 +176,30 @@ void SendWifiData_To_Cmd(uint8_t cmd,uint8_t data)
         
         transferSize=7;
 		usart1_dma_send(outputBuf,transferSize);
-//        if(transferSize)
-//        {
-//            while(transOngoingFlag); //UART interrupt transmit flag ,disable one more send data.
-//            transOngoingFlag=1;
-//            HAL_UART_Transmit_IT(&huart1,outputBuf,transferSize);
-//        }
+
 	
 }
+
+void SendWifiData_To_three_Cmd(uint8_t cmd,uint8_t d1,uint8_t d2, uint8_t d3)
+{
+        outputBuf[0]=0x5A; //head : main board 0x5A
+        outputBuf[1]=0x10; //main board device No: 0x10
+        outputBuf[2]=cmd; //command type: fan speed of value 
+        outputBuf[3]= d1; // 0x0F : is data ,don't command order.
+        outputBuf[4]= d2; // don't data ,onlay is command order,recieve data is 1byte .
+        outputBuf[5]= d3;
+		
+
+		
+        outputBuf[6] = 0xFE; //frame is end of byte.
+        outputBuf[7] = bcc_check(outputBuf,7);
+        
+        transferSize=8;
+		usart1_dma_send(outputBuf,transferSize);
+
+	
+}
+
 //
 void SendWifiData_olderCmd(uint8_t cmd,uint8_t data)
 {
