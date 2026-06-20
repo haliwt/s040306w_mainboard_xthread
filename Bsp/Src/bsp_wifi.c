@@ -77,9 +77,9 @@ void link_wifi_net_handler(void)
                // WIFI_IC_ENABLE();
                 tx_thread_sleep(100);
                at_send_data((const uint8_t *)"AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
-                tx_thread_sleep(100);
+                tx_thread_sleep(20);
                 gctl_t.randomName[0]=HAL_GetUIDw0();
-			    tx_thread_sleep(100);
+			    tx_thread_sleep(20);
                 gpro_t.gTimer_link_net_timer_time = 0;
 		
                 
@@ -96,7 +96,7 @@ void link_wifi_net_handler(void)
             			
                         sprintf((char *)device_massage, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,gctl_t.randomName[0]);
             			at_send_data(device_massage, strlen((const char *)device_massage));
-            	  		tx_thread_sleep(100);
+            	  		tx_thread_sleep(20);
                       
                        gpro_t.link_net_step = 3;
 
@@ -205,7 +205,7 @@ void link_wifi_net_handler(void)
 			 
 				MqttData_Publish_SetOpen(0x01);
 		      
-		       tx_thread_sleep(20);
+		      
 		        
 				
 			  gpro_t.link_net_step = 9; // this is flag: link wifi times 119s is over.
@@ -223,7 +223,7 @@ void link_wifi_net_handler(void)
 
 				Subscriber_Data_FromCloud_Handler();
 		
-	             tx_thread_sleep(20);
+	          
         
 			 gpro_t.link_net_step = 0xfe;
 

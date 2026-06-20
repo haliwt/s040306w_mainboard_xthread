@@ -253,7 +253,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
              flag_switch=0;
             wifi_t.get_rx_beijing_time_enable=0;
             Subscriber_Data_FromCloud_Handler();
-            tx_thread_sleep(20);//HAL_Delay(200)
+           // tx_thread_sleep(20);//HAL_Delay(200)
             gpro_t.get_beijing_flag = 1;
 
             
@@ -262,7 +262,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
             flag_switch=0;
             wifi_t.get_rx_beijing_time_enable=0;
             Update_Dht11_Totencent_Value();
-		     tx_thread_sleep(20);
+		    // tx_thread_sleep(20);
             gpro_t.get_beijing_flag = 1;
 
          }
@@ -499,7 +499,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
           //  WIFI_IC_ENABLE();
        
     		at_send_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
-            tx_thread_sleep(1);//HAL_Delay(1000);
+            tx_thread_sleep(20);//HAL_Delay(1000);
             wifi_t.gTimer_auto_link_net_time =0;
             auto_link_net_flag=1;
 
@@ -530,7 +530,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
    
 //	        HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 0xffff);//瀵�1�?7?婵绻涢幒?
             at_send_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
-            tx_thread_sleep(1);//HAL_Delay(1000);
+            tx_thread_sleep(20);//HAL_Delay(1000);
          
            
 		
@@ -560,13 +560,13 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
 
           if(gpro_t.gpower_on == power_on){
                 MqttData_Publish_Update_Data();//Publish_Data_ToTencent_Initial_Data();
-                tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(200);
+               // tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(200);
 
             }
             else if(gpro_t.gpower_on == power_off){
 
                MqttData_Publish_PowerOff_Ref();
-               tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(200);
+               //tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(200);
 
 
             }

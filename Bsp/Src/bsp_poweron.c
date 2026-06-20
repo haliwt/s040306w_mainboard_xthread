@@ -1,15 +1,13 @@
 #include "bsp.h"
 
-
-
 // --- 1. 定义任务的时间周期（单位：毫秒，假设基础Tick为1ms） ---
-#define PERIOD_WIFI_STATE      300    // 10ms*300 = 3000ms = 3s
-#define PERIOD_WIFI_UPDATE     150    // 10ms*200 = 2000ms = 2s
-#define PERIOD_WORKS_HOURS     400    //  10ms*150 = 1500ms = 1.5s
+#define PERIOD_WIFI_STATE      350    // 10ms*300 =  3s
+#define PERIOD_WIFI_UPDATE     150    // 10ms*150 = 1.5s
+#define PERIOD_WORKS_HOURS     430    //  10ms*150 = 1500ms = 1.5s
 #define PERIOD_FAN_ADC         500    //  10ms*250 = 2500ms = 2.5s
-#define PERIOD_WIFI_TEMP       600    //   10ms * 500 = 50000ms = 5s 
-#define PERIOD_READ_DHT11      300    //   10ms * 100 = 1000ms = 1s
-#define PERIOD_FAN_SPEED       200    //   10ms * 130 = 1300ms = 1.3s
+#define PERIOD_WIFI_TEMP       700    //   10ms * 500 = 50000ms = 5s 
+#define PERIOD_READ_DHT11      280    //   10ms * 300 = 3s
+#define PERIOD_FAN_SPEED       200    //   10ms * 200 = 2s
 #define PERIOD_PERIPHERAL      50     //   10ms* 50 = 500ms
 #define PERIOD_LINK_WIFI       3
 #define PERIOD_DISP_AI_WIF     230
@@ -338,11 +336,7 @@ static void power_on_init_handler(void)
            
 
 	 }
-	
-     	
-  
-
-    gpro_t.process_run_step= 5;
+	gpro_t.process_run_step= 5;
 
 	 break;
 
@@ -483,7 +477,7 @@ static void handler_wifi_update_data(void)
 		  gctl_t.first_link_tencent_cloud_flag++;
 
              MqttData_Publish_Update_Data();
-			 tx_thread_sleep(20);//HAL_Delay(200);
+			
              SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
              tx_thread_sleep(1);
       }
@@ -491,7 +485,7 @@ static void handler_wifi_update_data(void)
 			 gctl_t.first_link_tencent_cloud_flag++;
 
             Subscriber_Data_FromCloud_Handler();
-    	    tx_thread_sleep(20);
+    	
 	  }
 		
 		  
@@ -514,7 +508,6 @@ static void handler_works_hours(void)
    
 	
 }
-
 /**
 *
 *@brief 
@@ -523,7 +516,6 @@ static void handler_works_hours(void)
 *@retval
 *
 **/
-
 static void handler_hardware_module_action(void)
 {
    
@@ -543,7 +535,6 @@ static void handler_hardware_module_action(void)
 *@retval
 *
 **/
-
 static void handler_wifi_report(void)
 {
 

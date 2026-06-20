@@ -2,6 +2,7 @@
 #include "tx_api.h"
 
 
+#define DEBUG_ENABLE      1
 
 /***********************************************************************************************************
 											函数声明
@@ -15,19 +16,22 @@
 
 
 
-#define STACK_SIZE_UI   1920//1792//1536//1792//3072//2048//1024//896//768
-#define STACK_SIZE_DEC  512//256
+#define STACK_SIZE_UI    1024//1024//1920//1792//1536
+#define STACK_SIZE_DEC   512//512//1024//512//256
+//#define STACK_SIZE_WIFI  640
 
 
 __attribute__((aligned(8))) static UCHAR stack_msg_pro[STACK_SIZE_UI];
-__attribute__((aligned(8))) static UCHAR stack_start_pro[STACK_SIZE_DEC];
+__attribute__((aligned(8))) static UCHAR stack_dec_pro[STACK_SIZE_DEC];
+//__attribute__((aligned(8))) static UCHAR stack_wifi_pro[STACK_SIZE_WIFI];
 
 
 
 /*在 ThreadX 里，优先级数字越小，优先级越高：*/
 
 static TX_THREAD thread_msg;
-static TX_THREAD thread_start;
+static TX_THREAD thread_decoder;
+//static TX_THREAD thread_wifi;
 /* 定义信号量 */
 TX_SEMAPHORE decoder_semaphore;
 
@@ -40,7 +44,9 @@ TX_TIMER  buzzer_timer;
 
 
 static void vTaskMsgPro(ULONG thread_input);
-static void vTaskStart(ULONG thread_input);
+static void vTaskDecoder(ULONG thread_input);
+//static void vTaskWifi(ULONG thread_input);
+
 static void buzzer_timer_callback(ULONG input);
 
 
@@ -56,10 +62,15 @@ volatile uint8_t tx_error_flag;
 
 static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr);
 #if DEBUG_ENABLE
-static void debug_stack_check(void);
-ULONG unused =0;
+static void debug_stack_ui_check(void);
+static void debug_stack_decoder_check(void);
+static void debug_stack_wifi_check(void);
+
+ULONG ui_unused =0,dec_unused,wifi_unused;
 
 #endif 
+uint16_t ui_counter,wifi_counter,dec_cnt;
+
 /**
  * @brief  :  static void vTaskStart(void *pvParameters
  * @note    
@@ -72,6 +83,8 @@ void tx_application_define(void *first_unused_memory)
    #if DEBUG_ENABLE
      // --- 关键点：在创建任务之前填充魔术字 ---
      memset(stack_msg_pro, 0xEF, sizeof(stack_msg_pro));
+     memset(stack_dec_pro, 0xEF, sizeof(stack_dec_pro));
+	// memset(stack_wifi_pro, 0xEF, sizeof(stack_wifi_pro));
    #endif 
     tx_thread_stack_error_notify(tx_thread_stack_error_handler);
 
@@ -102,24 +115,53 @@ void tx_application_define(void *first_unused_memory)
             wifi_run_handler();
          }
          #if DEBUG_ENABLE
-		   debug_stack_check();
+		 
+		   debug_stack_ui_check();
 
 		 #endif 
-
+         ui_counter++;
          LL_IWDG_ReloadCounter(IWDG);
 		 tx_thread_sleep(1);//10ms * 20 = 200ms
 		
 	}
       
  }
+ /**
+ * @brief  :  static void vTaskStart(void *pvParameters
+ * @note    
+ * @param   None
+ * @retval  None
+ */
+ #if 0
+ static void vTaskWifi(ULONG thread_input)
+{
+   (void)thread_input;  /* 消除未使用的参数警告 */
 
+	while(1)
+    {
+
+         wifi_run_handler();
+         LL_IWDG_ReloadCounter(IWDG);
+		 wifi_counter++;
+         #if DEBUG_ENABLE
+		 
+		   debug_stack_wifi_check();
+
+		 #endif 
+        
+		tx_thread_sleep(5);//10ms * 3 = 200ms
+		
+	}
+      
+ }
+#endif 
  /**
   * @brief	:  static void vTaskStart(void *pvParameters
   * @note	 
   * @param	 None
   * @retval  None
   */
- static void vTaskStart(ULONG thread_input)
+ static void vTaskDecoder(ULONG thread_input)
  {
    (void)thread_input;  /* 消除未使用的参数警告 */
   
@@ -135,6 +177,11 @@ void tx_application_define(void *first_unused_memory)
                  decoder_handler();
 
               //}
+             dec_cnt++;
+            #if DEBUG_ENABLE
+		     debug_stack_decoder_check();
+
+		 #endif 
                 
        }
     } 
@@ -171,17 +218,32 @@ void threadx_handler(void)
                      TX_AUTO_START);               /* 创建后立即启动 */
  #if 1
 
-    tx_thread_create(&thread_start,                /* 任务控制块地址 */    
-    				 "Start",                      /* 任务名 */
-                     vTaskStart,                   /* 启动任务函数地址 */
+    tx_thread_create(&thread_decoder,                /* 任务控制块地址 */    
+    				 "Decoder",                      /* 任务名 */
+                     vTaskDecoder,                   /* 启动任务函数地址 */
                      0,                            /* 传递给任务的参数 */
-                     stack_start_pro,              /* 堆栈基地址 */
+                     stack_dec_pro,              /* 堆栈基地址 */
                      STACK_SIZE_DEC,			   /* 堆栈空间大小 */  
                      0, 						   /* 任务优先级*/
                      0, 						   /* 任务抢占阀值 */
                      TX_NO_TIME_SLICE, 			   /* 不开启时间片 */
                      TX_AUTO_START);               /* 创建后立即启动 */
   #endif 
+
+   #if 0
+
+    tx_thread_create(&thread_wifi,                /* 任务控制块地址 */    
+    				 "WifiPro",                      /* 任务名 */
+                     vTaskWifi,                   /* 启动任务函数地址 */
+                     0,                            /* 传递给任务的参数 */
+                     stack_wifi_pro,              /* 堆栈基地址 */
+                     STACK_SIZE_WIFI,			   /* 堆栈空间大小 */  
+                     1, 						   /* 任务优先级*/
+                     1, 						   /* 任务抢占阀值 */
+                     TX_NO_TIME_SLICE, 			   /* 不开启时间片 */
+                     TX_AUTO_START);               /* 创建后立即启动 */
+  #endif 
+  
   
     tx_timer_create(&buzzer_timer,
     			    "BuzzerTimer",
@@ -311,22 +373,58 @@ void tx_thread_set_sound_once(void)
 }
 
 #if DEBUG_ENABLE
-static void debug_stack_check(void)
+static void debug_stack_ui_check(void)
 {
     ULONG i;
    // ULONG unused = 0;
    ULONG temp_unused = 0; // 使用局部变量进行统计
     // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
-    for (i = 0; i < STACK_SIZE_ONE; i++)
+    for (i = 0; i < STACK_SIZE_UI; i++)
     {
         if (stack_msg_pro[i] == 0xEF)
             temp_unused++;
         else
             break; 
     }
-	unused = temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+	ui_unused = temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
     // 剩下的 unused 就是你安全的“护城河”
     // 如果 unused < 100 字节，你的 G030 就危险了！
 }
 
+static void debug_stack_decoder_check(void)
+{
+    ULONG i;
+   // ULONG unused = 0;
+   ULONG temp_unused = 0; // 使用局部变量进行统计
+    // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
+    for (i = 0; i < STACK_SIZE_DEC; i++)
+    {
+        if (stack_dec_pro[i] == 0xEF)
+            temp_unused++;
+        else
+            break; 
+    }
+	dec_unused = temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+    // 剩下的 unused 就是你安全的“护城河”
+    // 如果 unused < 100 字节，你的 G030 就危险了！
+}
+#if 0
+static void debug_stack_wifi_check(void)
+{
+    ULONG i;
+   // ULONG unused = 0;
+   ULONG temp_unused = 0; // 使用局部变量进行统计
+    // 从数组起始位置（栈底/低地址）开始数连续的 0xEF
+    for (i = 0; i < STACK_SIZE_WIFI; i++)
+    {
+        if (stack_wifi_pro[i] == 0xEF)
+            temp_unused++;
+        else
+            break; 
+    }
+	wifi_unused = temp_unused;  // 统计完后再赋值给全局变量，方便 Watch 窗口查看
+    // 剩下的 unused 就是你安全的“护城河”
+    // 如果 unused < 100 字节，你的 G030 就危险了！
+}
+#endif 
 #endif 

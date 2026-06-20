@@ -577,7 +577,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			   SendWifiData_Answer_Cmd(0x18 ,0x01);//copy cmd
 			   tx_thread_sleep(1);
          }
-		 else if(pdata[3]==0){
+		 else if(pdata[3]==0){// fan is open .
             gpro_t.fan_rx_stop_flag = 0;
 		    Fan_RunSpeed_Fun();//fan_full_run();//WT.EDIT 2026.01.26
 			if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
@@ -614,14 +614,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		     
 			   gpro_t.ptc_active_f++;
         
-            
-              
-	
-              
               if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
 			  	PTC_SetHigh();
-				
-              }
+			  }
 			  if(gctl_t.gPlasma==1)PLASMA_SetHigh();
 			  if(gctl_t.gUltrasonic==1) ultrasonic_open();
 			  Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
