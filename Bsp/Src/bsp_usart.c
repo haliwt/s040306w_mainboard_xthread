@@ -912,8 +912,7 @@ void USART1_IRQHandler(void)
   /* USER CODE BEGIN USART1_IRQn 0 */
   volatile uint8_t data;
   // static uint8_t rx_flag;
-   if (LL_USART_IsActiveFlag_ORE(USART1)) LL_USART_ClearFlag_ORE(USART1);
-
+  
    if(LL_USART_IsActiveFlag_RXNE_RXFNE(USART1)){
    
      

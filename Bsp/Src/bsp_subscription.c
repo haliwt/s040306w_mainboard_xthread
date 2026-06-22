@@ -64,7 +64,7 @@ void Subscriber_Data_FromCloud_Handler(void)
          sprintf((char *)device_massage,"AT+TCMQTTSUB=\"$thing/down/property/%s/UYIJIA01-%d\",0\r\n", PRODUCT_ID, gctl_t.randomName[0]);
 //         HAL_UART_Transmit(&huart2, device_massage, strlen((const char *)device_massage), 5000); 
          //at_send_data(device_massage, strlen((const char *)device_massage));
-         tx_thread_sleep(20);
+        // tx_thread_sleep(20);
         // free(device_massage);
          USART2_DMA_Send(device_massage, sizeof(device_massage));
          tx_thread_sleep(20);

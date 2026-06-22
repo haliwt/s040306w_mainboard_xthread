@@ -143,12 +143,12 @@ void wifi_auto_detected_link_state(void)
         
           if(gpro_t.gpower_on == power_off){
 		     MqttData_Publish_PowerOff_Ref();
-               tx_thread_sleep(20);//HAL_Delay(200);
+             //  tx_thread_sleep(20);//HAL_Delay(200);
 
           }
           
           Subscriber_Data_FromCloud_Handler();
-          tx_thread_sleep(20);//HAL_Delay(200);
+          //tx_thread_sleep(20);//HAL_Delay(200);
          
 
           SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.

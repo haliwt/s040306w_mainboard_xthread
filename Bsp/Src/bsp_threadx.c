@@ -2,7 +2,7 @@
 #include "tx_api.h"
 
 
-#define DEBUG_ENABLE      1
+#define DEBUG_ENABLE      0
 
 /***********************************************************************************************************
 											函数声明
@@ -16,8 +16,8 @@
 
 
 
-#define STACK_SIZE_UI    1024//1024//1920//1792//1536
-#define STACK_SIZE_DEC   512//512//1024//512//256
+#define STACK_SIZE_UI    768//640//1024//1920//1792//1536
+#define STACK_SIZE_DEC   1024//512//512//1024//512//256
 //#define STACK_SIZE_WIFI  640
 
 
@@ -177,13 +177,18 @@ void tx_application_define(void *first_unused_memory)
                  decoder_handler();
 
               //}
-             dec_cnt++;
+            // dec_cnt++;
+			// LL_IWDG_ReloadCounter(IWDG);
             #if DEBUG_ENABLE
 		     debug_stack_decoder_check();
 
-		 #endif 
+		     #endif 
+
                 
        }
+	   else{
+		  tx_thread_sleep(10);
+	   }
     } 
 }
  
@@ -325,7 +330,7 @@ static void wifi_run_handler(void)
 			  break;
 
 			  default:
-			  	break;
+			  break;
 
 
 
