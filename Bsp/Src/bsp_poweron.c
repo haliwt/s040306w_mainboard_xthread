@@ -382,24 +382,7 @@ static void power_on_cycle_handler(void)
 
       // 获取当前系统的绝对时间戳
       uint32_t current_tick = tx_time_get();
-	  #if 0
-
-      // 第二步：通过时间片轮询核心算法，分时调用各个功能模块
-	   for (uint8_t i = 0; i < TASK_NUM; i++) {
-		   //g_tasks[i].counter++; // 基础 Tick 自增
-		   if ((current_tick - g_tasks[i].last_tick) >= g_tasks[i].period) {
-		   
-		        // 滚动更新该任务的历史时间戳基准
-               //g_tasks[i].last_tick = current_tick;
-               // 改进：滚动累加周期，消除长跑下的时间漂移
-               g_tasks[i].last_tick += g_tasks[i].period;
-			 
-			   g_tasks[i].task_handler(); // 触发对应周期的执行函数
-		   
-	   }
-
-	   }
-	   #else 
+	
         // 通过时间片轮询核心算法，分时调用各个功能模块
     for (uint8_t i = 0; i < TASK_NUM; i++) 
     {
@@ -424,7 +407,7 @@ static void power_on_cycle_handler(void)
             }
         }
     }
-	   #endif 
+	  
 
 }
 #endif 

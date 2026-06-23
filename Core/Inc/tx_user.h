@@ -86,7 +86,7 @@
 
 #define TX_MAX_PRIORITIES                8//32
 //#define TX_THREAD_USER_EXTENSION              int heartbeat
-#define TX_TIMER_THREAD_STACK_SIZE               256 //1024
+#define TX_TIMER_THREAD_STACK_SIZE               256//512 //1024
 //#define TX_TIMER_THREAD_PRIORITY                0
 
 //#define TX_MINIMUM_STACK                200
