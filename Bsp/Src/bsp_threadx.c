@@ -16,8 +16,8 @@
 
 
 
-#define STACK_SIZE_UI    768//640//1024//1920//1792//1536
-#define STACK_SIZE_DEC   1024//512//512//1024//512//256
+#define STACK_SIZE_UI    2048//640//1024//1920//1792//1536
+#define STACK_SIZE_DEC   1024//512//1024//512//256
 //#define STACK_SIZE_WIFI  640
 
 
@@ -38,20 +38,18 @@ TX_SEMAPHORE decoder_semaphore;
 TX_TIMER  buzzer_timer;
 
 /*队列*/
-//static TX_QUEUE uart1_rx_queue;
-//static uint8_t uart1_rx_queue_buffer[UART1_RX_BUF_SIZE * sizeof(uint8_t)];
 
 
 
 static void vTaskMsgPro(ULONG thread_input);
 static void vTaskDecoder(ULONG thread_input);
-//static void vTaskWifi(ULONG thread_input);
+static void vTaskWifi(ULONG thread_input);
 
 static void buzzer_timer_callback(ULONG input);
 
 
-/* 创建任务通信机制 */
-//static void AppObjCreate(void);
+
+
 
 static void wifi_run_handler(void);
 static void power_run_handler(void);
@@ -107,7 +105,7 @@ void tx_application_define(void *first_unused_memory)
 	while(1)
     {
 
-
+	
      
 	     power_run_handler();
          if(gpro_t.time_20ms_f ==1){
@@ -121,41 +119,10 @@ void tx_application_define(void *first_unused_memory)
 		 #endif 
          ui_counter++;
          LL_IWDG_ReloadCounter(IWDG);
-		 tx_thread_sleep(1);//10ms * 20 = 200ms
-		
-	}
-      
- }
- /**
- * @brief  :  static void vTaskStart(void *pvParameters
- * @note    
- * @param   None
- * @retval  None
- */
- #if 0
- static void vTaskWifi(ULONG thread_input)
-{
-   (void)thread_input;  /* 消除未使用的参数警告 */
-
-	while(1)
-    {
-
-         wifi_run_handler();
-         LL_IWDG_ReloadCounter(IWDG);
-		 wifi_counter++;
-         #if DEBUG_ENABLE
-		 
-		   debug_stack_wifi_check();
-
-		 #endif 
-        
-		tx_thread_sleep(5);//10ms * 3 = 200ms
-		
-	}
-      
- }
-#endif 
- /**
+		 tx_thread_sleep(20);//50//10ms * 100= 200ms
+    }
+}
+/**
   * @brief	:  static void vTaskStart(void *pvParameters
   * @note	 
   * @param	 None
@@ -168,7 +135,8 @@ void tx_application_define(void *first_unused_memory)
   
    while(1){
 		
-	// 阻塞等待 ISR 投递
+  
+      // 阻塞等待 ISR 投递
       if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
               // 或者直接调用解码器
@@ -189,6 +157,7 @@ void tx_application_define(void *first_unused_memory)
 	   else{
 		  tx_thread_sleep(10);
 	   }
+	  
     } 
 }
  

@@ -105,9 +105,6 @@ typedef enum{
     temp_high_warning=8,
     fan_warning_s=9,
     fan_on_off = 0x0B,
-
-     //notice no sound 
-    //ack_power_on_off = 0x10,
     ack_ptc_on_off = 0x12,
     ack_plasma_on_ff= 0x13,
     ack_ultrasonic_on_off = 0x14,
@@ -131,7 +128,6 @@ typedef struct Msg
 	uint8_t   rx_total_numbers;
 	uint8_t   rx_data[4];
 	uint8_t   usData[12];
-	uint8_t   desData[12];
 
 }MSG_T;
 
@@ -201,7 +197,7 @@ void usart1_isr_callback_handler(uint8_t data)
 
 			   gl_tMsg.bcc_check_code = data;
 
-               display_board_xtask_notice();
+                display_board_xtask_notice();
 
 	 break;
 
@@ -939,10 +935,20 @@ void USART1_IRQHandler(void)
 **/
 void decoder_handler(void)
 {
-    gpro_t.decoder_success_flag=0;
+    static uint8_t done_f = 0;
+	
 	check_bcc_code = bcc_check(gl_tMsg.usData,gl_tMsg.rx_total_numbers);
 	if(check_bcc_code == gl_tMsg.bcc_check_code){
 		usart1_protocol_state_machine(gl_tMsg.usData);
+		done_f =1;
+		
+    }
+	if(done_f ==1){
+	  done_f++;
+	  gl_tMsg.usData[0]=0;
+	  gl_tMsg.usData[1]=0;
+	  gl_tMsg.usData[2]=0;
+	  gl_tMsg.usData[3]=0;
     }
 }
 
