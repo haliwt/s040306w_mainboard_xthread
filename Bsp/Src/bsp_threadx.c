@@ -314,9 +314,10 @@ static void wifi_run_handler(void)
 void display_board_xtask_notice(void)
 {
 
-  tx_semaphore_put(&decoder_semaphore);
+  //tx_semaphore_put(&decoder_semaphore);
     // 投递到队列
    // tx_queue_send(&uart1_rx_queue, &data, TX_NO_WAIT);
+   tx_semaphore_ceiling_put(&decoder_semaphore,1);
 
 }
 
