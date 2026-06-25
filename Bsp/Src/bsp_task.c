@@ -100,7 +100,7 @@ static void wifi_run_handler(void)
 {
       // static uint8_t time_slot =0;
 		  
-		  if(gpro_t.wifi_led_fast_blink_flag==0 ){
+		   if(gpro_t.wifi_led_fast_blink_flag==0 ){
 
 		     switch(wifi_time_slot){
 
@@ -111,14 +111,16 @@ static void wifi_run_handler(void)
 		      break;
 
 			  case 1:
-        
-             getBeijingTime_cofirmLinkNetState_handler();
+            
+                  getBeijingTime_cofirmLinkNetState_handler();
+               	
 
 			  break;
 
 			  case 2:
-	
-             wifi_auto_detected_link_state();
+	        
+                  wifi_auto_detected_link_state();
+	           	
 
 			  break;
 
