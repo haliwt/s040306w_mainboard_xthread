@@ -170,6 +170,7 @@ void DMA1_Channel2_3_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel2_3_IRQn 0 */
   if(LL_DMA_IsActiveFlag_TC2(DMA1) != RESET) {
 		  LL_DMA_ClearFlag_TC2(DMA1);
+		  gpro_t.usart1_dma_sending_flag=0;
 		  
   	}
    else if(LL_DMA_IsActiveFlag_TC3(DMA1) != RESET) {

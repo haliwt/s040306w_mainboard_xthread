@@ -5,7 +5,12 @@
 void usart1_dma_send(uint8_t *txbuf,uint16_t txlen)
 {
     if(txbuf == NULL || txlen ==0)   return ;
-		
+
+	if(gpro_t.usart1_dma_sending_flag == 1) return ;
+	
+	gpro_t.usart1_dma_sending_flag =1;
+
+	
     LL_DMA_DisableChannel(DMA1,LL_DMA_CHANNEL_2);
 
     LL_DMA_ConfigAddresses(DMA1,LL_DMA_CHANNEL_2,

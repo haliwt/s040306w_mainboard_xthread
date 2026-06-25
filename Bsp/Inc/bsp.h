@@ -165,6 +165,7 @@ typedef struct PROCESS_T{
    
    uint8_t disp_works_hours ;    
    uint8_t disp_works_minutes ;
+   uint8_t usart1_dma_sending_flag;
 
 
  volatile  uint8_t time_20ms_f ;
