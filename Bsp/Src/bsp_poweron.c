@@ -740,6 +740,7 @@ void power_off_handler(void)
           gctl_t.rx_set_temp_flag=0; 
          gctl_t.set_temperature_flag = 0; 
 		 gpro_t.first_ptc_on=0;
+		  gpro_t.wifi_led_fast_blink_flag=0;
 		 fan_detect_voltage=100;
 		 if(dc_power ==0){
 		 	dc_power ++;

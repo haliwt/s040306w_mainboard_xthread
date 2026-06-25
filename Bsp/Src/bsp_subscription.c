@@ -545,17 +545,14 @@ void Json_Parse_Command_Fun(void)
 			
             phone_power_flag=1;
 
-			#if 1
+	
 			gctl_t.ptc_warning =0;
 			
 	        gpro_t.fan_warning_flag =0;
-	        gpro_t.power_off_run_step=1;
-	    
-	
-			gpro_t.gpower_on = power_on;//gctl_t.rx_command_tag= POWER_ON;
+	        gpro_t.gpower_on = power_on;//gctl_t.rx_command_tag= POWER_ON;
 			//gpro_t.send_ack_cmd = 1; //ack_app_power_on;
 	     
-			#endif 
+	
 			gpro_t.phone_power_on_flag = 1; //ack_app_power_on;
 	       
 		    SendWifiData_To_Cmd(0x01,0x01); //smart phone is power on
@@ -582,11 +579,11 @@ void Json_Parse_Command_Fun(void)
 		 	 
 			//tx_thread_sleep(200);//LL_mDelay(1000);
              phone_power_flag=2;
-			#if 1
+		
             gpro_t.gpower_on = power_off;
-            gpro_t.power_off_run_step=1; //WT.EDIT 2025.01.04
+            gpro_t.power_off_run_step=0; //WT.EDIT 2025.01.04
            
-     		#endif 
+     
 			
 			gpro_t.phone_power_on_flag = 2; //ack_app_power_on;
 	
@@ -840,7 +837,7 @@ void Json_Parse_Command_Fun(void)
 		     if(strstr((char *)TCMQTTRCVPUB,"open\":1")){
 		   
 			  gctl_t.app_timer_power_on_flag = 1;
-              gpro_t.power_off_run_step=1; // app power on 
+              gpro_t.power_off_run_step=0; // app power on 
               
 		 
 			   gpro_t.gpower_on = power_on;
@@ -864,7 +861,7 @@ void Json_Parse_Command_Fun(void)
 		   
 		    gctl_t.app_timer_power_on_flag = 0;
             gpro_t.gpower_on = power_off;
-            gpro_t.power_off_run_step=1; //WT.EDIT 2025.01.04
+            gpro_t.power_off_run_step=0; //WT.EDIT 2025.01.04
            
             gpro_t.send_ack_cmd = 1; //ack_app_power_off;
 

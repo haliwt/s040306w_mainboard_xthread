@@ -334,7 +334,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 
 			if(gpro_t.gpower_on != power_off){
-				gpro_t.power_off_run_step=1;
+				gpro_t.power_off_run_step=0;
 				gpro_t.gpower_on = power_off;
 				PTC_SetLow();
 
@@ -867,7 +867,7 @@ static void parse_recieve_copy_data(uint8_t *pddata)
 		 }
         else if(pddata[4] == 0x0){ //close 
 
-		   gpro_t.power_off_run_step=1;
+		   gpro_t.power_off_run_step=0;
            gpro_t.gpower_on = power_off;
 			 
 		}
