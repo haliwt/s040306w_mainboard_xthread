@@ -499,7 +499,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 
                FAN_Stop();
 			   PTC_SetLow(); //ptc off;
-			   LL_mDelay(10);
+			  // LL_mDelay(10);
 			    PLASMA_SetLow() ; //plasma turn off.
 	           ultrasonic_close();
          }
@@ -622,11 +622,11 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			       PTC_SetHigh();
 		        
 				 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.07.28
-		         LL_mDelay(10);
+		        // LL_mDelay(10);
 				 gpro_t.ptc_active_f++;
 				 if(wifi_link_net_state()==1){ 
 					  MqttData_Publish_SetPtc(0x01);
-					  LL_mDelay(200);
+					 // LL_mDelay(200);
 					
 				  }
 			   	
@@ -644,7 +644,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  
 		  if(wifi_link_net_state()==1){ 
 			MqttData_Publish_SetPtc(0x0);
-			LL_mDelay(200);
+			//LL_mDelay(200);
 		  }
          
 	   }

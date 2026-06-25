@@ -210,10 +210,10 @@ void fan_warning_sound(void)
 		   LL_mDelay(100);//LL_mDelay(1000);
           
            SendWifiData_To_Cmd(0x09, 0x01);
-           LL_mDelay(10);
+          // LL_mDelay(10);
 	       if(wifi_link_net_state()==1){
                 Publish_Data_Warning(fan_warning,warning);
-    	        LL_mDelay(200);//HAL_Delay(200);
+    	        //LL_mDelay(200);//HAL_Delay(200);
 
            }
 

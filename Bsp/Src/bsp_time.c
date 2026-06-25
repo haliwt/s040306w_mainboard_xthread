@@ -172,7 +172,7 @@ static void CompareSetAndActualTemperature(void)
 			    PTC_SetLow();
 		        ptc_state = PTC_STATE_OFF;
 				SendData_Set_Command(0x22, 0x00); // close PTC
-				LL_mDelay(10);
+				//LL_mDelay(10);
 			
 			    
 			return;
@@ -190,7 +190,7 @@ static void CompareSetAndActualTemperature(void)
 				   if(gpro_t.first_ptc_on ==1) gpro_t.first_ptc_on =2;
 				   SendData_Set_Command(0x22, 0x01); // open PTC
 
-				   LL_mDelay(10);
+				  // LL_mDelay(10);
 				  
 
 
@@ -207,7 +207,7 @@ static void CompareSetAndActualTemperature(void)
 					ptc_state = PTC_STATE_ON;
 					SendData_Set_Command(0x22, 0x01); // open PTC
 
-					LL_mDelay(10);
+					//LL_mDelay(10);
 				}
 			} 
         }
@@ -221,7 +221,7 @@ static void CompareSetAndActualTemperature(void)
 			    PTC_SetLow();
 				ptc_state = PTC_STATE_OFF;
 				SendData_Set_Command(0x22, 0x00); // close PTC
-				LL_mDelay(10);
+				//LL_mDelay(10);
 			}
 		}
         
@@ -280,7 +280,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
     else{
 	 if(net_t.wifi_link_net_success ==0){
 	    SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x0); //WT.EDIT 2025.04.02 0x1F: wifi link net is succes 
-	    LL_mDelay(10);
+	   // LL_mDelay(10);
 	 }
      gpro_t.get_beijing_flag = 1;
 
@@ -304,13 +304,13 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
       
                 net_t.linking_tencent_cloud_doing  =0; //receive from tencent command state .
                 SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01);
-                LL_mDelay(10);
+               // LL_mDelay(10);
 
             }
             else{
               
                SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x0); //0x1F: 0x1=wifi link net is succes ,0x0 = wifi link net is fail
-               LL_mDelay(10);
+              // LL_mDelay(10);
                gpro_t.get_beijing_flag = 10;
                net_t.linking_tencent_cloud_doing  =1; //receive from tencent command state .
                gpro_t.send_ack_cmd = 1; //ack_wifi_on;
@@ -407,7 +407,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
                     gpro_t.get_beijing_time_success = 1;
 
                     SendWifiData_To_PanelTime(gpro_t.disp_works_hours,gpro_t.disp_works_minutes,gpro_t.gTimer_works_time_seconds);
-                    LL_mDelay(10);//tx_thread_sleep(50);
+                    //LL_mDelay(10);//tx_thread_sleep(50);
 
                    gpro_t.get_beijing_flag = 6; //WT.EDIT 2025.01.06
                     
@@ -468,7 +468,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
             net_t.linking_tencent_cloud_doing  =1; //receive from tencent command state .
             gpro_t.wifi_rx_data_counter=0;
             SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x0); //WT.EDIT 2025.04.02 0x1F: wifi link net is succes 
-            LL_mDelay(10);
+            //LL_mDelay(10);
            
           }
           else{
@@ -476,7 +476,7 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
              net_t.linking_tencent_cloud_doing  =0; //receive from tencent command state .
              gpro_t.get_beijing_flag = 0;
 		     SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //WT.EDIT 2025.04.02 0x1F: wifi link net is succes 
-			 LL_mDelay(10);
+			// LL_mDelay(10);
           }
         
        }
@@ -574,13 +574,13 @@ void getBeijingTime_cofirmLinkNetState_handler(void)
             //tx_thread_sleep(200);//HAL_Delay(200);
 
             SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //0x1F: wifi link net is succes 
-			LL_mDelay(10);
+			//LL_mDelay(10);
              gpro_t.get_beijing_flag = 0;
 		
          }
          else{
 			 SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x0); //WT.EDIT 2025.04.02 0x1F: wifi link net is succes 
-			 LL_mDelay(10);
+			 //LL_mDelay(10);
              gpro_t.get_beijing_flag = 10;
          }
 	   

@@ -452,11 +452,11 @@ static void handler_wifi_state(void)
         uint8_t wifi_status = (net_t.wifi_link_net_success == 1) ? 0x01 : 0x00;
 		if(sw_flag == 1){
 			SendWifiData_olderCmd(0x1F,wifi_status);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-			LL_mDelay(10);
+			//LL_mDelay(10);
 		}
 		else{
 			SendWifiData_To_Data(0x1F,wifi_status);
-			LL_mDelay(10);
+			//LL_mDelay(10);
 		}
 
 	}
@@ -482,7 +482,7 @@ static void handler_wifi_update_data(void)
              MqttData_Publish_Update_Data();
 			
              SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-             LL_mDelay(10);
+             //LL_mDelay(10);
       }
 	  else if(gctl_t.first_link_tencent_cloud_flag < 3){
 			 gctl_t.first_link_tencent_cloud_flag++;

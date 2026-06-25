@@ -149,7 +149,7 @@ static void property_report_state(void)
                                
  
 	//at_send_data((uint8_t *)message, message_len);
-	LL_mDelay(10);
+	//LL_mDelay(10);
 	USART2_DMA_Send((uint8_t *)message, message_len);
 	LL_mDelay(200);
    
