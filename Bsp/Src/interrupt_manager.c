@@ -49,7 +49,7 @@ void tim17_isr_callback_handler(void)
 
     tm0 ++ ;
 
-	if(++tm1 > 1){
+	if(++tm1 > 4){
         tm1 = 0;
 		gpro_t.time_20ms_f = 1;
 

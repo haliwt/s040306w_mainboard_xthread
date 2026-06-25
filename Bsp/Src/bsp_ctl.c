@@ -27,12 +27,12 @@ void ai_mode_display_fun(void)
 	gctl_t.mode_ai_switch_flag=0;
 	if(gctl_t.gModel ==1){
 	   MqttData_Publish_AitState(1);
-	  tx_thread_sleep(20);
+	  LL_mDelay(200);
 
 	}
 	else if(gctl_t.gModel ==2 || gctl_t.gModel ==0){
 	  MqttData_Publish_AitState(2);
-	  tx_thread_sleep(20);
+	  LL_mDelay(200);
 	
 	}
 	}

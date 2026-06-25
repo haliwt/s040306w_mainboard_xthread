@@ -208,13 +208,27 @@ USART2_IRQHandler
 ;*******************************************************************************
 ; User Stack and Heap initialization
 ;*******************************************************************************
-               EXPORT   __initial_sp
-               
+                 IF      :DEF:__MICROLIB
 
-                IF       Heap_Size != 0
-                EXPORT   __heap_base
-                EXPORT   __heap_limit
-                ENDIF
+                 EXPORT  __initial_sp
+                 EXPORT  __heap_base
+                 EXPORT  __heap_limit
 
-                END
+                 ELSE
 
+                 IMPORT  __use_two_region_memory
+                 EXPORT  __user_initial_stackheap
+
+__user_initial_stackheap
+
+                 LDR     R0, =  Heap_Mem
+                 LDR     R1, =(Stack_Mem + Stack_Size)
+                 LDR     R2, = (Heap_Mem +  Heap_Size)
+                 LDR     R3, = Stack_Mem
+                 BX      LR
+
+                 ALIGN
+
+                 ENDIF
+
+                 END

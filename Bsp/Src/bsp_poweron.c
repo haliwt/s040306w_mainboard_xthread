@@ -56,6 +56,26 @@ TimeSharingTask_t g_tasks[] = {
 
 #define TASK_NUM (sizeof(g_tasks) / sizeof(TimeSharingTask_t))
 
+// 定义一个 32 位的全局 Tick 计数器
+// 使用 volatile 修饰，防止编译器将其优化，确保每次读取都从内存中获取最新值
+static __IO uint32_t g_system_ticks = 0;
+
+/**
+  * @brief  获取当前系统的绝对时间戳 (单位: 毫秒 ms)
+  * @retval 当前的 tick 值
+  */
+uint32_t get_system_tick(void)
+{
+    return g_system_ticks ;
+}
+
+/**
+  * @brief  SysTick 递增函数（由中断服务函数调用）
+  */
+void inc_system_tick(void)
+{
+    g_system_ticks ++;
+}
 
 #else 
 
@@ -352,7 +372,7 @@ static void power_on_init_handler(void)
 		read_sensorData();
 
 #if 1	
-        boot_tick = tx_time_get();
+        boot_tick = get_system_tick();
 		for(i=0;i < TASK_NUM;i ++){
 
 		     g_tasks[i].last_tick = boot_tick;
@@ -381,7 +401,7 @@ static void power_on_cycle_handler(void)
 {
 
       // 获取当前系统的绝对时间戳
-      uint32_t current_tick = tx_time_get();
+      uint32_t current_tick = get_system_tick();//tx_time_get();
 	
         // 通过时间片轮询核心算法，分时调用各个功能模块
     for (uint8_t i = 0; i < TASK_NUM; i++) 
@@ -432,11 +452,11 @@ static void handler_wifi_state(void)
         uint8_t wifi_status = (net_t.wifi_link_net_success == 1) ? 0x01 : 0x00;
 		if(sw_flag == 1){
 			SendWifiData_olderCmd(0x1F,wifi_status);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-			tx_thread_sleep(1);
+			LL_mDelay(10);
 		}
 		else{
 			SendWifiData_To_Data(0x1F,wifi_status);
-			tx_thread_sleep(1);
+			LL_mDelay(10);
 		}
 
 	}
@@ -462,7 +482,7 @@ static void handler_wifi_update_data(void)
              MqttData_Publish_Update_Data();
 			
              SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-             tx_thread_sleep(1);
+             LL_mDelay(10);
       }
 	  else if(gctl_t.first_link_tencent_cloud_flag < 3){
 			 gctl_t.first_link_tencent_cloud_flag++;
@@ -695,14 +715,7 @@ void power_off_handler(void)
 
 	case 0:
 
-		if(power_on_sound_flag==0){
-            power_on_sound_flag ++;
-            FAN_Stop();  //WT.EDIT.2025.01.03
-            buzzer_sound_once();//buzzer_sound();//buzzer_sound();
-            read_sensorData();
-		
-
-        }
+	
 		gpro_t.process_run_step=0;
          gpro_t.gTimer_poweroff_fan=0;
          //timer timing 
@@ -750,7 +763,7 @@ void power_off_handler(void)
        if(wifi_link_net_state() == 1){
 
           MqttData_Publish_PowerOff_Ref(); 
-          tx_thread_sleep(20); //WT.EDTI 2024.11.19 
+          LL_mDelay(200); //WT.EDTI 2024.11.19 
        }
          gpro_t.power_off_run_step = 2;
        break;
@@ -760,7 +773,7 @@ void power_off_handler(void)
           if(gctl_t.ptc_warning == 1){
 		 	
 		  	Publish_Data_Warning(ptc_temp_warning,0);
-		  	tx_thread_sleep(20);
+		  	LL_mDelay(200);
             
           }
            gpro_t.power_off_run_step = 3;
@@ -868,13 +881,13 @@ void app_timer_power_on_reference(void)
           if(get_ptc_value()==1){
               
 				SendWifiData_To_Cmd(0x02,0x01);
-				tx_thread_sleep(1);
+				LL_mDelay(10);
 			}
 			else if(get_ptc_value() ==0){
 					
                     
 					SendWifiData_To_Cmd(0x02,0x0);
-					tx_thread_sleep(1);
+					LL_mDelay(10);
 
 			}
 
@@ -882,25 +895,25 @@ void app_timer_power_on_reference(void)
 			if(gctl_t.gUltrasonic==1){
 
 					SendWifiData_To_Cmd(0x04,0x01);
-					tx_thread_sleep(1);
+					LL_mDelay(10);
 			}
 			else {
 					gctl_t.gUltrasonic=0;
 					SendWifiData_To_Cmd(0x04,0x0);
-					tx_thread_sleep(1);
+					LL_mDelay(10);
 			}
 
 			if(gctl_t.gPlasma == 1){
 			
 			  SendWifiData_To_Cmd(0x03,0x01);
-			  tx_thread_sleep(1);
+			  LL_mDelay(10);
 
 
 			}
 			else{
                
 				SendWifiData_To_Cmd(0x03,0);
-				tx_thread_sleep(1);
+				LL_mDelay(10);
 
 			}
 
@@ -915,7 +928,7 @@ void app_timer_power_on_reference(void)
     SendWifiData_To_three_Cmd(0x15, ptc_val,plasma,ultrasonic);
 
     // 3. 仅需一次 Sleep 释放 CPU 控制权
-    tx_thread_sleep(2);
+    LL_mDelay(20);
 
    
 

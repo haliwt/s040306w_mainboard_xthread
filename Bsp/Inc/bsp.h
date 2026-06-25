@@ -7,13 +7,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "app_threadx.h"
+//#include "app_threadx.h"
 
 
 #include "adc.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "iwdg.h"
 
 
 
@@ -22,7 +23,7 @@
 #include "main.h"
 
 
-#include "bsp_threadx.h"
+#include "bsp_task.h"
 #include "bsp_fan.h"
 
 #include "bsp_ctl.h"

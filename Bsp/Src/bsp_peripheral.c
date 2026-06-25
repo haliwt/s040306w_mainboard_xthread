@@ -27,7 +27,7 @@ void module_action_handler(void)
 	   if(gctl_t.app_timer_power_on_flag == 1){
 	   	
                 SendWifiData_To_Cmd(0x02,0x01);
-				tx_thread_sleep(1);
+				LL_mDelay(10);
 
 	   }
        
@@ -39,7 +39,7 @@ void module_action_handler(void)
 	
 
 			MqttData_Publish_SetPtc(0x01);
-			tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
+			LL_mDelay(200);//LL_mDelay(1000);//HAL_Delay(350);
 	     }
 		
    	  
@@ -51,7 +51,7 @@ void module_action_handler(void)
 		if(gctl_t.app_timer_power_on_flag == 1){
 			    gctl_t.ptc_prohibit_on_flag =1;
                 SendWifiData_To_Cmd(0x02,0);
-				tx_thread_sleep(1);
+				LL_mDelay(10);
 
 		}
 		
@@ -60,7 +60,7 @@ void module_action_handler(void)
 	   if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_active_f){//if(ptc_default!= get_ptc_value() && wifi_link_net_state()==1){
 		    ptc_default = gpro_t.ptc_active_f;
 		    MqttData_Publish_SetPtc(0x0);
-			tx_thread_sleep(20);//tx_thread_sleep(100);//HAL_Delay(350);
+			LL_mDelay(200);//LL_mDelay(1000);//HAL_Delay(350);
 			
 		}
 		
@@ -74,7 +74,7 @@ void module_action_handler(void)
 
 	     if(gctl_t.app_timer_power_on_flag == 1){
                 SendWifiData_To_Cmd(0x03,0x01);
-				tx_thread_sleep(1);
+				LL_mDelay(10);
 
 		 }
 		 
@@ -82,7 +82,7 @@ void module_action_handler(void)
 		 	
 			plasma_default = gpro_t.plasma_switch_flag;	
 		   MqttData_Publish_SetPlasma(0x01);
-		   tx_thread_sleep(20);
+		   LL_mDelay(200);
 		 
 		}
 	}
@@ -91,14 +91,14 @@ void module_action_handler(void)
 		PLASMA_SetLow();
 		if(gctl_t.app_timer_power_on_flag == 1){
                 SendWifiData_To_Cmd(0x03,0);
-				tx_thread_sleep(1);
+				LL_mDelay(10);
 
 		 }
 		 if(plasma_default!=gpro_t.plasma_switch_flag && wifi_link_net_state()==1){
 			plasma_default = gpro_t.plasma_switch_flag;
 		
 		   MqttData_Publish_SetPlasma(0);
-		  tx_thread_sleep(20);
+		  LL_mDelay(200);
 		 
 		}
 	}
@@ -108,7 +108,7 @@ void module_action_handler(void)
 	     ultrasonic_open();
 		 if(gctl_t.app_timer_power_on_flag == 1){
                 SendWifiData_To_Cmd(0x04,0x01);
-				tx_thread_sleep(1);
+				LL_mDelay(10);
 
 		 }
 	
@@ -116,7 +116,7 @@ void module_action_handler(void)
 	    ultrasonic_default = gpro_t.ultrasonic_switch_flag;
 		 
 		 MqttData_Publish_SetUltrasonic(0x01);
-		tx_thread_sleep(20);
+		LL_mDelay(200);
 	 } 
 		
 	}
@@ -125,7 +125,7 @@ void module_action_handler(void)
 	    ultrasonic_close();
 		if(gctl_t.app_timer_power_on_flag == 1){
                 SendWifiData_To_Cmd(0x04,0);
-				tx_thread_sleep(1);
+				LL_mDelay(10);
 
 		 }
 		
@@ -134,7 +134,7 @@ void module_action_handler(void)
 			ultrasonic_default = gpro_t.ultrasonic_switch_flag;	
 		
 			MqttData_Publish_SetUltrasonic(0);
-		    tx_thread_sleep(20);
+		    LL_mDelay(200);
 			
 		}
 
@@ -143,7 +143,7 @@ void module_action_handler(void)
 	 if(wifi_link_net_state()==1 && gpro_t.tx_wifi_temperature_f ==1){
 	 	gpro_t.tx_wifi_temperature_f++;
 		MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
-		tx_thread_sleep(20);//tx_thread_sleep(200);//HAL_Delay(350);
+		LL_mDelay(200);//tx_thread_sleep(200);//HAL_Delay(350);
 	 }
    
 	 Fan_RunSpeed_Fun();
@@ -195,13 +195,13 @@ void module_hardware_control(void)
 			   gctl_t.ptc_prohibit_on_flag = 1;
 			   SendWifiData_To_Cmd(0x02, 0x00);
 		   }
-		   tx_thread_sleep(2); 
+		   LL_mDelay(20); 
 	
 		   SendWifiData_To_Cmd(0x03, plasma_val);
-		   tx_thread_sleep(2);
+		   LL_mDelay(20);
 	
 		   SendWifiData_To_Cmd(0x04, ultra_val);
-		   tx_thread_sleep(2);
+		   LL_mDelay(20);
 	
 		   gctl_t.app_timer_power_on_flag = 0; // 发送完立即清零
 	   }
@@ -263,13 +263,13 @@ void module_wifi_report_handler(void)
             gctl_t.ptc_prohibit_on_flag = 1;
             SendWifiData_To_Cmd(0x02, 0x00);
         }
-        tx_thread_sleep(1); 
+        LL_mDelay(10); 
 
         SendWifiData_To_Cmd(0x03, gctl_t.gPlasma ? 0x01 : 0x00);
-        tx_thread_sleep(1);
+        LL_mDelay(10);
 
         SendWifiData_To_Cmd(0x04, gctl_t.gUltrasonic ? 0x01 : 0x00);
-        tx_thread_sleep(1);
+        LL_mDelay(10);
 
         gctl_t.app_timer_power_on_flag = 0; // 发送完立即清零
     }
@@ -283,28 +283,28 @@ void module_wifi_report_handler(void)
         if (ptc_default != gpro_t.ptc_active_f) {
             ptc_default = gpro_t.ptc_active_f;
             MqttData_Publish_SetPtc(gpro_t.gPtc ? 0x01 : 0x00);
-            tx_thread_sleep(20); 
+            LL_mDelay(200); 
         }
 
         // 等离子状态有变动则上报
         if (plasma_default != gpro_t.plasma_switch_flag) {
             plasma_default = gpro_t.plasma_switch_flag;
             MqttData_Publish_SetPlasma(gctl_t.gPlasma ? 0x01 : 0x00);
-            tx_thread_sleep(20);
+            LL_mDelay(200);
         }
 
         // 超声波状态有变动则上报
         if (ultrasonic_default != gpro_t.ultrasonic_switch_flag) {
             ultrasonic_default = gpro_t.ultrasonic_switch_flag;
             MqttData_Publish_SetUltrasonic(gctl_t.gUltrasonic ? 0x01 : 0x00);
-            tx_thread_sleep(20);
+            LL_mDelay(200);
         }
 
         // 温度定时上报
         if (gpro_t.tx_wifi_temperature_f == 1) {
             gpro_t.tx_wifi_temperature_f++;
             MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
-            tx_thread_sleep(20);
+            LL_mDelay(200);
         }
     }
 }

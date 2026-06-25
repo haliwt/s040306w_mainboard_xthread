@@ -39,7 +39,7 @@ void confirm_wifi_link_net_state(void)
    //HAL_UART_Transmit(&huart2, "AT+TCMQTTSTATE?\r\n", strlen("AT+TCMQTTSTATE?\r\n"), 5000);
 
 	at_send_data((const uint8_t *)"AT+TCMQTTSTATE?\r\n", strlen("AT+TCMQTTSTATE?\r\n"));
-    tx_thread_sleep(20);
+    LL_mDelay(200);
 
 }
 
@@ -67,19 +67,19 @@ void link_wifi_net_handler(void)
           
         		at_send_data((const uint8_t *)"AT+RST\r\n", strlen("AT+RST\r\n"));
         
-        		tx_thread_sleep(200);//tx_thread_sleep(1000);
-        		
+        		//tx_thread_sleep(200);//tx_thread_sleep(1000);
+        		LL_mDelay(1000);
               gpro_t.link_net_step = 1;
 
             break;
 
             case 1:
                // WIFI_IC_ENABLE();
-                tx_thread_sleep(100);
+                LL_mDelay(1000);
                at_send_data((const uint8_t *)"AT+CWMODE=3\r\n", strlen("AT+CWMODE=3\r\n"));
-                tx_thread_sleep(20);
+                LL_mDelay(200);
                 gctl_t.randomName[0]=HAL_GetUIDw0();
-			    tx_thread_sleep(20);
+			    LL_mDelay(200);
                 gpro_t.gTimer_link_net_timer_time = 0;
 		
                 
@@ -96,7 +96,7 @@ void link_wifi_net_handler(void)
             			
                         sprintf((char *)device_massage, "AT+TCPRDINFOSET=1,\"%s\",\"%s\",\"UYIJIA01-%d\"\r\n", PRODUCT_ID, DEVICE_SECRET,gctl_t.randomName[0]);
             			at_send_data(device_massage, strlen((const char *)device_massage));
-            	  		tx_thread_sleep(20);
+            	  		LL_mDelay(200);
                       
                        gpro_t.link_net_step = 3;
 
@@ -112,7 +112,7 @@ void link_wifi_net_handler(void)
                   
                 at_send_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
 
-			    tx_thread_sleep(100);
+			    LL_mDelay(1000);
 			
                
                   gpro_t.link_net_step = 4;
@@ -138,7 +138,7 @@ void link_wifi_net_handler(void)
 
 	            sprintf((char *)device_massage, "AT+TCSAP=\"UYIJIA01-%d\"\r\n",gctl_t.randomName[0]);
                 at_send_data(device_massage, strlen((const char *)device_massage));
-	           tx_thread_sleep(200);
+	            LL_mDelay(1000);//tx_thread_sleep(200);
 			
            
        
@@ -158,7 +158,7 @@ void link_wifi_net_handler(void)
             net_t.soft_ap_config_success=0;
  //           HAL_UART_Transmit(&huart2, "AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"), 5000);//å¼?å§‹è¿žæŽ?
             at_send_data((const uint8_t *)"AT+TCMQTTCONN=1,5000,240,0,1\r\n", strlen("AT+TCMQTTCONN=1,5000,240,0,1\r\n"));
-			tx_thread_sleep(100);
+			LL_mDelay(1000);
 	
 	         gpro_t.link_net_step = 7;
             gpro_t.gTimer_link_net_timer_time = 0;
@@ -179,7 +179,7 @@ void link_wifi_net_handler(void)
 			 
                 
                SendData_Set_Command(0x1F,0x01);//SendWifiData_To_Data(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-               tx_thread_sleep(1);
+               LL_mDelay(10);
 			
 			    gpro_t.link_net_step = 8;
                
@@ -190,7 +190,7 @@ void link_wifi_net_handler(void)
                   gpro_t.wifi_led_fast_blink_flag=0;
                   gpro_t.link_net_step = 11;
                   SendData_Set_Command(0x1F,0);//SendWifiData_To_Data(0x1F,0x00) ;	 //Link wifi net is fail .WT.EDTI .2024.08.31
-                  tx_thread_sleep(1);
+                  LL_mDelay(10);
                   
                 }
                 

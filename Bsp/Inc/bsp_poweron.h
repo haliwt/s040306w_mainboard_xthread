@@ -32,6 +32,7 @@ void SetPowerOff_ForDoing(void);
 
 void module_hardware_control(void);
 
+void inc_system_tick(void);
 
 
 

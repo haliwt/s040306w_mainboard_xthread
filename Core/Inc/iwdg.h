@@ -32,6 +32,8 @@ extern "C" {
 
 /* USER CODE END Includes */
 
+extern IWDG_HandleTypeDef hiwdg;
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
