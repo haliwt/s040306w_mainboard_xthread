@@ -778,12 +778,13 @@ void Json_Parse_Command_Fun(void)
 			SendWifiData_To_Data(0x2A, gctl_t.set_temperature_value); //smart phone set temperature value .
 			//LL_mDelay(10);//tx_thread_sleep(1);//HAL_Delay(10);
 			
+			gpro_t.ptc_active_f++;
 			gctl_t.set_temp_first_closeptc = 0;
 			gctl_t.rx_set_temp_flag =0;
 			 gctl_t.app_timer_power_on_flag = 0;
 
 			 MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
-            // LL_mDelay(200);
+           
        }
      
 	  buzzer_temp_on=0;

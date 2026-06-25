@@ -283,28 +283,28 @@ void module_wifi_report_handler(void)
         if (ptc_default != gpro_t.ptc_active_f) {
             ptc_default = gpro_t.ptc_active_f;
             MqttData_Publish_SetPtc(gpro_t.gPtc ? 0x01 : 0x00);
-            LL_mDelay(200); 
+           
         }
 
         // 等离子状态有变动则上报
         if (plasma_default != gpro_t.plasma_switch_flag) {
             plasma_default = gpro_t.plasma_switch_flag;
             MqttData_Publish_SetPlasma(gctl_t.gPlasma ? 0x01 : 0x00);
-            LL_mDelay(200);
+           
         }
 
         // 超声波状态有变动则上报
         if (ultrasonic_default != gpro_t.ultrasonic_switch_flag) {
             ultrasonic_default = gpro_t.ultrasonic_switch_flag;
             MqttData_Publish_SetUltrasonic(gctl_t.gUltrasonic ? 0x01 : 0x00);
-            LL_mDelay(200);
+            //LL_mDelay(200);
         }
 
         // 温度定时上报
         if (gpro_t.tx_wifi_temperature_f == 1) {
             gpro_t.tx_wifi_temperature_f++;
             MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
-            LL_mDelay(200);
+           // LL_mDelay(200);
         }
     }
 }
