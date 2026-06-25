@@ -14,6 +14,7 @@ void tim3_buzzer_sound_config(void);
 
 void buzzer_sound_close(void);
 
+void buzzer_poll(void);
 
 
 #endif 

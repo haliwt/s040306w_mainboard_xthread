@@ -48,6 +48,7 @@ void tim17_isr_callback_handler(void)
  
 
     tm0 ++ ;
+	buzzer_poll();
 
 	if(++tm1 > 4){
         tm1 = 0;

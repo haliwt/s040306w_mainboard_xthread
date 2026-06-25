@@ -26,15 +26,29 @@ static void tim3_stop_buzzer_sound_config(void)
 
 
 
-
+int8_t buzzer_timer ;
 void buzzer_sound_once(void)
 {
    
    tim3_buzzer_sound_config();
-   LL_mDelay(20);
-   tim3_stop_buzzer_sound_config();
-   LL_TIM_DisableCounter(TIM3);
+   buzzer_timer = 20;
+   //LL_mDelay(20);
+   //tim3_stop_buzzer_sound_config();
+   //LL_TIM_DisableCounter(TIM3);
 
+}
+
+void buzzer_poll(void)
+{
+  if(buzzer_timer > 0){
+     buzzer_timer = buzzer_timer - 10;
+	 if(buzzer_timer ==0 || buzzer_timer < 0){
+	   tim3_stop_buzzer_sound_config();
+	   LL_TIM_DisableCounter(TIM3);
+
+
+	 }
+  }
 }
 
 

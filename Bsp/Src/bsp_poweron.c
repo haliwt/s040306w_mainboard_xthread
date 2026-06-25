@@ -1,17 +1,17 @@
 #include "bsp.h"
 
 // --- 1. 定义任务的时间周期（单位：毫秒，假设基础Tick为1ms） ---
-#define PERIOD_WIFI_STATE      350    // 10ms*300 =  3s
-#define PERIOD_WIFI_UPDATE     150    // 10ms*150 = 1.5s
-#define PERIOD_WORKS_HOURS     430    //  10ms*150 = 1500ms = 1.5s
-#define PERIOD_FAN_ADC         500    //  10ms*250 = 2500ms = 2.5s
-#define PERIOD_WIFI_TEMP       700    //   10ms * 500 = 50000ms = 5s 
-#define PERIOD_READ_DHT11      280    //   10ms * 300 = 3s
-#define PERIOD_FAN_SPEED       200    //   10ms * 200 = 2s
-#define PERIOD_PERIPHERAL      50     //   10ms* 50 = 500ms
-#define PERIOD_LINK_WIFI       3
-#define PERIOD_DISP_AI_WIF     230
-#define PERIOD_WIFI_REPORT     100
+#define PERIOD_WIFI_STATE      3500    // 10ms*300 =  3s
+#define PERIOD_WIFI_UPDATE     1500    // 10ms*150 = 1.5s
+#define PERIOD_WORKS_HOURS     4300    //  10ms*150 = 1500ms = 1.5s
+#define PERIOD_FAN_ADC         5000    //  10ms*250 = 2500ms = 2.5s
+#define PERIOD_WIFI_TEMP       7000    //   10ms * 500 = 50000ms = 5s 
+#define PERIOD_READ_DHT11      2800    //   10ms * 300 = 3s
+#define PERIOD_FAN_SPEED       2000    //   10ms * 200 = 2s
+#define PERIOD_PERIPHERAL      500     //   10ms* 50 = 500ms
+#define PERIOD_LINK_WIFI       30
+#define PERIOD_DISP_AI_WIF     2300
+#define PERIOD_WIFI_REPORT     1000
 
 // --- 2. 定义分时任务控制结构体 ---
 typedef struct {
