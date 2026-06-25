@@ -29,7 +29,7 @@ static void handler_wifi_update_temp_humidity(void);
 static void handler_read_dht11(void);
 static void handler_fan_speed_state(void);
 static void handler_hardware_module_action(void);
-static void handler_rx_widi_data(void);
+static void handler_link_wifi(void);
 static void handler_send_ai_wif(void);
 static void handler_wifi_report(void);
 
@@ -46,7 +46,7 @@ TimeSharingTask_t g_tasks[] = {
     {0, PERIOD_READ_DHT11,       handler_read_dht11},
     {0, PERIOD_FAN_SPEED,        handler_fan_speed_state},
     {0,PERIOD_PERIPHERAL,        handler_hardware_module_action},
-    {0,PERIOD_LINK_WIFI,         handler_rx_widi_data},
+    {0,PERIOD_LINK_WIFI,         handler_link_wifi},
     {0,PERIOD_DISP_AI_WIF,       handler_send_ai_wif},
     {0,PERIOD_WIFI_REPORT,       handler_wifi_report}
    
@@ -633,7 +633,7 @@ static void handler_fan_speed_state(void)
 **/
 
 
-static void handler_rx_widi_data(void)
+static void handler_link_wifi(void)
 {
  link_wifi_to_tencent_handler();
 }
