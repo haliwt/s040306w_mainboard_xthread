@@ -908,8 +908,17 @@ void USART1_IRQHandler(void)
   
   /* USER CODE BEGIN USART1_IRQn 1 */
 	 // 清除错误标志
-  //  if (LL_USART_IsActiveFlag_ORE(USART1))  
-	LL_USART_ClearFlag_ORE(USART1);
+ // 2. 溢出错误（ORE）防御性闭环处理
+  if (LL_USART_IsActiveFlag_ORE(USART1))  
+  {
+      // 【核心修复】强行读走 RDR 寄存器里的脏数据，彻底释放硬件锁
+      volatile uint8_t dummy_read = LL_USART_ReceiveData8(USART1);
+      ((void)dummy_read); // 防止部分编译器报 “变量未引用” 的警告
+      
+      // 然后再清除错误标志
+      LL_USART_ClearFlag_ORE(USART1);
+  }
+	
     if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1); //WT.EDIT 2026-07-11
     if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1); //WT.EDIT 2026-07-11
   /* USER CODE END USART1_IRQn 1 */

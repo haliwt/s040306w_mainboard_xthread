@@ -275,10 +275,16 @@ void USART2_IRQHandler(void)
 
   /* USER CODE END USART2_IRQn 0 */
   /* USER CODE BEGIN USART2_IRQn 1 */
-   if(LL_USART_IsActiveFlag_ORE(USART2)){
-
-       LL_USART_ClearFlag_ORE(USART2);
-   }
+ // 2. 溢出错误（ORE）防御性闭环处理
+  if (LL_USART_IsActiveFlag_ORE(USART2))  
+  {
+      // 【核心修复】强行读走 RDR 寄存器里的脏数据，彻底释放硬件锁
+      volatile uint8_t dummy_read = LL_USART_ReceiveData8(USART2);
+      ((void)dummy_read); // 防止部分编译器报 “变量未引用” 的警告
+      
+      // 然后再清除错误标志
+      LL_USART_ClearFlag_ORE(USART2);
+  }
    if(LL_USART_IsActiveFlag_FE(USART2)){
        LL_USART_ClearFlag_FE(USART2);
    }
