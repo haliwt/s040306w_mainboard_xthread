@@ -279,12 +279,12 @@ void USART2_IRQHandler(void)
 
        LL_USART_ClearFlag_ORE(USART2);
    }
-//   if(LL_USART_IsActiveFlag_FE(USART2)){
-//       LL_USART_ClearFlag_FE(USART2);
-//   }
-//   if(LL_USART_IsActiveFlag_NE(USART2)){
-//      LL_USART_ClearFlag_NE(USART2);
-//   }
+   if(LL_USART_IsActiveFlag_FE(USART2)){
+       LL_USART_ClearFlag_FE(USART2);
+   }
+   if(LL_USART_IsActiveFlag_NE(USART2)){
+      LL_USART_ClearFlag_NE(USART2);
+   }
 
   /* USER CODE END USART2_IRQn 1 */
 }

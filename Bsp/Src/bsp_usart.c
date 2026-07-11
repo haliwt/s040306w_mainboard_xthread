@@ -910,8 +910,8 @@ void USART1_IRQHandler(void)
 	 // 清除错误标志
   //  if (LL_USART_IsActiveFlag_ORE(USART1))  
 	LL_USART_ClearFlag_ORE(USART1);
-    //if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
-    ///if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
+    if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1); //WT.EDIT 2026-07-11
+    if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1); //WT.EDIT 2026-07-11
   /* USER CODE END USART1_IRQn 1 */
 }
 
