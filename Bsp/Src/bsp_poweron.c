@@ -878,47 +878,7 @@ void donot_smart_app_power_on_init(void)
 **/
 void app_timer_power_on_reference(void)
 {
-    #if 0
-          if(get_ptc_value()==1){
-              
-				SendWifiData_To_Cmd(0x02,0x01);
-				LL_mDelay(10);
-			}
-			else if(get_ptc_value() ==0){
-					
-                    
-					SendWifiData_To_Cmd(0x02,0x0);
-					LL_mDelay(10);
-
-			}
-
-
-			if(gctl_t.gUltrasonic==1){
-
-					SendWifiData_To_Cmd(0x04,0x01);
-					LL_mDelay(10);
-			}
-			else {
-					gctl_t.gUltrasonic=0;
-					SendWifiData_To_Cmd(0x04,0x0);
-					LL_mDelay(10);
-			}
-
-			if(gctl_t.gPlasma == 1){
-			
-			  SendWifiData_To_Cmd(0x03,0x01);
-			  LL_mDelay(10);
-
-
-			}
-			else{
-               
-				SendWifiData_To_Cmd(0x03,0);
-				LL_mDelay(10);
-
-			}
-
-	#else 
+   
      // 1. 局部变量缓存状态，避免多次调用函数或中途状态被其它时片修改
    // 1. 局部变量初始化时，直接一步到位完成数据清洗（非1即0）
     uint8_t ptc_val      = (get_ptc_value() == 1) ? 1 : 0;
@@ -929,12 +889,6 @@ void app_timer_power_on_reference(void)
     SendWifiData_To_three_Cmd(0x15, ptc_val,plasma,ultrasonic);
 
     // 3. 仅需一次 Sleep 释放 CPU 控制权
-    LL_mDelay(20);
+    LL_mDelay(15);
 
-   
-
-	#endif 
-
-
-			
-}
+ }

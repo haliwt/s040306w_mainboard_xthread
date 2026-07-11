@@ -18,29 +18,14 @@ static void wifi_run_handler(void);
 void task_handler(void)	
 {
 
-//		 // 或者直接调用解码器
-//	  if(gpro_t.decoder_success_flag==1){
-//		  gpro_t.decoder_success_flag =0;
-//		  decoder_handler();
-		 
-//	  }
-//	  else{
-
-	  
-
-	     power_run_handler();
+         power_run_handler();
          if(gpro_t.time_20ms_f ==1){
 		 	gpro_t.time_20ms_f=0;
             wifi_run_handler();
+		    LL_IWDG_ReloadCounter(IWDG);
           }
         
-       
-        // LL_IWDG_ReloadCounter(IWDG);
-		 
-  }
-
- 
- 
+}
 /**********************************************************************************************************
 *	函 数 名: AppObjCreate
 *	功能说明: 创建任务通信机制
