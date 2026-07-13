@@ -126,7 +126,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata);
 
 static void receive_cmd_or_notice_handler(void);
 
-static void parse_recieve_copy_data_handler(void);
+
 
 
 

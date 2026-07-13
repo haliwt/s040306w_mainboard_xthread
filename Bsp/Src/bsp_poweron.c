@@ -717,7 +717,6 @@ void power_off_handler(void)
 
 	
 		gpro_t.process_run_step=0;
-         gpro_t.gTimer_poweroff_fan=0;
          //timer timing 
         gctl_t.set_wind_speed_value=10;
 		gctl_t.gModel =1;
@@ -750,8 +749,10 @@ void power_off_handler(void)
 		 else{ 
 		 	dc_power = 2;
             fan_run_one_minute_flag=1;
-		 }
 		    gpro_t.gTimer_poweroff_fan =0;
+		 }
+
+		
 		 
 		 
 	      SetPowerOff_ForDoing();
@@ -760,6 +761,12 @@ void power_off_handler(void)
       break;
 
       case 1:
+
+	  if(dc_power == 2){
+	     fan_run_one_minute_flag=1;
+		 gpro_t.gTimer_poweroff_fan =0;
+
+       }
         
        if(wifi_link_net_state() == 1){
 
@@ -787,6 +794,10 @@ void power_off_handler(void)
                  fan_run_one_minute_flag++;
                  FAN_Stop();
 		}
+	    else if(fan_run_one_minute_flag==2){
+		     FAN_Stop();
+
+        }
         gpro_t.power_off_run_step = 4;
 
      break;
