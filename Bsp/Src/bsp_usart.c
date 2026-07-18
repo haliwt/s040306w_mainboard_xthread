@@ -289,11 +289,13 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				
 
 		}
-        else if(pdata[3] == 0x0){ //close 
+        else if(pdata[3] == 0x0 || pdata[3] ==2){ //close 
 
 		     counter_power_flag ++;
 			 buzzer_sound();
 		     SendWifiData_Answer_Cmd(0x01,0x0); //power off .
+
+			 SendWifiData_Answer_Cmd(0x01,0x02); //power off .//WT.EDIT 2026-07-17
              //LL_mDelay(20);//tx_thread_sleep(5); 
 			 PTC_SetLow();
              PLASMA_SetLow();
@@ -499,7 +501,6 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 
                FAN_Stop();
 			   PTC_SetLow(); //ptc off;
-			  // LL_mDelay(10);
 			    PLASMA_SetLow() ; //plasma turn off.
 	           ultrasonic_close();
          }
@@ -565,6 +566,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		    Fan_RunSpeed_Fun();//fan_full_run();//WT.EDIT 2026.01.26
 			if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
 			  	PTC_SetHigh();
+				FAN_RUN_SetHigh();
 				
              }
 			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
@@ -599,6 +601,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
         
               if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
 			  	PTC_SetHigh();
+				FAN_RUN_SetHigh();
 			  }
 			  if(gctl_t.gPlasma==1)PLASMA_SetHigh();
 			  if(gctl_t.gUltrasonic==1) ultrasonic_open();
@@ -620,6 +623,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
                gpro_t.ptc_active_f++;
 			   if(gpro_t.stopTwoHours_flag ==0){
 			       PTC_SetHigh();
+				   FAN_RUN_SetHigh();
+				   Fan_RunSpeed_Fun();
 		        
 				 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.07.28
 		        // LL_mDelay(10);
@@ -670,6 +675,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		   if(gpro_t.stopTwoHours_flag ==0 && gctl_t.ptc_prohibit_on_flag==0){
 			  
 			     PTC_SetHigh();
+				 FAN_RUN_SetHigh();
+		         Fan_RunSpeed_Fun();
 		         gpro_t.ptc_active_f ++;
 		   	
 				#if 0
@@ -716,6 +723,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
 	             
 	              PTC_SetHigh();
+				  FAN_RUN_SetHigh();
+				  Fan_RunSpeed_Fun();
          		}
              
          
