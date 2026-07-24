@@ -445,6 +445,35 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		 
      break;
 
+	 case 0x0B: //WT.EDIT 2026.03.02 0x18:通知风扇关闭和打开
+         if(pdata[3]==0){ // recach 2 hours fan stop
+               gpro_t.fan_rx_stop_flag =1 ;
+			   gpro_t.stopTwoHours_flag=1;
+		       gpro_t.ptc_active_f++;
+		     
+		
+               FAN_Stop();
+			   PTC_SetLow(); //ptc off;
+			   PLASMA_SetLow() ; //plasma turn off.
+               ultrasonic_close();
+			   SendWifiData_Answer_Cmd(0x08 ,0x01);//copy cmd
+			   tx_thread_sleep(1);
+         }
+		 else if(pdata[3]==1){// fan is open .
+            gpro_t.fan_rx_stop_flag = 0;
+		    Fan_RunSpeed_Fun();//fan_full_run();//WT.EDIT 2026.01.26
+			if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
+			  	PTC_SetHigh();
+				
+             }
+			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
+			 if(gctl_t.gUltrasonic==1) ultrasonic_open();
+			  SendWifiData_Answer_Cmd(0x08 ,0x0);//copy cmd
+			  tx_thread_sleep(1);
+        }
+
+	 break;
+
 
 
       case 0x11:
@@ -505,34 +534,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	 break;
 
-	 case 0x18: //WT.EDIT 2026.03.02 0x18:通知风扇关闭和打开--在休息10分钟后.
-         if(pdata[3]==1){ // recach 2 hours fan stop
-               gpro_t.fan_rx_stop_flag =1 ;
-			   gpro_t.stopTwoHours_flag=1;
-		       gpro_t.ptc_active_f++;
-		     
-		
-               FAN_Stop();
-			   PTC_SetLow(); //ptc off;
-			   PLASMA_SetLow() ; //plasma turn off.
-               ultrasonic_close();
-			   SendWifiData_Answer_Cmd(0x18 ,0x01);//copy cmd
-			   tx_thread_sleep(1);
-         }
-		 else if(pdata[3]==0){// fan is open .
-            gpro_t.fan_rx_stop_flag = 0;
-		    Fan_RunSpeed_Fun();//fan_full_run();//WT.EDIT 2026.01.26
-			if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
-			  	PTC_SetHigh();
-				
-             }
-			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
-			 if(gctl_t.gUltrasonic==1) ultrasonic_open();
-			  SendWifiData_Answer_Cmd(0x18 ,0x0);//copy cmd
-			  tx_thread_sleep(1);
-        }
-
-	 break;
+	
 
 	  case 0x19: //works 2 hours ,then have a rest 10 minutes ->notice 
 
@@ -570,47 +572,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	  break;
 
-
-      case 0x1B: //write set temperature value .data.2026.01.06
-	  
-        if(pdata[3]== 0x01){
-		       gctl_t.ptc_prohibit_on_flag =0;
-			 //  gpro_t.gPtc = 1;//gctl_t.gDry = 1;
-               gpro_t.ptc_active_f++;
-			   if(gpro_t.stopTwoHours_flag ==0){
-			       PTC_SetHigh();
-		        
-				 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.07.28
-		         tx_thread_sleep(1);
-				 gpro_t.ptc_active_f++;
-				 if(wifi_link_net_state()==1){ 
-					  MqttData_Publish_SetPtc(0x01);
-					  tx_thread_sleep(20);
-					
-				  }
-			   	
-		       } 
-      }
-      else if(pdata[3]== 0x0){
-        
-        //  gpro_t.gPtc =0 ;//gctl_t.gDry =0;
-
-	       PTC_SetLow();
-        
-		   SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.07.28
-           tx_thread_sleep(1);
-
-		  
-		  if(wifi_link_net_state()==1){ 
-			MqttData_Publish_SetPtc(0x0);
-			tx_thread_sleep(20);
-		  }
-         
-	   }
-			 
-      break;
-     
- 
+   
 	  
     case 0x1C: // is time data: hours,minutes,sencodes.
 		   
