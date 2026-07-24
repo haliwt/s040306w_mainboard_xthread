@@ -45,12 +45,21 @@ void buzzer_sound_once(void)
 
 void buzzer_sound(void)
 {
-   
+   #if 0
    tim3_stop_buzzer_sound_config();
 
    tim3_buzzer_sound_config();
    tx_thread_set_sound_once();
    buzzer_sound_open();
+   #endif 
+
+    tim3_buzzer_sound_config();
+   //beep_delay_ms(30);
+   //delay_ms(20);
+   tx_thread_sleep(2);
+   tim3_stop_buzzer_sound_config();
+   LL_TIM_DisableCounter(TIM3);
+  
   
 
 }

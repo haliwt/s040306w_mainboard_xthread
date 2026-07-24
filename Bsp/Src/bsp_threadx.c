@@ -17,7 +17,7 @@
 
 
 #define STACK_SIZE_UI    1280//640//1024//1920//1792//1536
-#define STACK_SIZE_DEC   640//512//1024//512//256
+#define STACK_SIZE_DEC   1024//512//1024//512//256
 //#define STACK_SIZE_WIFI  640
 
 
@@ -35,17 +35,17 @@ static TX_THREAD thread_decoder;
 /* 定义信号量 */
 TX_SEMAPHORE decoder_semaphore;
 
-TX_TIMER  buzzer_timer;
+//TX_TIMER  buzzer_timer;
 
 /*队列*/
 
 
 
-static void vTaskMsgPro(ULONG thread_input);
-static void vTaskDecoder(ULONG thread_input);
-static void vTaskWifi(ULONG thread_input);
+static void main_thread_entry(ULONG thread_input);
+static void decoder_thread_entry(ULONG thread_input);
+//static void wifi_thread_entry(ULONG thread_input);
 
-static void buzzer_timer_callback(ULONG input);
+//static void buzzer_timer_callback(ULONG input);
 
 
 
@@ -98,7 +98,7 @@ void tx_application_define(void *first_unused_memory)
  * @param   None
  * @retval  None
  */
- static void vTaskMsgPro(ULONG thread_input)
+ static void main_thread_entry(ULONG thread_input)
 {
    (void)thread_input;  /* 消除未使用的参数警告 */
    static uint8_t power_on_sound_flag ;
@@ -126,7 +126,7 @@ void tx_application_define(void *first_unused_memory)
   * @param	 None
   * @retval  None
   */
- static void vTaskDecoder(ULONG thread_input)
+ static void decoder_thread_entry(ULONG thread_input)
  {
    (void)thread_input;  /* 消除未使用的参数警告 */
   
@@ -137,24 +137,18 @@ void tx_application_define(void *first_unused_memory)
       // 阻塞等待 ISR 投递
       if(tx_semaphore_get(&decoder_semaphore, TX_WAIT_FOREVER) == TX_SUCCESS)
       {
-              // 或者直接调用解码器
-             // if(gpro_t.decoder_success_flag==1){
-			  	 /// gpro_t.decoder_success_flag =0;
-                 decoder_handler();
+            
+              decoder_handler();
 
-              //}
-            // dec_cnt++;
-			// LL_IWDG_ReloadCounter(IWDG);
+         
             #if DEBUG_ENABLE
 		     debug_stack_decoder_check();
 
 		     #endif 
-           tx_thread_relinquish();
+         
                 
        }
-	   else{
-		  tx_thread_sleep(10);
-	   }
+	  
 	  
     } 
 }
@@ -172,59 +166,31 @@ void threadx_handler(void)
       /* 创建信号量 */
    tx_semaphore_create(&decoder_semaphore, "DecoderSemaphore", 0);
    
-//	tx_queue_create(&uart1_rx_queue,
-//					"Uart1RxQueue",
-//					TX_1_ULONG,   // 每个消息大小，这里用 1 字节
-//					uart1_rx_queue_buffer,
-//					sizeof(uart1_rx_queue_buffer));
   
 	tx_thread_create(&thread_msg,                  /* 任务控制块地址 */ 
  	                 "MsgPro",                     /* 任务名 */
-                     vTaskMsgPro,                  /* 启动任务函数地址 */
+                     main_thread_entry,                  /* 启动任务函数地址 */
                      0,                            /* 传递给任务的参数 */
                      stack_msg_pro,                /* 堆栈基地址 */
                      STACK_SIZE_UI,               /* 堆栈空间大小 */ 
                      1,							   /* 任务优先级*/
                      1,							   /* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
-                     TX_NO_TIME_SLICE,             /* 不开启时间片 */
+                     5,             /* 不开启时间片 TX_NO_TIME_SLICE*/
                      TX_AUTO_START);               /* 创建后立即启动 */
- #if 1
+
 
     tx_thread_create(&thread_decoder,                /* 任务控制块地址 */    
     				 "Decoder",                      /* 任务名 */
-                     vTaskDecoder,                   /* 启动任务函数地址 */
+                     decoder_thread_entry,                   /* 启动任务函数地址 */
                      0,                            /* 传递给任务的参数 */
                      stack_dec_pro,              /* 堆栈基地址 */
                      STACK_SIZE_DEC,			   /* 堆栈空间大小 */  
-                     0, 						   /* 任务优先级*/
-                     0, 						   /* 任务抢占阀值 */
-                     TX_NO_TIME_SLICE, 			   /* 不开启时间片 */
-                     TX_AUTO_START);               /* 创建后立即启动 */
-  #endif 
-
-   #if 0
-
-    tx_thread_create(&thread_wifi,                /* 任务控制块地址 */    
-    				 "WifiPro",                      /* 任务名 */
-                     vTaskWifi,                   /* 启动任务函数地址 */
-                     0,                            /* 传递给任务的参数 */
-                     stack_wifi_pro,              /* 堆栈基地址 */
-                     STACK_SIZE_WIFI,			   /* 堆栈空间大小 */  
                      1, 						   /* 任务优先级*/
                      1, 						   /* 任务抢占阀值 */
-                     TX_NO_TIME_SLICE, 			   /* 不开启时间片 */
+                     2, 			            /* 不开启时间片 TX_NO_TIME_SLICE*/
                      TX_AUTO_START);               /* 创建后立即启动 */
-  #endif 
-  
-  
-    tx_timer_create(&buzzer_timer,
-    			    "BuzzerTimer",
-    			    buzzer_timer_callback,
-    			    0,
-    			    2,                           /*第一次延时 20ms*/
-    			    0,                           /* 周期是20tick*/
-    			    TX_NO_ACTIVATE);
-   
+
+
  
 }
 /*
@@ -328,7 +294,7 @@ static void tx_thread_stack_error_handler(TX_THREAD *thread_ptr)
      tx_error_flag ++;
     // 或者进入安全模式
 }
-
+#if 0
 void buzzer_timer_callback(ULONG input)
 {
    (void)input;
@@ -344,7 +310,7 @@ void tx_thread_set_sound_once(void)
 {
  tx_timer_change(&buzzer_timer,2,0);
 }
-
+#endif 
 #if DEBUG_ENABLE
 static void debug_stack_ui_check(void)
 {
