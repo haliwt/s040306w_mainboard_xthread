@@ -1,14 +1,14 @@
 #include "bsp.h"
 
 // --- 1. 定义任务的时间周期（单位：毫秒，假设基础Tick为1ms） ---
-#define PERIOD_WIFI_STATE      3500    // 10ms*300 =  3s
-#define PERIOD_WIFI_UPDATE     1500    // 10ms*150 = 1.5s
-#define PERIOD_WORKS_HOURS     4300    //  10ms*150 = 1500ms = 1.5s
-#define PERIOD_FAN_ADC         5000    //  10ms*250 = 2500ms = 2.5s
-#define PERIOD_WIFI_TEMP       7000    //   10ms * 500 = 50000ms = 5s 
-#define PERIOD_READ_DHT11      2800    //   10ms * 300 = 3s
-#define PERIOD_FAN_SPEED       2000    //   10ms * 200 = 2s
-#define PERIOD_PERIPHERAL      500     //   10ms* 50 = 500ms
+#define PERIOD_WIFI_STATE      3500    // 
+#define PERIOD_WIFI_UPDATE     1500    // 
+#define PERIOD_WORKS_HOURS     4300    //  
+#define PERIOD_FAN_ADC         5000    //  
+#define PERIOD_WIFI_TEMP       7000    //   
+#define PERIOD_READ_DHT11      2800    //  
+#define PERIOD_FAN_SPEED       2000    //   
+#define PERIOD_PERIPHERAL      500     //  
 #define PERIOD_LINK_WIFI       30
 #define PERIOD_DISP_AI_WIF     2300
 #define PERIOD_WIFI_REPORT     1000
@@ -35,20 +35,20 @@ static void handler_wifi_report(void);
 
 volatile uint8_t time_slot ;
 
-#if 1
+
 // --- 4. 初始化分时任务表 ---
 TimeSharingTask_t g_tasks[] = {
-    {0, PERIOD_WIFI_STATE,       handler_wifi_state},
-    {0, PERIOD_WIFI_UPDATE,      handler_wifi_update_data},
-    {0, PERIOD_WORKS_HOURS,      handler_works_hours},
-    {0, PERIOD_FAN_ADC,          handler_fan_adc},
-    {0, PERIOD_WIFI_TEMP,        handler_wifi_update_temp_humidity},
-    {0, PERIOD_READ_DHT11,       handler_read_dht11},
-    {0, PERIOD_FAN_SPEED,        handler_fan_speed_state},
-    {0,PERIOD_PERIPHERAL,        handler_hardware_module_action},
-    {0,PERIOD_LINK_WIFI,         handler_link_wifi},
-    {0,PERIOD_DISP_AI_WIF,       handler_send_ai_wif},
-    {0,PERIOD_WIFI_REPORT,       handler_wifi_report}
+    {0, 3500,          handler_wifi_state},
+    {0, 1500,          handler_wifi_update_data},
+    {0, 4300,          handler_works_hours},
+    {0, 5000,          handler_fan_adc},
+    {0, 7000,          handler_wifi_update_temp_humidity},
+    {0, 2800,          handler_read_dht11},
+    {0, 2000,          handler_fan_speed_state},
+    {0, 500,           handler_hardware_module_action},
+    {0, 30,            handler_link_wifi},
+    {0, 2300,          handler_send_ai_wif},
+    {0, 1000,          handler_wifi_report}
    
     
 	
@@ -77,112 +77,6 @@ void inc_system_tick(void)
     g_system_ticks ++;
 }
 
-#else 
-
-void static task_time_slot_scheduler(void)
-{
-   static uint16_t wifi_counter_1,wifi_counter_2,counter_1,counter_2;
-   static uint16_t counter_3,counter_4,counter_5,counter_6;
-   switch(time_slot){
-
-    case 0:
-	   wifi_counter_1 ++;
-       if(wifi_counter_1 >300 ){//200
-        wifi_counter_1=0;
-	   handler_wifi_state();
-
-       }
-
-    break;
-
-    case 1:
-		wifi_counter_2++;
-		if(wifi_counter_2 > 150){
-			wifi_counter_2=0;
-		handler_wifi_update_data();
-
-	    }
-
-	break;
-
-	case 2:
-		counter_1++;
-		if(counter_1 > 400){
-			counter_1 =0;
-		handler_works_hours();
-
-	    }
-
-	break;
-
-	case 3:
-
-	counter_2++;
-		if(counter_2 > 500){
-			counter_2 =0;
-		 handler_fan_adc();
-		}
-
-	break;
-
-	case 4:
-	counter_3++;
-		if(counter_3 > 600){
-				counter_3 =0;
-			handler_wifi_update_temp_humidity();
-		}
-
-	break;
-
-	case 5:
-	counter_4++;
-			if(counter_4 > 100){
-				counter_4 =0;
-				handler_read_dht11();
-				}
-
-	break;
-
-	case 6:
-	counter_5++;
-			if(counter_5 > 270){
-				counter_5 =0;
-				handler_fan_speed_state();
-				}
-
-	break;
-
-	case 7:
-	counter_6++;
-			if(counter_6 > 60){
-				counter_6 =0;
-				handler_module_action();
-
-			}
-
-	break;
-
-	case 8:
-	   link_wifi_to_tencent_handler(); //detected ADC of value 
-        
-
-	break;
-
-	case 9:
-	 ai_mode_display_fun();
-
-	break;
-
-
-   }
-
-   time_slot ++;
-   if(time_slot > 9)time_slot = 0;//10ms * 10 = 100ms
-}
-
-
-
-#endif 
 
 
 
@@ -452,14 +346,15 @@ static void handler_wifi_state(void)
         uint8_t wifi_status = (net_t.wifi_link_net_success == 1) ? 0x01 : 0x00;
 		if(sw_flag == 1){
 			SendWifiData_olderCmd(0x1F,wifi_status);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-			//LL_mDelay(10);
+			LL_mDelay(10);
 		}
-		else{
-			SendWifiData_To_Data(0x1F,wifi_status);
-			//LL_mDelay(10);
-		}
+		
 
 	}
+   
+   if(net_t.wifi_link_net_success == 1)SendWifiData_To_Cmd(0x1F,0X01);
+
+   
 }
   
 
@@ -756,6 +651,10 @@ void power_off_handler(void)
 		 
 		 
 	      SetPowerOff_ForDoing();
+		  if(wifi_link_net_state() == 1){ //WT.EDIT 2026.07.24
+              SendData_Set_Command(0x1F,0x01);
+	  
+		  }
 		  gpro_t.power_off_run_step = 1;
        
       break;

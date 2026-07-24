@@ -78,22 +78,6 @@ typedef enum{
 }atcion_state_e;
 
 
-typedef enum{
-
-    power_on_off=1,
-    ptc_on_off=2,
-    plasma_on_off=3,
-    ultrasonic_on_off=4,
-    wifi_link=5,
-    buzzer_sound_s=6,
-    ai_mode=7,
-    temp_high_warning=8,
-    fan_warning_s=9,
-    fan_on_off = 0x0B,
-    ack_ptc_on_off = 0x12,
-    ack_plasma_on_ff= 0x13,
-    ack_ultrasonic_on_off = 0x14,
-}signal_parase_t;
 
 
 typedef struct Msg
@@ -267,7 +251,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
    break;
 
-   case power_on_off: 
+   case 1: 
 
          
         if(pdata[3] == 0x01){ //open
@@ -294,7 +278,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		     counter_power_flag ++;
 			 buzzer_sound();
 		     SendWifiData_Answer_Cmd(0x01,0x0); //power off .
-
+   
 			 SendWifiData_Answer_Cmd(0x01,0x02); //power off .//WT.EDIT 2026-07-17
              //LL_mDelay(20);//tx_thread_sleep(5); 
 			 PTC_SetLow();
@@ -350,7 +334,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	    }
      break;
 
-	  case ptc_on_off: //PTC key of command .
+	  case 0x02: //PTC key of command .
 
        if(pdata[3] == 0x01 ){//phone_cmd_power
 
@@ -390,7 +374,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
       break;
 
 	  
-     case plasma_on_off: //PLASMA ACTIVE OPEN OR CLOSE
+     case 0x03: //PLASMA ACTIVE OPEN OR CLOSE
    
 		  if(pdata[3]== 0x01){
 			 
@@ -459,7 +443,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
     break;
 
 	
-     case  wifi_link: // link wifi command
+     case  0x05: // link wifi command
 
        if(pdata[3] == 0x01){  // link wifi 
         
@@ -481,12 +465,43 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
      break;
 
-	  case buzzer_sound_s: //buzzer sound command 
+	  case 0x06: //buzzer sound command 
           if(pdata[3] == 0x01)buzzer_sound();
 
            
 		 
      break;
+
+	
+	 case 0x0B: //WT.EDIT 2026.03.02 0x18:通知风扇关闭和打开--
+         if(pdata[3]==0){ // 0.-> FAN TURN OFF 
+               gpro_t.fan_rx_stop_flag =1 ;
+			   gpro_t.stopTwoHours_flag=1;
+		       gpro_t.ptc_active_f++;
+		     
+		
+               FAN_Stop();
+			   PTC_SetLow(); //ptc off;
+			   PLASMA_SetLow() ; //plasma turn off.
+               ultrasonic_close();
+			   SendWifiData_Answer_Cmd(0x0B ,0);//copy cmd
+			   //LL_mDelay(10);
+         }
+		 else if(pdata[3]==1){// 1.-> FAN TURN ON 
+            gpro_t.fan_rx_stop_flag = 0;
+		    Fan_RunSpeed_Fun();//fan_full_run();//WT.EDIT 2026.01.26
+			if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
+			  	PTC_SetHigh();
+				FAN_RUN_SetHigh();
+				
+             }
+			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
+			 if(gctl_t.gUltrasonic==1) ultrasonic_open();
+			  SendWifiData_Answer_Cmd(0x0B ,0x01);//copy cmd
+			 /// LL_mDelay(10);
+        }
+
+	 break;
 
 
 
@@ -547,35 +562,6 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	 break;
 
-	 case 0x18: //WT.EDIT 2026.03.02 0x18:通知风扇关闭和打开--在休息10分钟后.
-         if(pdata[3]==1){ // recach 2 hours fan stop
-               gpro_t.fan_rx_stop_flag =1 ;
-			   gpro_t.stopTwoHours_flag=1;
-		       gpro_t.ptc_active_f++;
-		     
-		
-               FAN_Stop();
-			   PTC_SetLow(); //ptc off;
-			   PLASMA_SetLow() ; //plasma turn off.
-               ultrasonic_close();
-			   SendWifiData_Answer_Cmd(0x18 ,0x01);//copy cmd
-			   //LL_mDelay(10);
-         }
-		 else if(pdata[3]==0){// fan is open .
-            gpro_t.fan_rx_stop_flag = 0;
-		    Fan_RunSpeed_Fun();//fan_full_run();//WT.EDIT 2026.01.26
-			if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
-			  	PTC_SetHigh();
-				FAN_RUN_SetHigh();
-				
-             }
-			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
-			 if(gctl_t.gUltrasonic==1) ultrasonic_open();
-			  SendWifiData_Answer_Cmd(0x18 ,0x0);//copy cmd
-			 /// LL_mDelay(10);
-        }
-
-	 break;
 
 	  case 0x19: //works 2 hours ,then have a rest 10 minutes ->notice 
 
@@ -593,7 +579,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			//LL_mDelay(10);
 			
 		}
-		else if(pdata[3]==0){
+		else if(pdata[3]==0){ //工作两个小时,结束通知
 			   gpro_t.stopTwoHours_flag=0;//WT.EDIT 2026.01.26
 			   gpro_t.fan_rx_stop_flag =0 ;
 		     
@@ -615,7 +601,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  break;
 
 
-      case 0x1B: //write set temperature value .data.2026.01.06
+      case 0x1B://0x1B //write set temperature value .data.2026.01.06
 	  
         if(pdata[3]== 0x01){
 		       gctl_t.ptc_prohibit_on_flag =0;
