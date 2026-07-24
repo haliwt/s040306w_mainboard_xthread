@@ -572,7 +572,47 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	  break;
 
-   
+      #if 0
+      case 0x1B: //write set temperature value .data.2026.01.06
+	  
+        if(pdata[3]== 0x01){
+		       gctl_t.ptc_prohibit_on_flag =0;
+			 //  gpro_t.gPtc = 1;//gctl_t.gDry = 1;
+               gpro_t.ptc_active_f++;
+			   if(gpro_t.stopTwoHours_flag ==0){
+			       PTC_SetHigh();
+		        
+				 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.07.28
+		         tx_thread_sleep(1);
+				 gpro_t.ptc_active_f++;
+				 if(wifi_link_net_state()==1){ 
+					  MqttData_Publish_SetPtc(0x01);
+					  tx_thread_sleep(20);
+					
+				  }
+			   	
+		       } 
+      }
+      else if(pdata[3]== 0x0){
+        
+        //  gpro_t.gPtc =0 ;//gctl_t.gDry =0;
+
+	       PTC_SetLow();
+        
+		   SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.07.28
+           tx_thread_sleep(1);
+
+		  
+		  if(wifi_link_net_state()==1){ 
+			MqttData_Publish_SetPtc(0x0);
+			tx_thread_sleep(20);
+		  }
+         
+	   }
+		
+     break;
+     
+  #endif 	 
 	  
     case 0x1C: // is time data: hours,minutes,sencodes.
 		   
