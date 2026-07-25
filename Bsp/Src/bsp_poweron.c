@@ -924,3 +924,24 @@ void app_timer_power_on_reference(void)
 
 			
 }
+
+
+void direct_temperature_compraison_handler(void)
+{
+if(gctl_t.set_temperature_value > gctl_t.gDht11_temperature){
+		 
+				 
+				  
+				   gpro_t.gPtc=1;
+				   if(gpro_t.stopTwoHours_flag ==0)PTC_SetHigh();
+				   
+			}
+			else{
+			   
+				gpro_t.gPtc =0 ;//gctl_t.gDry =0;
+
+				PTC_SetLow();
+			}
+
+}
+

@@ -617,11 +617,11 @@ void Json_Parse_Command_Fun(void)
 		  gctl_t.set_temp_first_closeptc =0;
 		  gctl_t.rx_set_temp_flag =0;
 		  gpro_t.ptc_active_f++;
+          direct_temperature_compraison_handler();
 
-
-           SendWifiData_To_Cmd(0x02,0x01);
+           SendWifiData_To_Cmd(0x02,gpro_t.gPtc);
 		   tx_thread_sleep(1);//HAL_Delay(5);
-		   MqttData_Publish_SetPtc(0x01);
+		   MqttData_Publish_SetPtc(gpro_t.gPtc);
 		  // tx_thread_sleep(20);
          
 		

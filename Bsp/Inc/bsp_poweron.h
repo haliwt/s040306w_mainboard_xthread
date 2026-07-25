@@ -33,6 +33,7 @@ void SetPowerOff_ForDoing(void);
 void module_hardware_control(void);
 
 
+void direct_temperature_compraison_handler(void);
 
 
 
