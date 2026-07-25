@@ -64,7 +64,7 @@ static void power_run_handler(void)
 
           case power_off:
 		  
-          
+              LL_IWDG_ReloadCounter(IWDG);
 		      power_off_handler();
              break;
           }

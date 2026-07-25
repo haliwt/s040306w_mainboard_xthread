@@ -44,10 +44,10 @@ void adc_detected_hundler(void)
 	static uint8_t fan_counter_error = 0;
 
 
-	if(gpro_t.fan_rx_stop_flag ==1  || gpro_t.stopTwoHours_flag ==1) return ;//WT.EDIT 2026.03.03
+	if(gpro_t.stopTwoHours_flag ==1) return ;//WT.EDIT 2026.03.03
     if(gpro_t.stopTwoHours_flag ==0 && gpro_t.fan_warning_flag==0){ //detected 3 times is 60s 
      
-        Fan_Full_Speed();
+    if(gctl_t.set_wind_speed_value > 66){ // Fan_Full_Speed();
 
        fan_detect_voltage=(adc_buffer[0] * 3300 )/4095;
        LL_mDelay(10);
@@ -76,6 +76,7 @@ void adc_detected_hundler(void)
 
 	   
     }
+   }
    if(gpro_t.fan_warning_flag==1){
    	
 	  fan_counter_error =0;

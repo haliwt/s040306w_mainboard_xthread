@@ -41,10 +41,10 @@ TimeSharingTask_t g_tasks[] = {
     {0, 3500,          handler_wifi_state},
     {0, 1500,          handler_wifi_update_data},
     {0, 4300,          handler_works_hours},
-    {0, 5000,          handler_fan_adc},
+    {0, 5300,          handler_fan_adc},
     {0, 7000,          handler_wifi_update_temp_humidity},
     {0, 2800,          handler_read_dht11},
-    {0, 2000,          handler_fan_speed_state},
+    {0, 2100,          handler_fan_speed_state},
     {0, 500,           handler_hardware_module_action},
     {0, 30,            handler_link_wifi},
     {0, 2300,          handler_send_ai_wif},
@@ -147,6 +147,7 @@ static void power_on_init_handler(void)
 		  gctl_t.set_temp_first_closeptc =0;
 		  gctl_t.rx_set_temp_flag =0;
 		  gpro_t.fan_rx_stop_flag=0;
+		
 
 		 /*end*/
          
@@ -155,6 +156,7 @@ static void power_on_init_handler(void)
 		 gctl_t.ptc_warning =0;
 		 gctl_t.ptc_warning =0;
 	     gpro_t.fan_warning_flag =0;
+		 gpro_t.two_hours_f=0; //WT.EIDT 2026.07.25
 	
 	
 		 gpro_t.gTimer_detect_fan_error=0;
@@ -264,6 +266,14 @@ static void power_on_init_handler(void)
 
 	     }
 		read_sensorData();
+
+		 if(wifi_link_net_state()==1){
+		 	
+		     Publish_Data_Warning(0x02,0);
+    	    LL_mDelay(200);//HAL_Delay(200);
+
+           
+           }
 
 #if 1	
         boot_tick = get_system_tick();
@@ -388,6 +398,7 @@ static void handler_wifi_update_data(void)
 		
 		  
 	}
+   LL_IWDG_ReloadCounter(IWDG);
     
 }
 
@@ -417,7 +428,7 @@ static void handler_works_hours(void)
 static void handler_hardware_module_action(void)
 {
    
-   if((gpro_t.fan_rx_stop_flag ==0 && gpro_t.stopTwoHours_flag ==0)){//(gctl_t.app_timer_power_on_flag == 1)
+   if((gpro_t.stopTwoHours_flag ==0)){//(gctl_t.app_timer_power_on_flag == 1)
 		 
 			 
 		module_hardware_control();//module_action_handler();
@@ -573,6 +584,13 @@ void smartphone_timer_power_on_and_normal_handler(void)
 	}
 			
 }
+/************************************************************************************
+*
+*Function Name:void smartphone_timer_power_on_and_normal_handler(void)
+*
+*
+*
+************************************************************************************/
 
 void SetPowerOff_ForDoing(void)
 {
@@ -629,6 +647,7 @@ void power_off_handler(void)
 
 		  gctl_t.ptc_warning =0;
 		  gctl_t.fan_warning =0;
+		  gpro_t.two_hours_f =0; //WT.EDIT 2026.07.25
        
 
           gctl_t.rx_set_temp_flag=0; 
@@ -677,10 +696,17 @@ void power_off_handler(void)
 
        case 2:
 
-          if(gctl_t.ptc_warning == 1){
+          if(wifi_link_net_state()==1){
 		 	
-		  	Publish_Data_Warning(ptc_temp_warning,0);
+		  	
+		   
+            Publish_Data_Warning(0x02,0);
+    	    LL_mDelay(200);//HAL_Delay(200);
+
+			Publish_Data_Warning(ptc_temp_warning,0);
 		  	LL_mDelay(200);
+
+           
             
           }
            gpro_t.power_off_run_step = 3;

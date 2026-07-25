@@ -474,8 +474,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	
 	 case 0x0B: //WT.EDIT 2026.03.02 0x18:通知风扇关闭和打开--
+	   #if 0
          if(pdata[3]==0){ // 0.-> FAN TURN OFF 
-               gpro_t.fan_rx_stop_flag =1 ;
+              
 			   gpro_t.stopTwoHours_flag=1;
 		       gpro_t.ptc_active_f++;
 		     
@@ -488,7 +489,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			   //LL_mDelay(10);
          }
 		 else if(pdata[3]==1){// 1.-> FAN TURN ON 
-            gpro_t.fan_rx_stop_flag = 0;
+           
 		    Fan_RunSpeed_Fun();//fan_full_run();//WT.EDIT 2026.01.26
 			if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
 			  	PTC_SetHigh();
@@ -500,7 +501,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			  SendWifiData_Answer_Cmd(0x0B ,0x01);//copy cmd
 			 /// LL_mDelay(10);
         }
-
+      #endif 
 	 break;
 
 
@@ -581,7 +582,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		}
 		else if(pdata[3]==0){ //工作两个小时,结束通知
 			   gpro_t.stopTwoHours_flag=0;//WT.EDIT 2026.01.26
-			   gpro_t.fan_rx_stop_flag =0 ;
+		
 		     
 			   gpro_t.ptc_active_f++;
         

@@ -100,8 +100,9 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM3_Init();
   MX_TIM17_Init();
- // MX_IWDG_Init();
+  MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
+  LL_IWDG_ReloadCounter(IWDG);
     bsp_init();
   /* USER CODE END 2 */
 

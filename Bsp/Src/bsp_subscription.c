@@ -769,7 +769,7 @@ void Json_Parse_Command_Fun(void)
             if( gctl_t.set_temperature_value > 40)  gctl_t.set_temperature_value=40;
             if( gctl_t.set_temperature_value <20 )  gctl_t.set_temperature_value=20;
           
-		
+
 			gctl_t.ptc_prohibit_on_flag =0;
 		
 			SendWifiData_To_Data(0x2A, gctl_t.set_temperature_value); //smart phone set temperature value .

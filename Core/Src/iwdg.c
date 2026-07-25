@@ -30,24 +30,26 @@ IWDG_HandleTypeDef hiwdg;
 void MX_IWDG_Init(void)
 {
 
-  /* USER CODE BEGIN IWDG_Init 0 */
+ /* USER CODE BEGIN IWDG_Init 0 */
   /* T-over = (prev * (reload + 1))/32KHz   */
   /* USER CODE END IWDG_Init 0 */
+  //Counter Value between Min_Data=0 and Max_Data=0x0FFF
 
   /* USER CODE BEGIN IWDG_Init 1 */
-   // iwdg = 8s Time_out = (relaod * prescaler)/32000 = s.
+   // iwdg = 16s Time_out = (2000 * 256)/32000 = 16s.
   /* USER CODE END IWDG_Init 1 */
-  hiwdg.Instance = IWDG;
-  hiwdg.Init.Prescaler = IWDG_PRESCALER_128;
-  hiwdg.Init.Window = 1999;//3999;
-  hiwdg.Init.Reload = 1999;//3999;//4095;
-  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
+  LL_IWDG_Enable(IWDG);//error is 
+  LL_IWDG_EnableWriteAccess(IWDG);
+  LL_IWDG_SetPrescaler(IWDG, LL_IWDG_PRESCALER_256);
+  LL_IWDG_SetReloadCounter(IWDG, 1999);//4000*(128/32000)=8s//4095
+  while (LL_IWDG_IsReady(IWDG) != 1)
   {
-    Error_Handler();
   }
+
+  LL_IWDG_ReloadCounter(IWDG);
   /* USER CODE BEGIN IWDG_Init 2 */
   // 6. 最后一步：正式使能/启动看门狗
-  
+   LL_IWDG_Enable(IWDG);
   /* USER CODE END IWDG_Init 2 */
 
 }

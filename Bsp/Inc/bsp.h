@@ -156,6 +156,7 @@ typedef struct PROCESS_T{
    bool ptc_warning ;
    bool fan_warning_flag;
    uint8_t soft_version;
+   uint8_t two_hours_f;
    volatile uint8_t decoder_success_flag; //interrupt be used to flag.
 
    uint8_t fan_rx_stop_flag;
@@ -187,6 +188,7 @@ typedef struct PROCESS_T{
 
   volatile uint8_t gTimer_twohours_seconds_counter;	
   volatile uint8_t gTimer_conter_twohours_minutes;
+  volatile uint8_t gTimer_fan_counter_2;
 
   
 

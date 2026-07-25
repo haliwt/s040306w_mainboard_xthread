@@ -10,158 +10,6 @@ uint8_t  ptc_rx_counter ;
 *Return Ref:NO
 *
 ************************************************************************************/
-#if 0
-void module_action_handler(void)
-{
-
-   static uint8_t ptc_default =0xff,plasma_default =0xff,ultrasonic_default =0xff;
-   static uint8_t app_timer_power_counter=0;
-
-   if(gpro_t.fan_warning_flag ==1 || gpro_t.ptc_warning ==1) return ; //WT.EDIT 2025.10.29
-   
-   if(gpro_t.gPtc==1 && gctl_t.ptc_prohibit_on_flag ==0){//if( gctl_t.gDry==1 && gctl_t.ptc_prohibit_on_flag ==0){
-
-       ptc_rx_counter ++ ;
-      if(gpro_t.stopTwoHours_flag ==0) PTC_SetHigh();
-
-	   if(gctl_t.app_timer_power_on_flag == 1){
-	   	
-                SendWifiData_To_Cmd(0x02,0x01);
-				LL_mDelay(10);
-
-	   }
-       
-
-
-		if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_active_f){//ptc_actiov_f = 0++
-           
-			ptc_default = gpro_t.ptc_active_f;
-	
-
-			MqttData_Publish_SetPtc(0x01);
-			LL_mDelay(200);//LL_mDelay(1000);//HAL_Delay(350);
-	     }
-		
-   	  
-	}
-	else if(gpro_t.gPtc ==0){
-		
-	    ptc_rx_counter ++ ;
-		PTC_SetLow();
-		if(gctl_t.app_timer_power_on_flag == 1){
-			    gctl_t.ptc_prohibit_on_flag =1;
-                SendWifiData_To_Cmd(0x02,0);
-				LL_mDelay(10);
-
-		}
-		
-
-
-	   if(wifi_link_net_state()==1 && ptc_default != gpro_t.ptc_active_f){//if(ptc_default!= get_ptc_value() && wifi_link_net_state()==1){
-		    ptc_default = gpro_t.ptc_active_f;
-		    MqttData_Publish_SetPtc(0x0);
-			LL_mDelay(200);//LL_mDelay(1000);//HAL_Delay(350);
-			
-		}
-		
-   }
-   
-
-   //plasma
-    if(gctl_t.gPlasma == 1){
-		
-	     PLASMA_SetHigh();
-
-	     if(gctl_t.app_timer_power_on_flag == 1){
-                SendWifiData_To_Cmd(0x03,0x01);
-				LL_mDelay(10);
-
-		 }
-		 
-		 if(plasma_default!=gpro_t.plasma_switch_flag && wifi_link_net_state()==1){
-		 	
-			plasma_default = gpro_t.plasma_switch_flag;	
-		   MqttData_Publish_SetPlasma(0x01);
-		   LL_mDelay(200);
-		 
-		}
-	}
-	else if(gctl_t.gPlasma == 0){
-
-		PLASMA_SetLow();
-		if(gctl_t.app_timer_power_on_flag == 1){
-                SendWifiData_To_Cmd(0x03,0);
-				LL_mDelay(10);
-
-		 }
-		 if(plasma_default!=gpro_t.plasma_switch_flag && wifi_link_net_state()==1){
-			plasma_default = gpro_t.plasma_switch_flag;
-		
-		   MqttData_Publish_SetPlasma(0);
-		  LL_mDelay(200);
-		 
-		}
-	}
-	//driver bug
-	if(gctl_t.gUltrasonic ==1){
-		
-	     ultrasonic_open();
-		 if(gctl_t.app_timer_power_on_flag == 1){
-                SendWifiData_To_Cmd(0x04,0x01);
-				LL_mDelay(10);
-
-		 }
-	
-	 if(ultrasonic_default!=gpro_t.ultrasonic_switch_flag && wifi_link_net_state()==1){
-	    ultrasonic_default = gpro_t.ultrasonic_switch_flag;
-		 
-		 MqttData_Publish_SetUltrasonic(0x01);
-		LL_mDelay(200);
-	 } 
-		
-	}
-	else if(gctl_t.gUltrasonic ==0){
-
-	    ultrasonic_close();
-		if(gctl_t.app_timer_power_on_flag == 1){
-                SendWifiData_To_Cmd(0x04,0);
-				LL_mDelay(10);
-
-		 }
-		
-		if(ultrasonic_default!=gpro_t.ultrasonic_switch_flag && wifi_link_net_state()==1){
-			
-			ultrasonic_default = gpro_t.ultrasonic_switch_flag;	
-		
-			MqttData_Publish_SetUltrasonic(0);
-		    LL_mDelay(200);
-			
-		}
-
-	}
-
-	 if(wifi_link_net_state()==1 && gpro_t.tx_wifi_temperature_f ==1){
-	 	gpro_t.tx_wifi_temperature_f++;
-		MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
-		LL_mDelay(200);//tx_thread_sleep(200);//HAL_Delay(350);
-	 }
-   
-	 Fan_RunSpeed_Fun();
-    
-	// --- 定时开机标志级联计数器 ---
-    if (gctl_t.app_timer_power_on_flag == 1) {
-        if (app_timer_power_counter < 3) {
-            app_timer_power_counter++;
-        } 
-		else {
-            app_timer_power_counter = 0;
-            gctl_t.app_timer_power_on_flag = 0;
-        }
-    }
- }
-#endif 
-
-
 /**
  * @brief 1. 硬件控制与安全防护函数
  * @note  建议将其挂在 50ms 或 100ms 的高频轮询周期中，确保安全响应灵敏
@@ -208,13 +56,12 @@ void module_hardware_control(void)
 
     // --- PTC 硬件驱动 ---
     ptc_rx_counter++; 
-    if (gpro_t.gPtc == 1 && gctl_t.ptc_prohibit_on_flag == 0) {
+    if(gpro_t.gPtc == 1 && gctl_t.ptc_prohibit_on_flag == 0) {
         if (gpro_t.stopTwoHours_flag == 0) {
             PTC_SetHigh();
-        } else {
-            PTC_SetLow();
-        }
-    } else {
+        } 
+    }
+	else {
         PTC_SetLow();
     }
 
@@ -231,8 +78,7 @@ void module_hardware_control(void)
     } else {
         ultrasonic_close();
     }
-
-   
+    if(gpro_t.stopTwoHours_flag == 0)Fan_RunSpeed_Fun(); //WT.EDIT 2026.07.25
 }
 
 
@@ -252,28 +98,6 @@ void module_wifi_report_handler(void)
     static uint8_t ptc_default = 0xff;
     static uint8_t plasma_default = 0xff;
     static uint8_t ultrasonic_default = 0xff;
-#if 0
-    // ==========================================
-    // 业务 1：定时开机——本地 WiFi 模块串口命令下发
-    // ==========================================
-    if (gctl_t.app_timer_power_on_flag == 1) {
-        if (gpro_t.gPtc == 1 && gctl_t.ptc_prohibit_on_flag == 0) {
-            SendWifiData_To_Cmd(0x02, 0x01);
-        } else {
-            gctl_t.ptc_prohibit_on_flag = 1;
-            SendWifiData_To_Cmd(0x02, 0x00);
-        }
-        LL_mDelay(10); 
-
-        SendWifiData_To_Cmd(0x03, gctl_t.gPlasma ? 0x01 : 0x00);
-        LL_mDelay(10);
-
-        SendWifiData_To_Cmd(0x04, gctl_t.gUltrasonic ? 0x01 : 0x00);
-        LL_mDelay(10);
-
-        gctl_t.app_timer_power_on_flag = 0; // 发送完立即清零
-    }
-#endif 
     // ==========================================
     // 业务 2：云端状态同步——MQTT 属性上报
     // ==========================================
@@ -282,6 +106,9 @@ void module_wifi_report_handler(void)
         // PTC 状态有变动则上报
         if (ptc_default != gpro_t.ptc_active_f) {
             ptc_default = gpro_t.ptc_active_f;
+
+		    direct_temperature_comparison_handler();
+			
             MqttData_Publish_SetPtc(gpro_t.gPtc ? 0x01 : 0x00);
            
         }
@@ -307,6 +134,33 @@ void module_wifi_report_handler(void)
            // LL_mDelay(200);
         }
     }
+}
+
+
+void direct_temperature_comparison_handler(void)
+{
+
+   if(gctl_t.set_temperature_value >gctl_t.gDht11_temperature){
+			
+	   if(gctl_t.ptc_prohibit_on_flag == 0){
+	   	 gpro_t.gPtc=1;
+		 SendData_Set_Command(0x02,0x01);
+
+	   	}
+	   if(gpro_t.stopTwoHours_flag ==0 && gctl_t.ptc_prohibit_on_flag == 0)PTC_SetHigh();
+
+	   
+					  
+	}
+    else{
+			   	  
+		gpro_t.gPtc =0 ;//gctl_t.gDry =0;
+		PTC_SetLow();
+	    SendData_Set_Command(0x02,0);
+	}
+          
+				  
+			   	
 }
 
 

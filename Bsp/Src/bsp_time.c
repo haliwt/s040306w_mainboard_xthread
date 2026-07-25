@@ -50,36 +50,42 @@ uint8_t twoHours_stop_flag;
 ************************************************************************/
 void works_run_two_hours_state(void)
 {
-  static uint8_t two_hours_f = 0;
+
   switch(gpro_t.soft_version ){
 
    case 0x02://new version 
   
  
-  if(gpro_t.stopTwoHours_flag ==1){//WT.EDIT 2025.11.19
-		 two_hours_f = 1;
+	  if(gpro_t.stopTwoHours_flag ==1 && gpro_t.two_hours_f==0){//WT.EDIT 2025.11.19
+			 gpro_t.two_hours_f = 1;
 
-         PLASMA_SetLow(); //
-         PTC_SetLow();
-         ultrasonic_close();
+	         PLASMA_SetLow(); //
+	         PTC_SetLow();
+	         ultrasonic_close();
+			 gpro_t.gTimer_fan_counter_2 =0;
 
-  }
+	  }
 
-  if(two_hours_f == 1 && gpro_t.stopTwoHours_flag ==0){
-      two_hours_f ++; 
-      module_hardware_control();
+	  if(gpro_t.gTimer_fan_counter_2 > 60 &&  gpro_t.two_hours_f ==1){
+	                gpro_t.two_hours_f ++;
+	                 FAN_Stop();
+	   }
+	
 
-  }
- 
+	  if(gpro_t.two_hours_f == 2 && gpro_t.stopTwoHours_flag ==0){
+	      gpro_t.two_hours_f =0; 
+	      module_hardware_control();
+
+	  }
+      else  if(gpro_t.two_hours_f == 0 && gpro_t.stopTwoHours_flag ==0){
+
+	     module_hardware_control();
+
+      }
+	 
   
 
-	if(gpro_t.fan_rx_stop_flag ==1){
-		
-               FAN_Stop();
-			  PLASMA_SetLow(); //
-            PTC_SetLow();
-            ultrasonic_close();
-     }
+
 
   	break;
 
@@ -114,13 +120,13 @@ void works_run_two_hours_state(void)
 			  define_twohours_flag++;
 			   gpro_t.gTimer_conter_twohours_minutes=0;
 			   gpro_t.gTimer_twohours_seconds_counter=0;
-               gpro_t.fan_rx_stop_flag =1;
+       
 	           FAN_Stop();
       }
       else if(gpro_t.stopTwoHours_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 10 && define_twohours_flag ==2){
 			  define_twohours_flag=0;
 			  gpro_t.stopTwoHours_flag =0;
-	          gpro_t.fan_rx_stop_flag =0;
+	        
 	          gpro_t.gTimer_conter_twohours_minutes=0;
 			  gpro_t.gTimer_twohours_seconds_counter=0;
 
