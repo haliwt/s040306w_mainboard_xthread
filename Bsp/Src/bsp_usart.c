@@ -447,7 +447,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	 case 0x0B: //WT.EDIT 2026.03.02 0x18:通知风扇关闭和打开
          if(pdata[3]==0){ // recach 2 hours fan stop
-               gpro_t.fan_rx_stop_flag =1 ;
+       
 			   gpro_t.stopTwoHours_flag=1;
 		       gpro_t.ptc_active_f++;
 		     
@@ -460,7 +460,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			   tx_thread_sleep(1);
          }
 		 else if(pdata[3]==1){// fan is open .
-            gpro_t.fan_rx_stop_flag = 0;
+       
 		    Fan_RunSpeed_Fun();//fan_full_run();//WT.EDIT 2026.01.26
 			if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
 			  	PTC_SetHigh();
@@ -538,7 +538,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	  case 0x19: //works 2 hours ,then have a rest 10 minutes ->notice 
 
-	    if(pdata[3]==1){ // works run four recach 2 hours 
+	    if(pdata[3]==0){ // works run four recach 2 hours 
 
            gpro_t.stopTwoHours_flag=1;
 	
@@ -552,9 +552,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			tx_thread_sleep(1);
 			
 		}
-		else if(pdata[3]==0){
+		else if(pdata[3]==1){
 			   gpro_t.stopTwoHours_flag=0;//WT.EDIT 2026.01.26
-			   gpro_t.fan_rx_stop_flag =0 ;
 		     
 			   gpro_t.ptc_active_f++;
         
@@ -871,17 +870,18 @@ void USART1_IRQHandler(void)
 	 // 清除错误标志
   //  if (LL_USART_IsActiveFlag_ORE(USART1))  
 	// 2. 溢出错误（ORE）防御性闭环处理
-  if (LL_USART_IsActiveFlag_ORE(USART1))  
-  {
-      // 【核心修复】强行读走 RDR 寄存器里的脏数据，彻底释放硬件锁
-      volatile uint8_t dummy_read = LL_USART_ReceiveData8(USART1);
-      ((void)dummy_read); // 防止部分编译器报 “变量未引用” 的警告
+//  if (LL_USART_IsActiveFlag_ORE(USART1))  
+//  {
+//      // 【核心修复】强行读走 RDR 寄存器里的脏数据，彻底释放硬件锁
+//      volatile uint8_t dummy_read = LL_USART_ReceiveData8(USART1);
+//      ((void)dummy_read); // 防止部分编译器报 “变量未引用” 的警告
       
-      // 然后再清除错误标志
-      LL_USART_ClearFlag_ORE(USART1);
-  }
-    if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
-    if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
+//      // 然后再清除错误标志
+//      LL_USART_ClearFlag_ORE(USART1);
+//  }
+    LL_USART_ClearFlag_ORE(USART1);
+   // if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
+   /// if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
   /* USER CODE END USART1_IRQn 1 */
 }
 

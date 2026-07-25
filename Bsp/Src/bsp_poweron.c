@@ -502,7 +502,7 @@ static void handler_works_hours(void)
 static void handler_hardware_module_action(void)
 {
    
-   if((gpro_t.fan_rx_stop_flag ==0 && gpro_t.stopTwoHours_flag ==0)){//(gctl_t.app_timer_power_on_flag == 1)
+   if(gpro_t.stopTwoHours_flag ==0){//(gctl_t.app_timer_power_on_flag == 1)
 		 
 			 
 		module_hardware_control();//module_action_handler();
