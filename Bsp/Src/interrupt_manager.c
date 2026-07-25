@@ -87,6 +87,7 @@ void tim17_isr_callback_handler(void)
 	   gpro_t.gTimer_update_tencet_dht11++;
 
         gpro_t.gTimer_poweroff_fan++;
+		gpro_t.gTimer_fan_counter_2++;
 		
 
 

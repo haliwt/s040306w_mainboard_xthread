@@ -232,7 +232,7 @@ static void power_on_init_handler(void)
 		 gctl_t.set_temperature_flag=0;
 		  gctl_t.set_temp_first_closeptc =0;
 		  gctl_t.rx_set_temp_flag =0;
-		  gpro_t.fan_rx_stop_flag=0;
+
 
 		 /*end*/
          
@@ -253,6 +253,7 @@ static void power_on_init_handler(void)
 		gpro_t.gTimer_conter_twohours_minutes=0;
 	    gpro_t.gTimer_twohours_seconds_counter=0;
 		gpro_t.wifi_led_fast_blink_flag=0;
+		gpro_t.two_hours_f=0;
         /*end*/
 		
        
@@ -715,10 +716,11 @@ void power_off_handler(void)
 	  
          //power off init two hours flag
 	     gpro_t.stopTwoHours_flag=0;
+		 gpro_t.two_hours_f=0;
 	
 		     
 	
-		 gpro_t.fan_rx_stop_flag=0;
+
 
 		  gctl_t.ptc_warning =0;
 		  gctl_t.fan_warning =0;

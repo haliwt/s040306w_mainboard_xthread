@@ -446,6 +446,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
      break;
 
 	 case 0x0B: //WT.EDIT 2026.03.02 0x18:通知风扇关闭和打开
+	   #if 0
          if(pdata[3]==0){ // recach 2 hours fan stop
        
 			   gpro_t.stopTwoHours_flag=1;
@@ -471,6 +472,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			  SendWifiData_Answer_Cmd(0x08 ,0x0);//copy cmd
 			  tx_thread_sleep(1);
         }
+		#endif 
 
 	 break;
 
