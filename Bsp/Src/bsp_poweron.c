@@ -739,7 +739,7 @@ void power_off_handler(void)
 		 	dc_power = 2;
             fan_run_one_minute_flag=1;
 		 }
-		    gpro_t.gTimer_poweroff_fan =0;
+		  gpro_t.gTimer_fan_counter_2 =0;
 		 
 		 
 	      SetPowerOff_ForDoing();
@@ -752,7 +752,7 @@ void power_off_handler(void)
        if(wifi_link_net_state() == 1){
 
           MqttData_Publish_PowerOff_Ref(); 
-          tx_thread_sleep(20); //WT.EDTI 2024.11.19 
+          //tx_thread_sleep(20); //WT.EDTI 2024.11.19 
        }
          gpro_t.power_off_run_step = 2;
        break;
@@ -762,7 +762,7 @@ void power_off_handler(void)
           if(gctl_t.ptc_warning == 1){
 		 	
 		  	Publish_Data_Warning(ptc_temp_warning,0);
-		  	tx_thread_sleep(20);
+		  	///tx_thread_sleep(20);
             
           }
            gpro_t.power_off_run_step = 3;
@@ -771,7 +771,7 @@ void power_off_handler(void)
         case 3:
           
        
-       if(gpro_t.gTimer_poweroff_fan > 60 &&  fan_run_one_minute_flag==1){
+       if(gpro_t.gTimer_fan_counter_2 > 60 &&  fan_run_one_minute_flag==1){
                  fan_run_one_minute_flag++;
                  FAN_Stop();
 		}

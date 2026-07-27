@@ -70,7 +70,7 @@ ULONG ui_unused =0,dec_unused,wifi_unused;
 uint16_t ui_counter,wifi_counter,dec_cnt;
 
 /**
- * @brief  :  static void vTaskStart(void *pvParameters
+ * @brief  :  
  * @note    
  * @param   None
  * @retval  None
@@ -93,7 +93,7 @@ void tx_application_define(void *first_unused_memory)
 
 
 /**
- * @brief  :  static void vTaskStart(void *pvParameters
+ * @brief  : 
  * @note    
  * @param   None
  * @retval  None
@@ -115,13 +115,14 @@ void tx_application_define(void *first_unused_memory)
 		   debug_stack_ui_check();
 
 		 #endif 
-         ui_counter++;
+         //ui_counter++;
          LL_IWDG_ReloadCounter(IWDG);
-		 tx_thread_sleep(20);//50//10ms * 100= 200ms
+		 tx_thread_sleep(20);//10ms*20 =200ms
+		
     }
 }
 /**
-  * @brief	:  static void vTaskStart(void *pvParameters
+  * @brief	:  
   * @note	 
   * @param	 None
   * @retval  None
@@ -155,8 +156,8 @@ void tx_application_define(void *first_unused_memory)
  
 
  /**
- * @brief  :  void AppTaskCreate (void)�����ݴ����������ȼ�Ϊ�е�
- * @note    �����ڲ�ʹ�ö��н������ݣ����ȳ�ʼ������
+ * @brief  : 
+ * @note    
  * @param   None
  * @retval  None
  */
@@ -208,17 +209,10 @@ static void power_run_handler(void)
 		 
 			
             power_on_handler();
-           // link_wifi_to_tencent_handler(); //detected ADC of value 
-            //ai_mode_display_fun();
-		
-
-		
-			
+        
 		  break;
 
-		  
-
-          case power_off:
+		  case power_off:
 		  
           
 		      power_off_handler();
@@ -272,7 +266,7 @@ static void wifi_run_handler(void)
            }
 
 		  time_slot ++;
-		  if(time_slot > 2) time_slot = 0;
+		  if(time_slot > 2) time_slot = 0;\
 
 }
 

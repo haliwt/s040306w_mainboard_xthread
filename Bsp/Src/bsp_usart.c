@@ -894,20 +894,13 @@ void USART1_IRQHandler(void)
 **/
 void decoder_handler(void)
 {
-    static uint8_t done_f = 0;
-	
-	check_bcc_code = bcc_check(gl_tMsg.usData,gl_tMsg.rx_total_numbers);
+    
+    check_bcc_code = bcc_check(gl_tMsg.usData,gl_tMsg.rx_total_numbers);
 	if(check_bcc_code == gl_tMsg.bcc_check_code){
 		usart1_protocol_state_machine(gl_tMsg.usData);
-		done_f =1;
+		gl_tMsg.usData[0]=0;
 		
     }
-	if(done_f ==1){
-	  done_f++;
-	  gl_tMsg.usData[0]=0;
-	  gl_tMsg.usData[1]=0;
-	  gl_tMsg.usData[2]=0;
-	  gl_tMsg.usData[3]=0;
-    }
+	
 }
 
