@@ -111,11 +111,6 @@ void works_run_two_hours_state(void)
 	  
 	  }
 	  
-	  
-
-	 
-	  
-
 	  if(gpro_t.stopTwoHours_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 0 && define_twohours_flag ==1){
 			  define_twohours_flag++;
 			   gpro_t.gTimer_conter_twohours_minutes=0;
