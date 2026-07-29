@@ -253,7 +253,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		     counter_power_flag ++;
 			 buzzer_sound();
 		     SendWifiData_Answer_Cmd(0x01,0x0); //power off .
-             tx_thread_sleep(5); 
+             tx_thread_sleep(2); 
+			 SendWifiData_Answer_Cmd(0x01,0x02); //power off .
+             tx_thread_sleep(2); 
 			 PTC_SetLow();
              PLASMA_SetLow();
 		     gpro_t.power_off_run_step=0;
@@ -273,7 +275,11 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	 
 	 if(pdata[3] == 0x01){ //open
                 
-		if(gpro_t.gpower_on != power_on){
+		if(gpro_t.gpower_on == power_on){
+
+
+		}
+		else{
 
 			gpro_t.process_run_step=0;
 
