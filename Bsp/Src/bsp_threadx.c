@@ -89,9 +89,6 @@ void tx_application_define(void *first_unused_memory)
     // 创建线程、信号量、事件组、队列
      threadx_handler();
 }
-
-
-
 /**
  * @brief  : 
  * @note    
@@ -104,10 +101,7 @@ void tx_application_define(void *first_unused_memory)
    static uint8_t power_on_sound_flag ;
 	while(1)
     {
-
-	
-     
-	     power_run_handler();
+         power_run_handler();
          wifi_run_handler();
          
          #if DEBUG_ENABLE
@@ -146,9 +140,7 @@ void tx_application_define(void *first_unused_memory)
 		     debug_stack_decoder_check();
 
 		     #endif 
-         
-                
-       }
+      }
 	  
 	  
     } 
@@ -232,41 +224,39 @@ static void power_run_handler(void)
 *******************************************************************************/
 static void wifi_run_handler(void)
 {
-       static uint8_t time_slot =0;
-		  
-		  if(gpro_t.wifi_led_fast_blink_flag==0 ){
+	static uint8_t time_slot =0;
 
-		     switch(time_slot){
+	if(gpro_t.wifi_led_fast_blink_flag==0 ){
 
-			   case 0:
+	switch(time_slot){
 
-		         wifi_communication_tnecent_handler();//
+	case 0:
 
-		      break;
+		wifi_communication_tnecent_handler();//
 
-			  case 1:
-        
-             getBeijingTime_cofirmLinkNetState_handler();
+	break;
 
-			  break;
+	case 1:
 
-			  case 2:
-	
-             wifi_auto_detected_link_state();
+		getBeijingTime_cofirmLinkNetState_handler();
 
-			  break;
+	break;
 
-			  default:
-			  break;
+	case 2:
 
+		wifi_auto_detected_link_state();
 
+	break;
 
-		     }
-		
-           }
+	default:
+	break;
 
-		  time_slot ++;
-		  if(time_slot > 2) time_slot = 0;\
+    }
+
+	}
+
+	time_slot ++;
+	if(time_slot > 2) time_slot = 0;
 
 }
 

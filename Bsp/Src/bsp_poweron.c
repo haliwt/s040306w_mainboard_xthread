@@ -39,12 +39,12 @@ volatile uint8_t time_slot ;
 // --- 4. 初始化分时任务表 ---
 TimeSharingTask_t g_tasks[] = {
     {0, 370,       handler_wifi_state},
-    {0, 140,      handler_wifi_update_data},
-    {0, 430,      handler_works_hours},
-    {0, 570,          handler_fan_adc},
-    {0, 710,        handler_wifi_update_temp_humidity},
+    {0, 140,       handler_wifi_update_data},
+    {0, 430,       handler_works_hours},
+    {0, 570,       handler_fan_adc},
+    {0, 710,       handler_wifi_update_temp_humidity},
     {0, 280,       handler_read_dht11},
-    {0, 220,        handler_fan_speed_state},
+    {0, 220,       handler_fan_speed_state},
     {0, 53,        handler_hardware_module_action},
     {0, 3,         handler_rx_widi_data},
     {0, 230,       handler_send_ai_wif},

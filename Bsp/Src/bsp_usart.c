@@ -327,10 +327,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0 && gpro_t.stopTwoHours_flag==0){ //PTC warning flag
 	             
 	              PTC_SetHigh();
-         
-             
-           SendWifiData_Answer_Cmd(0x02,0x01); //
-           tx_thread_sleep(2); 
+                  SendWifiData_Answer_Cmd(0x02,0x01); //
+                  tx_thread_sleep(2); 
 		
            }
 
@@ -546,7 +544,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	  case 0x19: //works 2 hours ,then have a rest 10 minutes ->notice 
 
-	    if(pdata[3]==0){ // works run four recach 2 hours 
+	    if(pdata[3]==1){ // works run four recach 2 hours 
 
            gpro_t.stopTwoHours_flag=1;
 	
@@ -560,7 +558,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			tx_thread_sleep(2);
 			
 		}
-		else if(pdata[3]==1){
+		else if(pdata[3]==0){
 			   gpro_t.stopTwoHours_flag=0;//WT.EDIT 2026.01.26
 		     
 			   gpro_t.ptc_active_f++;
@@ -579,47 +577,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	  break;
 
-      #if 0
-      case 0x1B: //write set temperature value .data.2026.01.06
-	  
-        if(pdata[3]== 0x01){
-		       gctl_t.ptc_prohibit_on_flag =0;
-			 //  gpro_t.gPtc = 1;//gctl_t.gDry = 1;
-               gpro_t.ptc_active_f++;
-			   if(gpro_t.stopTwoHours_flag ==0){
-			       PTC_SetHigh();
-		        
-				 SendWifiData_Answer_Cmd(0x22,0x01); //WT.EDIT 2025.07.28
-		         tx_thread_sleep(1);
-				 gpro_t.ptc_active_f++;
-				 if(wifi_link_net_state()==1){ 
-					  MqttData_Publish_SetPtc(0x01);
-					  tx_thread_sleep(20);
-					
-				  }
-			   	
-		       } 
-      }
-      else if(pdata[3]== 0x0){
-        
-        //  gpro_t.gPtc =0 ;//gctl_t.gDry =0;
-
-	       PTC_SetLow();
-        
-		   SendWifiData_Answer_Cmd(0x22,0x0); //WT.EDIT 2025.07.28
-           tx_thread_sleep(1);
-
-		  
-		  if(wifi_link_net_state()==1){ 
-			MqttData_Publish_SetPtc(0x0);
-			tx_thread_sleep(20);
-		  }
-         
-	   }
-		
-     break;
      
-  #endif 	 
 	  
     case 0x1C: // is time data: hours,minutes,sencodes.
 		   
