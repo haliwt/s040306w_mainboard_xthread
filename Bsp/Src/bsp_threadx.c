@@ -16,8 +16,8 @@
 
 
 
-#define STACK_SIZE_UI    1536//1280//640//1024//1920//1792//1536
-#define STACK_SIZE_DEC   1024//512//1024//512//256
+#define STACK_SIZE_UI    1664//1536//1280//640//1024//1920//1792//1536
+#define STACK_SIZE_DEC   1280//1024//512//1024//512//256
 //#define STACK_SIZE_WIFI  640
 
 
@@ -174,9 +174,9 @@ void threadx_handler(void)
                      0,                            /* 传递给任务的参数 */
                      stack_msg_pro,                /* 堆栈基地址 */
                      STACK_SIZE_UI,               /* 堆栈空间大小 */ 
-                     1,							   /* 任务优先级*/
-                     1,							   /* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
-                     5,             /* 不开启时间片 TX_NO_TIME_SLICE*/
+                     2,							   /* 任务优先级*/
+                     2,							   /* 任务抢占阀值 , 允许它不被优先级 1-0 之间的任务抢占，除非是中断 */
+                     TX_NO_TIME_SLICE,             /* 不开启时间片 TX_NO_TIME_SLICE*/
                      TX_AUTO_START);               /* 创建后立即启动 */
 
 
@@ -188,7 +188,7 @@ void threadx_handler(void)
                      STACK_SIZE_DEC,			   /* 堆栈空间大小 */  
                      1, 						   /* 任务优先级*/
                      1, 						   /* 任务抢占阀值 */
-                     2, 			            /* 不开启时间片 TX_NO_TIME_SLICE*/
+                     TX_NO_TIME_SLICE, 			            /* 不开启时间片 TX_NO_TIME_SLICE*/
                      TX_AUTO_START);               /* 创建后立即启动 */
 
 

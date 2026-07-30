@@ -244,7 +244,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	        ultrasonic_open();   //ultrasnoic ON 
 	        PTC_SetHigh();
 			SendWifiData_Answer_Cmd(0x01,0x01);
-	        tx_thread_sleep(5);
+	        tx_thread_sleep(2);
 				
 
 		}
@@ -330,7 +330,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
          
              
            SendWifiData_Answer_Cmd(0x02,0x01); //
-           tx_thread_sleep(1); 
+           tx_thread_sleep(2); 
 		
            }
 
@@ -347,7 +347,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			  gpro_t.ptc_active_f++;
 		  
           SendWifiData_Answer_Cmd(0x02,0x0); //
-          tx_thread_sleep(1); 
+          tx_thread_sleep(2); 
      
        }
       break;
@@ -368,7 +368,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 
 			SendWifiData_Answer_Cmd(0x03,0x01); //
-			tx_thread_sleep(1); 
+			tx_thread_sleep(2); 
 			 
 		  }
 		  else if(pdata[3]  == 0x0){
@@ -380,7 +380,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 PLASMA_SetLow();
 
 			SendWifiData_Answer_Cmd(0x03,0x0); //
-			tx_thread_sleep(1); 
+			tx_thread_sleep(2); 
 			  
 		  
 		  }
@@ -414,7 +414,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			ultrasonic_close();
 			
 			SendWifiData_Answer_Cmd(0x04,0x0); //
-			tx_thread_sleep(1); 
+			tx_thread_sleep(2); 
    
 		  }
    
@@ -436,7 +436,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  
           gctl_t.gTimer_linkTencentCounter=0; //total times is 120s
           SendWifiData_Answer_Cmd(0x05,0x01); //WT.EDIT 2024.12.28
-          tx_thread_sleep(1);
+          tx_thread_sleep(2);
          
       
         }
@@ -557,7 +557,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			PLASMA_SetLow() ; //plasma turn off.
             ultrasonic_close();
 			SendWifiData_Answer_Cmd(0x19 ,0x01);//copy cmd
-			tx_thread_sleep(1);
+			tx_thread_sleep(2);
 			
 		}
 		else if(pdata[3]==1){
@@ -572,7 +572,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			  if(gctl_t.gUltrasonic==1) ultrasonic_open();
 			  Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
 			 SendWifiData_Answer_Cmd(0x19 ,0x0);//copy cmd
-			 tx_thread_sleep(1);
+			 tx_thread_sleep(2);
 			  
 		}
 	   
@@ -862,8 +862,22 @@ void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
   volatile uint8_t data;
-  // static uint8_t rx_flag;
-  
+
+  // 1. 优先处理异常错误 (ORE / FE / NE)，做防御性闭环，防止 ISR 死锁
+    if (LL_USART_IsActiveFlag_ORE(USART1) || 
+        LL_USART_IsActiveFlag_FE(USART1)  || 
+        LL_USART_IsActiveFlag_NE(USART1))
+    {
+        // 【核心操作】必须先强行读取 RDR 寄存器，丢弃脏数据，释放硬件接收锁
+        volatile uint8_t dummy_read = LL_USART_ReceiveData8(USART1);
+        (void)dummy_read; // 消除未引用变量警告
+
+        // 【核心操作】针对性地清除错误标志位
+        LL_USART_ClearFlag_ORE(USART1);
+        LL_USART_ClearFlag_FE(USART1);
+        LL_USART_ClearFlag_NE(USART1);
+    }
+ 
    if(LL_USART_IsActiveFlag_RXNE_RXFNE(USART1)){
    
      
@@ -871,26 +885,6 @@ void USART1_IRQHandler(void)
        usart1_isr_callback_handler(rx1_data);
 	 
    }
-  /* USER CODE END USART1_IRQn 0 */
-
-  
-  /* USER CODE BEGIN USART1_IRQn 1 */
-	 // 清除错误标志
-  //  if (LL_USART_IsActiveFlag_ORE(USART1))  
-	// 2. 溢出错误（ORE）防御性闭环处理
-//  if (LL_USART_IsActiveFlag_ORE(USART1))  
-//  {
-//      // 【核心修复】强行读走 RDR 寄存器里的脏数据，彻底释放硬件锁
-//      volatile uint8_t dummy_read = LL_USART_ReceiveData8(USART1);
-//      ((void)dummy_read); // 防止部分编译器报 “变量未引用” 的警告
-      
-//      // 然后再清除错误标志
-//      LL_USART_ClearFlag_ORE(USART1);
-//  }
-    LL_USART_ClearFlag_ORE(USART1);
-   // if (LL_USART_IsActiveFlag_FE(USART1))  LL_USART_ClearFlag_FE(USART1);
-   /// if (LL_USART_IsActiveFlag_NE(USART1))  LL_USART_ClearFlag_NE(USART1);
-  /* USER CODE END USART1_IRQn 1 */
 }
 
 /**

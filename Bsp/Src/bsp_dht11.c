@@ -131,7 +131,7 @@ uint8_t DHT11_Read_TempAndHumidity(DHT11_Data_TypeDef *DHT11_Data)
 	/*????*/
 	DHT11_Dout_LOW();
 	/*??18ms*/
-	delay_ms(18);//HAL_Delay(20);//tx_thread_sleep(pdMS_TO_TICKS(20));//HAL_Delay(20);
+	tx_thread_sleep(2);//WT.EDIT 2026.07.29//delay_ms(18);//HAL_Delay(20);//tx_thread_sleep(pdMS_TO_TICKS(20));//HAL_Delay(20);
 
 	/*???? ????30us*/
 	DHT11_Dout_HIGH(); 
@@ -226,14 +226,7 @@ void static Dht11_Read_TempHumidity_Handler(DHT11_Data_TypeDef * pdth11)
 *@return:
 *
 */
-void updateDht11_sensorData_toDisp(void)
-{
-	
-	    Dht11_Read_TempHumidity_Handler(&DHT11);
-	    sendData_Real_TimeHum(gctl_t.gDht11_humidity ,gctl_t.gDht11_temperature);
-		tx_thread_sleep(1);
-	
-}
+
 /**
 *@breif :
 *@note:
@@ -246,7 +239,7 @@ void read_sensorData(void)
 	
 	    Dht11_Read_TempHumidity_Handler(&DHT11);
 	    sendData_Real_TimeHum(gctl_t.gDht11_humidity ,gctl_t.gDht11_temperature);
-		tx_thread_sleep(1);
+		tx_thread_sleep(2);
 	
 }
 
@@ -267,7 +260,7 @@ void Update_Dht11_Totencent_Value(void)
 
 
 	MqttData_Publis_ReadTempHum(gctl_t.gDht11_temperature, gctl_t.gDht11_humidity);
-    tx_thread_sleep(20);//HAL_Delay(100);
+    
 
 }
 

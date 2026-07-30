@@ -38,17 +38,17 @@ volatile uint8_t time_slot ;
 #if 1
 // --- 4. 初始化分时任务表 ---
 TimeSharingTask_t g_tasks[] = {
-    {0, PERIOD_WIFI_STATE,       handler_wifi_state},
-    {0, PERIOD_WIFI_UPDATE,      handler_wifi_update_data},
-    {0, PERIOD_WORKS_HOURS,      handler_works_hours},
-    {0, PERIOD_FAN_ADC,          handler_fan_adc},
-    {0, PERIOD_WIFI_TEMP,        handler_wifi_update_temp_humidity},
-    {0, PERIOD_READ_DHT11,       handler_read_dht11},
-    {0, PERIOD_FAN_SPEED,        handler_fan_speed_state},
-    {0,PERIOD_PERIPHERAL,        handler_hardware_module_action},
-    {0,PERIOD_LINK_WIFI,         handler_rx_widi_data},
-    {0,PERIOD_DISP_AI_WIF,       handler_send_ai_wif},
-    {0,PERIOD_WIFI_REPORT,       handler_wifi_report}
+    {0, 370,       handler_wifi_state},
+    {0, 140,      handler_wifi_update_data},
+    {0, 430,      handler_works_hours},
+    {0, 570,          handler_fan_adc},
+    {0, 710,        handler_wifi_update_temp_humidity},
+    {0, 280,       handler_read_dht11},
+    {0, 220,        handler_fan_speed_state},
+    {0, 53,        handler_hardware_module_action},
+    {0, 3,         handler_rx_widi_data},
+    {0, 230,       handler_send_ai_wif},
+    {0, 270,       handler_wifi_report}
    
     
 	
@@ -433,11 +433,11 @@ static void handler_wifi_state(void)
         uint8_t wifi_status = (net_t.wifi_link_net_success == 1) ? 0x01 : 0x00;
 		if(sw_flag == 1){
 			SendWifiData_olderCmd(0x1F,wifi_status);//SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-			tx_thread_sleep(1);
+			tx_thread_sleep(2);
 		}
 		else{
 			SendWifiData_To_Data(0x1F,wifi_status);
-			tx_thread_sleep(1);
+			tx_thread_sleep(2);
 		}
 
 	}
@@ -463,7 +463,7 @@ static void handler_wifi_update_data(void)
              MqttData_Publish_Update_Data();
 			
              SendWifiData_To_Cmd(0x1F,0x01); //link wifi order 1 --link wifi net is success.
-             tx_thread_sleep(1);
+             tx_thread_sleep(2);
       }
 	  else if(gctl_t.first_link_tencent_cloud_flag < 3){
 			 gctl_t.first_link_tencent_cloud_flag++;
