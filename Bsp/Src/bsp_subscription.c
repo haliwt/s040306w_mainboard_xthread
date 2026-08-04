@@ -545,18 +545,18 @@ void Json_Parse_Command_Fun(void)
 			
             phone_power_flag=1;
 
-			#if 1
+		
 			gctl_t.ptc_warning =0;
 			
 	        gpro_t.fan_warning_flag =0;
-	        gpro_t.power_off_run_step=1;
+	        gpro_t.power_off_run_step=0;
 	    
 	
 			gpro_t.gpower_on = power_on;//gctl_t.rx_command_tag= POWER_ON;
 			//gpro_t.send_ack_cmd = 1; //ack_app_power_on;
 	     
-			#endif 
-			gpro_t.phone_power_on_flag = 1; //ack_app_power_on;
+		
+		
 	       
 		    SendWifiData_To_Cmd(0x01,0x01); //smart phone is power on
 			tx_thread_sleep(1);//tx_thread_sleep(5);//HAL_Delay(5);
@@ -582,13 +582,10 @@ void Json_Parse_Command_Fun(void)
 		 	 
 			//tx_thread_sleep(200);//tx_thread_sleep(100);
              phone_power_flag=2;
-			#if 1
+		
             gpro_t.gpower_on = power_off;
-            gpro_t.power_off_run_step=1; //WT.EDIT 2025.01.04
-           
-     		#endif 
-			
-			gpro_t.phone_power_on_flag = 2; //ack_app_power_on;
+            gpro_t.power_off_run_step=0; //WT.EDIT 2025.01.04
+      
 	
              SendWifiData_To_Cmd(0x01,0x0); //smart phone is power off
              tx_thread_sleep(1);

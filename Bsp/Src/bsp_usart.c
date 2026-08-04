@@ -449,36 +449,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		 
      break;
 
-	 case 0x0B: //WT.EDIT 2026.03.02 0x18:通知风扇关闭和打开
-	   #if 0
-         if(pdata[3]==0){ // recach 2 hours fan stop
-       
-			   gpro_t.stopTwoHours_flag=1;
-		       gpro_t.ptc_active_f++;
-		     
-		
-               FAN_Stop();
-			   PTC_SetLow(); //ptc off;
-			   PLASMA_SetLow() ; //plasma turn off.
-               ultrasonic_close();
-			   SendWifiData_Answer_Cmd(0x08 ,0x01);//copy cmd
-			   tx_thread_sleep(1);
-         }
-		 else if(pdata[3]==1){// fan is open .
-       
-		    Fan_RunSpeed_Fun();//fan_full_run();//WT.EDIT 2026.01.26
-			if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
-			  	PTC_SetHigh();
-				
-             }
-			 if(gctl_t.gPlasma==1)PLASMA_SetHigh();
-			 if(gctl_t.gUltrasonic==1) ultrasonic_open();
-			  SendWifiData_Answer_Cmd(0x08 ,0x0);//copy cmd
-			  tx_thread_sleep(1);
-        }
-		#endif 
-
-	 break;
+	
 
 
 
@@ -793,7 +764,7 @@ static void parse_recieve_copy_data(uint8_t *pddata)
 		 }
         else if(pddata[4] == 0x0){ //close 
 
-		   gpro_t.power_off_run_step=1;
+		   gpro_t.power_off_run_step=0; //WT.EDIT 2026-08.04
            gpro_t.gpower_on = power_off;
 			 
 		}

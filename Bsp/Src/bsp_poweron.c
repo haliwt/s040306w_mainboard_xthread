@@ -218,6 +218,7 @@ static void power_on_init_handler(void)
 	case 0: //1
 	     
           gpro_t.power_off_run_step=0;
+	      gpro_t.power_off_run_step = 0;
           /*power on initial reference---start */
       
      
@@ -248,7 +249,7 @@ static void power_on_init_handler(void)
        
 	
         /*POWER OFF REF-start */
-        gpro_t.power_off_run_step = 1;
+      
     
 		gpro_t.gTimer_conter_twohours_minutes=0;
 	    gpro_t.gTimer_twohours_seconds_counter=0;

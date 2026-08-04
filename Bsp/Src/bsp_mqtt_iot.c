@@ -123,8 +123,7 @@ void property_topic_publish(void)
 
     gctl_t.randomName[0]=HAL_GetUIDw0();
     message_len = snprintf(message, sizeof(message), "AT+TCMQTTPUB=\"$thing/up/property/%s/UYIJIA01-%d\",0,", PRODUCT_ID,gctl_t.randomName[0]);
-    //at_send_data((uint8_t *)topic, size);
-    tx_thread_sleep(20);
+  
     USART2_DMA_Send((uint8_t *)message, message_len);
     tx_thread_sleep(20);
 }
@@ -149,7 +148,7 @@ static void property_report_state(void)
                                
  
 	//at_send_data((uint8_t *)message, message_len);
-	tx_thread_sleep(1);
+
 	USART2_DMA_Send((uint8_t *)message, message_len);
 	tx_thread_sleep(20);
    
@@ -267,7 +266,7 @@ static void property_report_SetOpen(uint8_t open)
 	 message_len = snprintf(message, sizeof(message),"\"{\\\"method\\\":\\\"report\\\"\\,\\\"clientToken\\\":\\\"up04\\\"\\,\\\"params\\\":{\\\"open\\\":%d}}\"\r\n",open);
 								  
 	//at_send_data((uint8_t *)message, message_len);
-	tx_thread_sleep(20);
+	//tx_thread_sleep(20);
 	USART2_DMA_Send((uint8_t *)message, message_len);
 	tx_thread_sleep(20);
 

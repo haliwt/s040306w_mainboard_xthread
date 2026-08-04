@@ -10,7 +10,7 @@
   *    #define NEW_PCB  ON/OFF.DATA.2026-04-07
   *  data:2026-04-21 : add auto check wifi is not connect is success .
   *                    reconnect wifi function .
-  *
+  *  data:2026-08.04 : app smart phone power off fan at once turn off .
   * 
   *
   *

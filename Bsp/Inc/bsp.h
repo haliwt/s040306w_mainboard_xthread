@@ -118,7 +118,7 @@ typedef enum{
 typedef struct PROCESS_T{
 
 
-   uint8_t gpower_on;
+   bool gpower_on;
    uint8_t disp_rx_cmd_done_flag;
    uint8_t  wifi_rx_data_array[150];
    uint8_t wifi_rx_data_counter;
@@ -136,7 +136,7 @@ typedef struct PROCESS_T{
 
    uint8_t receive_copy_cmd ;
    uint8_t send_ack_cmd;
-   uint8_t phone_power_on_flag;
+
    //uint8_t gFan_pwm_duty_level;
    uint8_t answer_buzzer_flag ;
  
