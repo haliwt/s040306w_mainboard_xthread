@@ -25,7 +25,7 @@ static void tim3_stop_buzzer_sound_config(void)
 }
 
 
-// 简单的微秒级阻塞延时（若没有 DWT/微秒定时器，可使用 LL 库或自建 count 循环）
+ // 简单的微秒级阻塞延时（若没有 DWT/微秒定时器，可使用 LL 库或自建 count 循环）
 static void once_delay_us(uint32_t us)
 {
     uint32_t ticks = us * (SystemCoreClock / 1000000) / 4; // 粗略循环，建议换为 DWT->CYCCNT
