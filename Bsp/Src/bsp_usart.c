@@ -324,7 +324,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 gpro_t.ptc_active_f++;
 			 
 		
-	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0 && gpro_t.stopTwoHours_flag==0){ //PTC warning flag
+	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0 && gpro_t.twoHoursStop_flag==0){ //PTC warning flag
 	             
 	              PTC_SetHigh();
                   SendWifiData_Answer_Cmd(0x02,0x01); //
@@ -359,7 +359,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			
 			 gctl_t.gPlasma = 1;
 		     gpro_t.plasma_switch_flag ++;
-			 if(gpro_t.stopTwoHours_flag==0){
+			 if(gpro_t.twoHoursStop_flag==0){
 				 PLASMA_SetHigh() ;
    
 			}
@@ -394,7 +394,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			gctl_t.gUltrasonic =1;
 		     gpro_t.ultrasonic_switch_flag ++;
    
-			if(gpro_t.stopTwoHours_flag==0){
+			if(gpro_t.twoHoursStop_flag==0){
 				 ultrasonic_open();
    
 			}
@@ -517,12 +517,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	    if(pdata[3]==1){ // works run four recach 2 hours 
 
-           gpro_t.stopTwoHours_flag=1;
-	
-	       gpro_t.ptc_active_f++;
-
-	
-		    PTC_SetLow(); //ptc off;
+           gpro_t.twoHoursStop_flag=1;
+	      PTC_SetLow(); //ptc off;
 			PLASMA_SetLow() ; //plasma turn off.
             ultrasonic_close();
 			SendWifiData_Answer_Cmd(0x19 ,0x01);//copy cmd
@@ -530,10 +526,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			
 		}
 		else if(pdata[3]==0){
-			   gpro_t.stopTwoHours_flag=0;//WT.EDIT 2026.01.26
+			  gpro_t.twoHoursStop_flag=0;//WT.EDIT 2026.01.26
 		     
-			   gpro_t.ptc_active_f++;
-        
               if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
 			  	PTC_SetHigh();
 			  }
@@ -564,10 +558,12 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 		  
 	
 		   gpro_t.gPtc = 1;//gctl_t.gDry = 1;
-		   if(gpro_t.stopTwoHours_flag ==0 && gctl_t.ptc_prohibit_on_flag==0){
+		   if(gpro_t.twoHoursStop_flag ==0 && gctl_t.ptc_prohibit_on_flag==0){
 			  
 			     PTC_SetHigh();
 		         gpro_t.ptc_active_f ++;
+		        SendWifiData_Answer_Cmd(0x22 ,0x01);//copy cmd  WT.EDIT 2026-10-30
+			    tx_thread_sleep(2);
 		   	
 				#if 0
 				
@@ -585,6 +581,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	    
 	          PTC_SetLow();
 			  gpro_t.ptc_active_f++;
+			   SendWifiData_Answer_Cmd(0x22 ,0);//copy cmd  WT.EDIT 2026-10-30
+			   tx_thread_sleep(2);
 
 		 #if 0
 		 
@@ -609,7 +607,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 gctl_t.ptc_prohibit_on_flag=0;
 			 gpro_t.ptc_active_f++;
 			 
-			 if(gpro_t.stopTwoHours_flag==0){//two hours have a rest ten minutes .
+			 if(gpro_t.twoHoursStop_flag==0){//two hours have a rest ten minutes .
 	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
 	             
 	              PTC_SetHigh();
@@ -650,7 +648,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			        
 					 
                       gpro_t.gPtc=1;
-					  if(gpro_t.stopTwoHours_flag ==0)PTC_SetHigh();
+					  if(gpro_t.twoHoursStop_flag ==0)PTC_SetHigh();
 					  
 			   }
 			   else{

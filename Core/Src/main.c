@@ -11,7 +11,8 @@
   *  data:2026-04-21 : add auto check wifi is not connect is success .
   *                    reconnect wifi function .
   *  data:2026-08.04 : app smart phone power off fan at once turn off .
-  * 
+  *  Data:2026-11-09 : two hours have a rest ,but fan always run don't run one 
+  *                   minutes stop .is bug.
   *
   *
   ******************************************************************************

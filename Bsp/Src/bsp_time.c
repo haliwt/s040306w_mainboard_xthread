@@ -48,15 +48,19 @@ uint8_t twoHours_stop_flag;
     *Return Ref: NO
     *
 ************************************************************************/
+#if 1
+uint8_t two_hours_f;
 void works_run_two_hours_state(void)
 {
+  //static uint8_t two_hours_f;
 
-  switch(gpro_t.soft_version ){
+  switch(gpro_t.twoHoursStop_flag){
 
-   case 0x02://new version 
-  
-    if(gpro_t.stopTwoHours_flag ==1 && gpro_t.two_hours_f==0){//WT.EDIT 2025.11.19
-			 gpro_t.two_hours_f = 1;
+
+  case 0x01:
+
+   if(two_hours_f==0){//WT.EDIT 2025.11.19
+			 two_hours_f = 1;
 
 	         PLASMA_SetLow(); //
 	         PTC_SetLow();
@@ -65,41 +69,52 @@ void works_run_two_hours_state(void)
 
 	  }
 
-	  if(gpro_t.gTimer_fan_counter_2 > 60 &&  gpro_t.two_hours_f ==1){
-	                gpro_t.two_hours_f ++;
-	                 FAN_Stop();
+	  if(gpro_t.gTimer_fan_counter_2 > 60 &&  two_hours_f ==1){
+	           two_hours_f ++;
+	             FAN_Stop();
 	   }
+
+	   if(two_hours_f ==2)FAN_Stop();
 	
+    break;
 
-	  if(gpro_t.two_hours_f == 2 && gpro_t.stopTwoHours_flag ==0){
-	      gpro_t.two_hours_f =0; 
-	      module_hardware_control();
+	 case 0:
+	   if(two_hours_f ==2){
+	   	 two_hours_f ++;
+	   	 Fan_RunSpeed_Fun();
+	    
+       }
+       else if(two_hours_f  >0){
+	      Fan_RunSpeed_Fun();
+             two_hours_f =0;
+	   	}
+	    module_hardware_control();
+	   	
 
-	  }
-      else  if(gpro_t.two_hours_f == 0 && gpro_t.stopTwoHours_flag ==0){
 
-	     module_hardware_control();
+	 break;
+  }
+}
+ #else 
+	  
+void works_run_two_hours_state(void)
+{
 
-      }
-	 
- 
-  
-
-
-  	break;
+   
+   switch(gpro_t.twoHoursStop_flag ){
 
 	case 0x0://older version 
 
-	  if(gpro_t.gTimer_conter_twohours_minutes >119 && gpro_t.stopTwoHours_flag ==0){
+	  if(gpro_t.gTimer_conter_twohours_minutes >119 && gpro_t.twoHoursStop_flag ==0){
 			gpro_t.gTimer_conter_twohours_minutes=0;
 	        gpro_t.gTimer_twohours_seconds_counter=0;
-	        gpro_t.stopTwoHours_flag =1;
+	        gpro_t.twoHoursStop_flag =1;
 			define_twohours_flag =1;
 			PLASMA_SetLow(); //
             PTC_SetLow();
             ultrasonic_close();
 	  }
-	  else if(gpro_t.stopTwoHours_flag ==1 &&  define_twohours_flag ==0){
+	  else if(gpro_t.twoHoursStop_flag ==1 &&  define_twohours_flag ==0){
 	  
 	  	    gpro_t.gTimer_conter_twohours_minutes=0;
 	        gpro_t.gTimer_twohours_seconds_counter=0;
@@ -115,23 +130,23 @@ void works_run_two_hours_state(void)
 	 
 	  
 
-	  if(gpro_t.stopTwoHours_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 0 && define_twohours_flag ==1){
+	  if(gpro_t.twoHoursStop_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 0 && define_twohours_flag ==1){
 			  define_twohours_flag++;
 			   gpro_t.gTimer_conter_twohours_minutes=0;
 			   gpro_t.gTimer_twohours_seconds_counter=0;
       
 	           FAN_Stop();
       }
-      else if(gpro_t.stopTwoHours_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 10 && define_twohours_flag ==2){
+      else if(gpro_t.twoHoursStop_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 10 && define_twohours_flag ==2){
 			  define_twohours_flag=0;
-			  gpro_t.stopTwoHours_flag =0;
+			  gpro_t.twoHoursStop_flag =0;
 	 
 	          gpro_t.gTimer_conter_twohours_minutes=0;
 			  gpro_t.gTimer_twohours_seconds_counter=0;
 
 	          
       }
-      else if(define_twohours_flag==0 && gpro_t.stopTwoHours_flag ==0){ //300ms
+      else if(define_twohours_flag==0 && gpro_t.twoHoursStop_flag ==0){ //300ms
             
           
             module_hardware_control();
@@ -147,6 +162,7 @@ void works_run_two_hours_state(void)
   	}
 
 }
+#endif 
 /**
 *@brief:
 *@notice
@@ -190,7 +206,7 @@ static void CompareSetAndActualTemperature(void)
 		        if(real_temp < target_temp && gctl_t.ptc_prohibit_on_flag ==0){
 
 		           gpro_t.gPtc= 1;
-				   if(gpro_t.stopTwoHours_flag ==0)PTC_SetHigh();
+				   if(gpro_t.twoHoursStop_flag ==0)PTC_SetHigh();
 				   ptc_state = PTC_STATE_ON;
 				   if(gpro_t.first_ptc_on ==1) gpro_t.first_ptc_on =2;
 				   SendData_Set_Command(0x22, 0x01); // open PTC
@@ -208,7 +224,7 @@ static void CompareSetAndActualTemperature(void)
 				if (real_temp < (target_temp - 2)) {
 					
 					gpro_t.gPtc  = 1;
-					if(gpro_t.stopTwoHours_flag ==0)PTC_SetHigh();
+					if(gpro_t.twoHoursStop_flag ==0)PTC_SetHigh();
 					ptc_state = PTC_STATE_ON;
 					SendData_Set_Command(0x22, 0x01); // open PTC
 

@@ -30,7 +30,7 @@ static void handler_read_dht11(void);
 static void handler_fan_speed_state(void);
 static void handler_hardware_module_action(void);
 static void handler_rx_widi_data(void);
-static void handler_send_ai_wif(void);
+static void handler_send_ai_wifi(void);
 static void handler_wifi_report(void);
 
 volatile uint8_t time_slot ;
@@ -47,7 +47,7 @@ TimeSharingTask_t g_tasks[] = {
     {0, 220,       handler_fan_speed_state},
     {0, 53,        handler_hardware_module_action},
     {0, 3,         handler_rx_widi_data},
-    {0, 230,       handler_send_ai_wif},
+    {0, 230,       handler_send_ai_wifi},
     {0, 270,       handler_wifi_report}
    
     
@@ -254,11 +254,11 @@ static void power_on_init_handler(void)
 		gpro_t.gTimer_conter_twohours_minutes=0;
 	    gpro_t.gTimer_twohours_seconds_counter=0;
 		gpro_t.wifi_led_fast_blink_flag=0;
-		gpro_t.two_hours_f=0;
+
         /*end*/
 		
        
-        gpro_t.stopTwoHours_flag =0;
+        gpro_t.twoHoursStop_flag = false;
 	
 	
          Fan_Full_Speed();//Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
@@ -504,7 +504,7 @@ static void handler_works_hours(void)
 static void handler_hardware_module_action(void)
 {
    
-   if(gpro_t.stopTwoHours_flag ==0){//(gctl_t.app_timer_power_on_flag == 1)
+   if(gpro_t.twoHoursStop_flag == false ){//(gctl_t.app_timer_power_on_flag == 1)
 		 
 			 
 		module_hardware_control();//module_action_handler();
@@ -600,7 +600,7 @@ static void handler_read_dht11(void)
 static void handler_fan_speed_state(void)
 {
    
-   	 if(gpro_t.stopTwoHours_flag ==0 ){
+   	 if(gpro_t.twoHoursStop_flag == false ){
 	   
 		Fan_RunSpeed_Fun();
 	}
@@ -628,7 +628,7 @@ static void handler_rx_widi_data(void)
 	*
 **/
 
-static void handler_send_ai_wif(void)
+static void handler_send_ai_wifi(void)
 {
 	ai_mode_display_fun();
 
@@ -716,8 +716,8 @@ void power_off_handler(void)
 	    gpro_t.gTimer_twohours_seconds_counter=0;
 	  
          //power off init two hours flag
-	     gpro_t.stopTwoHours_flag=0;
-		 gpro_t.two_hours_f=0;
+	     gpro_t.twoHoursStop_flag= false;
+		 //gpro_t.two_hours_f=0;
 	
 		     
 	
@@ -936,7 +936,7 @@ if(gctl_t.set_temperature_value > gctl_t.gDht11_temperature){
 				 
 				  
 				   gpro_t.gPtc=1;
-				   if(gpro_t.stopTwoHours_flag ==0)PTC_SetHigh();
+				   if(gpro_t.twoHoursStop_flag == false)PTC_SetHigh();
 				   
 			}
 			else{

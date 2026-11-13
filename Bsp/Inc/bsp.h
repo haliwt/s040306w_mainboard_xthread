@@ -132,7 +132,7 @@ typedef struct PROCESS_T{
 
 
    uint8_t get_beijing_flag;
-   bool stopTwoHours_flag;
+   bool twoHoursStop_flag;
 
    uint8_t receive_copy_cmd ;
    uint8_t send_ack_cmd;
@@ -160,7 +160,7 @@ typedef struct PROCESS_T{
 
    uint8_t ptc_active_f;
    uint8_t tx_wifi_temperature_f;
-   uint8_t two_hours_f;
+   //uint8_t two_hours_f;
 
    
    uint8_t disp_works_hours ;    

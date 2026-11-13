@@ -606,7 +606,7 @@ void Json_Parse_Command_Fun(void)
          buzzer_sound();
 		 gpro_t.gPtc = 1;//gctl_t.gDry=1;
 
-		 if(gpro_t.stopTwoHours_flag==0 && gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
+		 if(gpro_t.twoHoursStop_flag== false && gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
                 PTC_SetHigh();
 		 }
 		
