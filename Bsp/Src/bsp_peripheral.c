@@ -83,7 +83,9 @@ void module_hardware_control(void)
  */
 void module_wifi_report_handler(void)
 {
-    // 如果系统已经报警，清空业务标志，不进行正常上报（或者在此处增加上报报警错误码的逻辑）
+
+   static uint8_t temporary_variable =0xff;
+   // 如果系统已经报警，清空业务标志，不进行正常上报（或者在此处增加上报报警错误码的逻辑）
     if (gpro_t.fan_warning_flag == 1 || gpro_t.ptc_warning == 1) {
         gctl_t.app_timer_power_on_flag = 0;
         return;
@@ -144,8 +146,12 @@ void module_wifi_report_handler(void)
         // 温度定时上报
         if (gpro_t.tx_wifi_temperature_f == 1) {
             gpro_t.tx_wifi_temperature_f++;
-            MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
-           // tx_thread_sleep(20);
+
+		    if(temporary_variable != gctl_t.set_temperature_value){
+			   temporary_variable = gctl_t.set_temperature_value;
+		       MqttData_Publis_SetTemp(gctl_t.set_temperature_value);
+            }
+           
         }
     }
 }

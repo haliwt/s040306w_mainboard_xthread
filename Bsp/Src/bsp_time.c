@@ -164,19 +164,6 @@ static void older_version_two_hours_handler(void)
             ultrasonic_close();
 	  }
 	
-//	  else if(gpro_t.twoHoursStop_flag ==1 &&  define_twohours_flag ==0){
-	  
-//	  	    gpro_t.gTimer_conter_twohours_minutes=0;
-//	        gpro_t.gTimer_twohours_seconds_counter=0;
-//			define_twohours_flag =1;
-//			PLASMA_SetLow(); //
-//            PTC_SetLow();
-//            ultrasonic_close();
-	  
-//	  }
-
-  
-	  
      break;
 	  
 	 case 1:
@@ -220,7 +207,8 @@ static void older_version_two_hours_handler(void)
           module_hardware_control();
 	       Fan_RunSpeed_Fun();
       }
-	  else if(define_twohours_flag ==10 ){
+
+	  if(define_twohours_flag ==10 ){
 
 	      define_twohours_flag ++;
 		  module_hardware_control();

@@ -195,6 +195,7 @@ void usart1_isr_callback_handler(uint8_t data)
 	 case 2:
 		       rx_data_counter++;
 	           gl_tMsg.usData[rx_data_counter]=data;
+	           
 			 
 	           rx_state = 0;
                gl_tMsg.rx_total_numbers = rx_data_counter;
@@ -243,7 +244,7 @@ void usart1_isr_callback_handler(uint8_t data)
 	 
 
 	 default:
-	   rx_data_counter=0;
+	   
 
 	 break;
 
@@ -259,7 +260,8 @@ void usart1_isr_callback_handler(uint8_t data)
 	*Return Ref:NO
 	*
 *******************************************************************************/
-uint8_t break_two_hours,stop_break_counter;
+//uint8_t break_two_hours,stop_break_counter;
+uint8_t r_0x1A_counter ;
 
 static void usart1_protocol_state_machine(uint8_t *pdata)
 {
@@ -563,7 +565,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
             if( gpro_t.twoHoursStop_flag==true){
 			    SendWifiData_Answer_Cmd(0x19 ,0x01);//copy cmd
 				tx_thread_sleep(2);
-				break_two_hours++;
+			
 
 
 			}
@@ -574,7 +576,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	            ultrasonic_close();
 				SendWifiData_Answer_Cmd(0x19 ,0x01);//copy cmd
 				tx_thread_sleep(2);
-				break_two_hours++;
+				
 			}
 			
 		}
@@ -598,13 +600,15 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 				  Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
 				 SendWifiData_Answer_Cmd(0x19 ,0x0);//copy cmd
 				 tx_thread_sleep(2);
-				 stop_break_counter++;
+				
 			  }
 			  
 		}
 	   
 
 	  break;
+
+	
 
      
 	  
@@ -689,12 +693,13 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	 break;
 
 
-	 
+	 case 0x1A:
 	 case 0x2A: //smart phone or display  board set temperature .receive.
 	 
-		   if(pdata[4]==0x01 && gpro_t.gpower_on == power_on){
+		   if(pdata[4]==0x01){
 			  
-			   if(pdata[5] >19 && pdata[5] < 41){
+			    gpro_t.tx_wifi_temperature_f = 1;
+		        gpro_t.ptc_active_f++;
 			   	gctl_t.ptc_prohibit_on_flag = 0;
 			
 			   
@@ -702,10 +707,8 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 
 			   if(gctl_t.set_temperature_value > gctl_t.gDht11_temperature){
 			
-			        
-					 
-                      gpro_t.gPtc=1;
-					  if(gpro_t.twoHoursStop_flag ==0)PTC_SetHigh();
+			        gpro_t.gPtc=1;
+					if(gpro_t.twoHoursStop_flag ==0)PTC_SetHigh();
 					  
 			   }
 			   else{
@@ -714,13 +717,9 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 			       PTC_SetLow();
 		       }
-              gpro_t.tx_wifi_temperature_f = 1;
-		      gpro_t.ptc_active_f++;
-				  
-			   	
-			  }
-		   
-			}
+             
+	      }
+		  
 		
 		
 	 break;
@@ -880,27 +879,25 @@ void USART1_IRQHandler(void)
   * @param
   * @retrval 
 **/
+uint8_t counter_f;
 void decoder_handler(void)
 {
     
     check_bcc_code = bcc_check(gl_tMsg.usData,gl_tMsg.rx_total_numbers);
 
-
-	if(check_bcc_code == gl_tMsg.bcc_check_code && gl_tMsg.decoder_copy_cmd_flag == false){
+    if(check_bcc_code == gl_tMsg.bcc_check_code && gl_tMsg.decoder_copy_cmd_flag == false){
 		usart1_protocol_state_machine(gl_tMsg.usData);
-		gl_tMsg.usData[0]=0;
+		//gl_tMsg.usData[0]=0;
+		counter_f ++ ;
 		
     }
 	else if(gl_tMsg.decoder_copy_cmd_flag == true && check_bcc_code == gl_tMsg.bcc_check_code){
 
 	   
 			parse_recieve_copy_data(gl_tMsg.usData);
-			gl_tMsg.usData[0]=0;
+			//gl_tMsg.usData[0]=0;
 			
-		
-
 	}
-	
 	
 }
 
