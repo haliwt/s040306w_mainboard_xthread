@@ -109,7 +109,7 @@ void tx_application_define(void *first_unused_memory)
 		   debug_stack_ui_check();
 
 		 #endif 
-         //ui_counter++;
+         ui_counter++;
          LL_IWDG_ReloadCounter(IWDG);
 		 tx_thread_sleep(20);//10ms*20 =200ms
 		
@@ -210,10 +210,7 @@ static void power_run_handler(void)
 		      power_off_handler();
              break;
           }
-
-
 }
-
 /********************************************************************************
 	**
 	*Function Name:static void wifi_run_handler(void)

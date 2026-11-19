@@ -124,6 +124,7 @@ typedef struct Msg
     uint8_t   data_length;
 	uint8_t   rc_data_length;
 	uint8_t   total_data_length;
+	bool      decoder_copy_cmd_flag;
  
 	uint8_t   rx_total_numbers;
 	uint8_t   rx_data[4];
@@ -179,8 +180,13 @@ void usart1_isr_callback_handler(uint8_t data)
 
 	       rx_data_counter++;
            gl_tMsg.usData[rx_data_counter]=data;
-		   
-		  if(gl_tMsg.usData[rx_data_counter]==0xFE && rx_data_counter> 4){
+
+		  if(rx_data_counter == 0x02 && gl_tMsg.usData[rx_data_counter]==0xFF){
+
+		      rx_state = 3;
+
+		  }
+		  else if(gl_tMsg.usData[rx_data_counter]==0xFE && rx_data_counter> 4){
 		      rx_state = 2;
 		  }
 		 
@@ -193,15 +199,51 @@ void usart1_isr_callback_handler(uint8_t data)
 	           rx_state = 0;
                gl_tMsg.rx_total_numbers = rx_data_counter;
                 gpro_t.decoder_success_flag=1;
-
+                gl_tMsg.decoder_copy_cmd_flag= false;
+				
 			   gl_tMsg.bcc_check_code = data;
 
                 display_board_xtask_notice();
 
 	 break;
 
+	 case 3:
+
+           rx_data_counter++;
+           gl_tMsg.usData[rx_data_counter]=data;
+
+	       if(gl_tMsg.usData[rx_data_counter]==0xFE && rx_data_counter> 4){
+		      rx_state = 4;
+		   }
+
+
+	 break;
+
+
+     case 4:
+
+
+		       rx_data_counter++;
+	           gl_tMsg.usData[rx_data_counter]=data;
+			 
+	           rx_state = 0;
+               gl_tMsg.rx_total_numbers = rx_data_counter;
+                gpro_t.decoder_success_flag=1;
+				gl_tMsg.decoder_copy_cmd_flag= true;
+
+			   gl_tMsg.bcc_check_code = data;
+               
+                display_board_xtask_notice();
+
+	 break;
+
+
+
+	 break;
+	 
+
 	 default:
-	  
+	   rx_data_counter=0;
 
 	 break;
 
@@ -217,6 +259,8 @@ void usart1_isr_callback_handler(uint8_t data)
 	*Return Ref:NO
 	*
 *******************************************************************************/
+uint8_t break_two_hours,stop_break_counter;
+
 static void usart1_protocol_state_machine(uint8_t *pdata)
 {
 
@@ -516,26 +560,46 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 	  case 0x19: //works 2 hours ,then have a rest 10 minutes ->notice 
 
 	    if(pdata[3]==1){ // works run four recach 2 hours 
+            if( gpro_t.twoHoursStop_flag==true){
+			    SendWifiData_Answer_Cmd(0x19 ,0x01);//copy cmd
+				tx_thread_sleep(2);
+				break_two_hours++;
 
-           gpro_t.twoHoursStop_flag=1;
-	      PTC_SetLow(); //ptc off;
-			PLASMA_SetLow() ; //plasma turn off.
-            ultrasonic_close();
-			SendWifiData_Answer_Cmd(0x19 ,0x01);//copy cmd
-			tx_thread_sleep(2);
+
+			}
+			else{
+	           gpro_t.twoHoursStop_flag=1;
+		        PTC_SetLow(); //ptc off;
+				PLASMA_SetLow() ; //plasma turn off.
+	            ultrasonic_close();
+				SendWifiData_Answer_Cmd(0x19 ,0x01);//copy cmd
+				tx_thread_sleep(2);
+				break_two_hours++;
+			}
 			
 		}
 		else if(pdata[3]==0){
-			  gpro_t.twoHoursStop_flag=0;//WT.EDIT 2026.01.26
-		     
-              if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
-			  	PTC_SetHigh();
+
+		      if(gpro_t.twoHoursStop_flag== false){
+
+			        SendWifiData_Answer_Cmd(0x19 ,0x0);//copy cmd
+					tx_thread_sleep(2);
+				   
+
 			  }
-			  if(gctl_t.gPlasma==1)PLASMA_SetHigh();
-			  if(gctl_t.gUltrasonic==1) ultrasonic_open();
-			  Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
-			 SendWifiData_Answer_Cmd(0x19 ,0x0);//copy cmd
-			 tx_thread_sleep(2);
+			  else{
+				  gpro_t.twoHoursStop_flag=false;//WT.EDIT 2026.01.26
+			     
+	              if(gpro_t.gPtc ==1 && gctl_t.ptc_prohibit_on_flag==0){
+				  	PTC_SetHigh();
+				  }
+				  if(gctl_t.gPlasma==1)PLASMA_SetHigh();
+				  if(gctl_t.gUltrasonic==1) ultrasonic_open();
+				  Fan_RunSpeed_Fun();//WT.EDIT 2026.01.26
+				 SendWifiData_Answer_Cmd(0x19 ,0x0);//copy cmd
+				 tx_thread_sleep(2);
+				 stop_break_counter++;
+			  }
 			  
 		}
 	   
@@ -551,7 +615,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
 	case 0x22: //PTC ON OR OFF by compare temperature value .
 
-	    if(gctl_t.ptc_prohibit_on_flag == 1)return ;
+	    if(gctl_t.ptc_prohibit_on_flag == true)return ;
 		
         if(pdata[3]== 0x01){
 		  
@@ -584,14 +648,7 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			   SendWifiData_Answer_Cmd(0x22 ,0);//copy cmd  WT.EDIT 2026-10-30
 			   tx_thread_sleep(2);
 
-		 #if 0
 		 
-		  if(wifi_link_net_state()==1){ 
-			MqttData_Publish_SetPtc(0x0);
-			tx_thread_sleep(20);
-		  }
-		  
-         #endif 
 	  }
 	
    
@@ -607,15 +664,15 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 			 gctl_t.ptc_prohibit_on_flag=0;
 			 gpro_t.ptc_active_f++;
 			 
-			 if(gpro_t.twoHoursStop_flag==0){//two hours have a rest ten minutes .
-	         if(gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0){ //PTC warning flag
+			 
+	         if( gpro_t.twoHoursStop_flag==0 && gpro_t.ptc_warning ==0 && gpro_t.fan_warning_flag ==0 ){ //PTC warning flag
 	             
 	              PTC_SetHigh();
-         		}
+         	 }
              
          
-           	}
-
+           	
+     
 		 
 	   }
        else if(pdata[3]== 0x0 ){
@@ -724,16 +781,18 @@ static void usart1_protocol_state_machine(uint8_t *pdata)
 
     break;
 
-
+#if 0
 	case 0xFF: //copy comand or notice or data.
 
 	       parse_recieve_copy_data(pdata) ;
 
 	break;
+#endif 
 
 	}
 
 }
+
 /**********************************************************************
 	*
 	*Function Name:static void parse_recieve_copy_data_handler(void)
@@ -769,6 +828,8 @@ static void parse_recieve_copy_data(uint8_t *pddata)
 	   
 
 	   break;
+
+	  
 
 	   case 0x1F: //link wifi is success from display board return 
 
@@ -823,11 +884,23 @@ void decoder_handler(void)
 {
     
     check_bcc_code = bcc_check(gl_tMsg.usData,gl_tMsg.rx_total_numbers);
-	if(check_bcc_code == gl_tMsg.bcc_check_code){
+
+
+	if(check_bcc_code == gl_tMsg.bcc_check_code && gl_tMsg.decoder_copy_cmd_flag == false){
 		usart1_protocol_state_machine(gl_tMsg.usData);
 		gl_tMsg.usData[0]=0;
 		
     }
+	else if(gl_tMsg.decoder_copy_cmd_flag == true && check_bcc_code == gl_tMsg.bcc_check_code){
+
+	   
+			parse_recieve_copy_data(gl_tMsg.usData);
+			gl_tMsg.usData[0]=0;
+			
+		
+
+	}
+	
 	
 }
 

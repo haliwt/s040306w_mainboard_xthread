@@ -77,7 +77,7 @@ void Error_Handler(void);
 #define OLDER_PCB   0
 
 
-#define NEW_PCB   1
+#define NEW_PCB   0
 
 #if NEW_PCB
 
@@ -152,8 +152,8 @@ void Error_Handler(void);
 
 
 
-#define TEMP_SENSOR_Pin         LL_GPIO_PIN_13
-#define TEMP_SENSOR_GPIO_Port GPIOB
+#define TEMP_SENSOR_Pin         		LL_GPIO_PIN_13
+#define TEMP_SENSOR_GPIO_Port 			GPIOB
 
 
 //USART2 
