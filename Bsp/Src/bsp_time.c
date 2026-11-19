@@ -20,6 +20,11 @@ static PTC_State ptc_state = PTC_STATE_OFF;
 
 static void CompareSetAndActualTemperature(void);
 
+static void new_version_two_hours_handler(void);
+static void older_version_two_hours_handler(void);
+
+
+
 uint8_t counter_two_hours;
 uint8_t define_twohours_flag ;
 
@@ -48,11 +53,42 @@ uint8_t twoHours_stop_flag;
     *Return Ref: NO
     *
 ************************************************************************/
-#if 1
-uint8_t two_hours_f;
 void works_run_two_hours_state(void)
 {
   //static uint8_t two_hours_f;
+
+  switch(gpro_t.soft_version ){
+
+
+  case 0x02:
+
+      new_version_two_hours_handler();
+  break;
+
+
+  case 0:
+      older_version_two_hours_handler();
+
+  break;
+
+
+  }
+
+
+}
+
+
+/**********************************************************************
+    *
+    *Functin Name: void works_run_two_hours_state(void)
+    *Function :  
+    *Input Ref: NO
+    *Return Ref: NO
+    *
+************************************************************************/
+static void new_version_two_hours_handler(void)
+{
+  static uint8_t two_hours_f;
 
   switch(gpro_t.twoHoursStop_flag){
 
@@ -95,17 +131,30 @@ void works_run_two_hours_state(void)
 	 break;
   }
 }
- #else 
-	  
-void works_run_two_hours_state(void)
+/**********************************************************************
+    *
+    *Functin Name: 
+    *Function :  
+    *Input Ref: NO
+    *Return Ref: NO
+    *
+************************************************************************/
+static void older_version_two_hours_handler(void)
 {
 
-   
+   static uint8_t older_two_hours_f;
    switch(gpro_t.twoHoursStop_flag ){
 
 	case 0x0://older version 
 
-	  if(gpro_t.gTimer_conter_twohours_minutes >119 && gpro_t.twoHoursStop_flag ==0){
+      #if 1
+
+	  if(gpro_t.gTimer_conter_twohours_minutes >4 && gpro_t.twoHoursStop_flag ==0){
+
+	  #else 
+	     if(gpro_t.gTimer_conter_twohours_minutes >119 && gpro_t.twoHoursStop_flag ==0){
+
+	  #endif 
 			gpro_t.gTimer_conter_twohours_minutes=0;
 	        gpro_t.gTimer_twohours_seconds_counter=0;
 	        gpro_t.twoHoursStop_flag =1;
@@ -114,21 +163,30 @@ void works_run_two_hours_state(void)
             PTC_SetLow();
             ultrasonic_close();
 	  }
-	  else if(gpro_t.twoHoursStop_flag ==1 &&  define_twohours_flag ==0){
+	
+//	  else if(gpro_t.twoHoursStop_flag ==1 &&  define_twohours_flag ==0){
 	  
-	  	    gpro_t.gTimer_conter_twohours_minutes=0;
-	        gpro_t.gTimer_twohours_seconds_counter=0;
-			define_twohours_flag =1;
-			PLASMA_SetLow(); //
+//	  	    gpro_t.gTimer_conter_twohours_minutes=0;
+//	        gpro_t.gTimer_twohours_seconds_counter=0;
+//			define_twohours_flag =1;
+//			PLASMA_SetLow(); //
+//            PTC_SetLow();
+//            ultrasonic_close();
+	  
+//	  }
+
+  
+	  
+     break;
+	  
+	 case 1:
+
+	  if(gpro_t.twoHoursStop_flag ==1 &&  define_twohours_flag ==1){
+	        PLASMA_SetLow(); //
             PTC_SetLow();
             ultrasonic_close();
 	  
 	  }
-	  
-	  
-
-	 
-	  
 
 	  if(gpro_t.twoHoursStop_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 0 && define_twohours_flag ==1){
 			  define_twohours_flag++;
@@ -137,7 +195,15 @@ void works_run_two_hours_state(void)
       
 	           FAN_Stop();
       }
-      else if(gpro_t.twoHoursStop_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 10 && define_twohours_flag ==2){
+
+	 #if 1
+
+	 if(gpro_t.twoHoursStop_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 2 && define_twohours_flag ==2){
+
+	 #else 
+	    if(gpro_t.twoHoursStop_flag ==1 && gpro_t.gTimer_conter_twohours_minutes > 10 && define_twohours_flag ==2){
+
+	  #endif 
 			  define_twohours_flag=0;
 			  gpro_t.twoHoursStop_flag =0;
 	 
@@ -146,23 +212,29 @@ void works_run_two_hours_state(void)
 
 	          
       }
-      else if(define_twohours_flag==0 && gpro_t.twoHoursStop_flag ==0){ //300ms
-            
-          
-            module_hardware_control();
-      }
 
-     if(gpro_t.gTimer_poweroff_fan > 5){
-	 	gpro_t.gTimer_poweroff_fan=0;
-	    CompareSetAndActualTemperature();
+	
 	  
-     	}
+      if(define_twohours_flag==0){ //300ms
+         define_twohours_flag = 10;
+          module_hardware_control();
+	       Fan_RunSpeed_Fun();
+      }
+	  else if(define_twohours_flag ==10 ){
+
+	      define_twohours_flag ++;
+		  module_hardware_control();
+	       Fan_RunSpeed_Fun();
+
+	  }
+
+
 	break;
 
   	}
 
 }
-#endif 
+
 /**
 *@brief:
 *@notice

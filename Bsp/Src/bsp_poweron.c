@@ -35,7 +35,7 @@ static void handler_wifi_report(void);
 
 volatile uint8_t time_slot ;
 
-#if 1
+
 // --- 4. 初始化分时任务表 ---
 TimeSharingTask_t g_tasks[] = {
     {0, 370,       handler_wifi_state},
@@ -55,116 +55,6 @@ TimeSharingTask_t g_tasks[] = {
 };
 
 #define TASK_NUM (sizeof(g_tasks) / sizeof(TimeSharingTask_t))
-
-
-#else 
-
-void static task_time_slot_scheduler(void)
-{
-   static uint16_t wifi_counter_1,wifi_counter_2,counter_1,counter_2;
-   static uint16_t counter_3,counter_4,counter_5,counter_6;
-   switch(time_slot){
-
-    case 0:
-	   wifi_counter_1 ++;
-       if(wifi_counter_1 >300 ){//200
-        wifi_counter_1=0;
-	   handler_wifi_state();
-
-       }
-
-    break;
-
-    case 1:
-		wifi_counter_2++;
-		if(wifi_counter_2 > 150){
-			wifi_counter_2=0;
-		handler_wifi_update_data();
-
-	    }
-
-	break;
-
-	case 2:
-		counter_1++;
-		if(counter_1 > 400){
-			counter_1 =0;
-		handler_works_hours();
-
-	    }
-
-	break;
-
-	case 3:
-
-	counter_2++;
-		if(counter_2 > 500){
-			counter_2 =0;
-		 handler_fan_adc();
-		}
-
-	break;
-
-	case 4:
-	counter_3++;
-		if(counter_3 > 600){
-				counter_3 =0;
-			handler_wifi_update_temp_humidity();
-		}
-
-	break;
-
-	case 5:
-	counter_4++;
-			if(counter_4 > 100){
-				counter_4 =0;
-				handler_read_dht11();
-				}
-
-	break;
-
-	case 6:
-	counter_5++;
-			if(counter_5 > 270){
-				counter_5 =0;
-				handler_fan_speed_state();
-				}
-
-	break;
-
-	case 7:
-	counter_6++;
-			if(counter_6 > 60){
-				counter_6 =0;
-				handler_module_action();
-
-			}
-
-	break;
-
-	case 8:
-	   link_wifi_to_tencent_handler(); //detected ADC of value 
-        
-
-	break;
-
-	case 9:
-	 ai_mode_display_fun();
-
-	break;
-
-
-   }
-
-   time_slot ++;
-   if(time_slot > 9)time_slot = 0;//10ms * 10 = 100ms
-}
-
-
-
-#endif 
-
-
 
 
 static void power_off_stop_fun(void);

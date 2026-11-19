@@ -107,7 +107,7 @@ void link_wifi_net_handler(void)
 
 
             case 3:
-            if(gpro_t.gTimer_link_net_timer_time  > 4){
+            if(gpro_t.gTimer_link_net_timer_time  > 6){//4
                       gpro_t.gTimer_link_net_timer_time = 0;
                   
                 at_send_data((const uint8_t *)"AT+TCDEVREG\r\n", strlen("AT+TCDEVREG\r\n"));
@@ -124,7 +124,7 @@ void link_wifi_net_handler(void)
 
             case 4:
 		
-                 if(gpro_t.gTimer_link_net_timer_time  > 7){
+                 if(gpro_t.gTimer_link_net_timer_time  > 10){
                   gpro_t.gTimer_link_net_timer_time = 0;
 
                    net_t.linking_tencent_cloud_doing =1;

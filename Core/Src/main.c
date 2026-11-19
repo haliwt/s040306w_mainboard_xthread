@@ -13,7 +13,7 @@
   *  data:2026-08.04 : app smart phone power off fan at once turn off .
   *  Data:2026-11-09 : two hours have a rest ,but fan always run don't run one 
   *                   minutes stop .is bug.
-  *
+  *  data:2026-11-19  : compatible with older version display board modify 
   *
   ******************************************************************************
   */
